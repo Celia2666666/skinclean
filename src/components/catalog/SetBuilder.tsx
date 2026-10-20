@@ -37,7 +37,7 @@ export function SetBuilder() {
   return (
     <div className="mx-auto grid max-w-[1400px] gap-8 px-4 py-10 md:px-8 lg:grid-cols-[1.25fr_1fr]">
       <div>
-        <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-3">
+        <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-3 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0">
           {[{ slug: "tous", short: "Tous" }, ...typeCategories].map((c) => (
             <button key={c.slug} onClick={() => setFilter(c.slug)} className={`chip shrink-0 px-4 py-2 text-sm transition ${filter === c.slug ? "bg-forest text-ivory" : "bg-ivory hover:bg-sage-soft"}`}>{c.short}</button>
           ))}
@@ -62,8 +62,8 @@ export function SetBuilder() {
         </motion.div>
       </div>
 
-      <div className="lg:sticky lg:top-24 lg:self-start">
-        <div className="relative aspect-[5/4] overflow-hidden rounded-none bg-[radial-gradient(120%_100%_at_30%_10%,#FFFEFB,#EFEEEA_60%,#EFEEEA)]">
+      <div className="lg:sticky lg:top-24 lg:flex lg:max-h-[calc(100vh-11rem)] lg:flex-col lg:self-start">
+        <div className="relative aspect-[5/4] shrink-0 overflow-hidden rounded-none lg:aspect-auto lg:h-[min(36vh,320px)] bg-[radial-gradient(120%_100%_at_30%_10%,#FFFEFB,#EFEEEA_60%,#EFEEEA)]">
           <div className="absolute inset-x-6 bottom-6 h-6 rounded-[50%] bg-forest/10 blur-md" />
           <LayoutGroup>
             <div className="absolute inset-0 flex flex-wrap content-end items-end justify-center gap-1 p-8 pb-10">
@@ -83,8 +83,9 @@ export function SetBuilder() {
           <p className="absolute left-5 top-5 chip bg-ivory/90">Mon set · {count} soin{count > 1 ? "s" : ""}</p>
         </div>
 
-        <div className="mt-4 rounded-none bg-ivory p-5">
-          <ul className="divide-y divide-line">
+        <div className="mt-4 rounded-none bg-ivory p-5 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
+          {sel.length > 0 && <p className="mb-1 text-xs font-medium uppercase tracking-[0.08em] text-forest-soft">Soins choisis ({sel.length})</p>}
+          <ul className="divide-y divide-line lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-1">
             <AnimatePresence initial={false}>
               {sel.map((x) => {
                 const p = all.find((y) => y.id === x.productId)!;
@@ -112,7 +113,7 @@ export function SetBuilder() {
           </ul>
           {pct > 0 && <p className="mt-3 rounded-[2px] bg-sage-soft px-3 py-2 text-sm">Remise set : -{pct} % appliquée</p>}
           {nextTier && <p className="mt-3 text-xs text-forest-soft">Encore {nextTier.minItems - count} soin(s) pour -{nextTier.percent} %</p>}
-          <div className="mt-4 flex items-end justify-between">
+          <div className="mt-4 flex shrink-0 items-end justify-between border-t border-line pt-4">
             <div>
               <p className="text-xs text-forest-soft">Total du set</p>
               <motion.p key={total} initial={{ scale: 1.15 }} animate={{ scale: 1 }} className="font-display text-3xl">{euro(total)}</motion.p>
