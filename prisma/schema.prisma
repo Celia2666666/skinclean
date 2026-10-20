@@ -1,0 +1,252 @@
+// SKINCLEAN — schéma de base de données cible (PostgreSQL + Prisma).
+// Le site tourne aujourd'hui en mode démo (catalogue dans src/data, comptes dans le navigateur).
+// Ce schéma décrit le passage en production. Installation : npm i -D prisma && npm i @prisma/client
+// puis : npx prisma migrate dev --name init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role { CUSTOMER OWNER MANAGER EDITOR SUPPORT }
+enum OrderStatus { PENDING PAID SHIPPED DELIVERED RETURN_REQUESTED REFUNDED CANCELLED }
+enum LedgerStatus { PENDING CREDITED USED CANCELLED EXPIRED }
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String?
+  firstName     String
+  lastName      String
+  phone         String?
+  birthday      DateTime?
+  role          Role      @default(CUSTOMER)
+  createdAt     DateTime  @default(now())
+  addresses     Address[]
+  orders        Order[]
+  ledger        LeafLedger[]
+  routines      SavedRoutine[]
+  diagnostics   Diagnostic[]
+  favorites     Favorite[]
+  journal       Journal?
+  newsletter    NewsletterSubscriber?
+}
+
+model Address {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  line1     String
+  line2     String?
+  zip       String
+  city      String
+  country   String
+  phone     String?
+  isDefault Boolean @default(false)
+}
+
+// ─── Catalogue : un produit = une fiche, reliée à plusieurs catégories ───
+model Product {
+  id             String   @id            // ex. sc-sr-01
+  slug           String   @unique
+  name           String
+  kind           String
+  tagline        String
+  type           String
+  description    String
+  benefits       String[]
+  concerns       String[]
+  skinTypes      String[]
+  actives        String[]
+  intensity      Int
+  step           String
+  moments        String[]
+  frequency      String
+  usage          String
+  tips           String[]
+  precautions    String[]
+  inci           String
+  naturalOrigin  Float?
+  routineRole    String   @default("core")
+  bestsellerRank Int?
+  isNew          Boolean  @default(false)
+  colors         Json
+  media          Json     // packshot, hover, hoverVideo, howToVideo, gallery, beforeAfter
+  keyIngredients Json
+  faq            Json
+  variants       Variant[]
+  categories     ProductCategory[]
+  reviews        Review[]
+  updatedAt      DateTime @updatedAt
+}
+
+model Variant {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  code      String  // std, mini
+  label     String
+  size      String
+  priceCents Int
+  stock     Int
+  mini      Boolean @default(false)
+  @@unique([productId, code])
+}
+
+model Category {
+  slug     String @id
+  label    String
+  group    String // type | concern | special
+  intro    String
+  bg       String
+  products ProductCategory[]
+}
+
+model ProductCategory {
+  productId  String
+  categoryId String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [slug], onDelete: Cascade)
+  @@id([productId, categoryId])
+}
+
+model Kit {
+  id              String @id
+  slug            String @unique
+  name            String
+  group           String
+  season          String?
+  tagline         String
+  description     String
+  discountPercent Int
+  routine         String[]
+  items           Json   // [{ productId, variantCode }]
+  color           String
+  accent          String
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  orderId   String   // avis vérifié = lié à une commande
+  rating    Int
+  text      String
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// ─── Commandes & paiements ───
+model Order {
+  id              String      @id @default(cuid())
+  number          String      @unique
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id])
+  email           String
+  status          OrderStatus @default(PENDING)
+  stripeSessionId String?     @unique
+  subtotalCents   Int
+  discountCents   Int
+  shippingCents   Int
+  totalCents      Int
+  welcomeCode     String?
+  gift            String?
+  shippingAddress Json
+  lines           Json
+  trackingNumber  String?
+  createdAt       DateTime    @default(now())
+}
+
+// ─── Fidélité ───
+model LeafLedger {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  delta     Int
+  label     String
+  status    LedgerStatus
+  orderId   String?
+  createdAt DateTime     @default(now())
+}
+
+model NewsletterSubscriber {
+  id           String    @id @default(cuid())
+  email        String    @unique   // une seule attribution d'avantages par adresse
+  userId       String?   @unique
+  user         User?     @relation(fields: [userId], references: [id])
+  confirmedAt  DateTime?
+  bonusGranted Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+}
+
+model WelcomeCode {
+  code      String   @id
+  email     String   @unique
+  percent   Int
+  expiresAt DateTime
+  usedAt    DateTime?
+  orderId   String?
+}
+
+// ─── Diag, routines, favoris ───
+model Diagnostic {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  answers   Json
+  result    Json
+  createdAt DateTime @default(now())
+}
+
+model SavedRoutine {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  items     Json
+  createdAt DateTime @default(now())
+}
+
+model Favorite {
+  userId    String
+  productId String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@id([userId, productId])
+}
+
+// ─── Skin Journal (données sensibles : chiffrement au repos, accès propriétaire uniquement) ───
+model Journal {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consentAt       DateTime
+  startDate       DateTime
+  reminders       Boolean  @default(true)
+  retentionMonths Int      @default(12)
+  routineId       String?
+  checkins        String[]
+  entries         JournalEntry[]
+}
+
+model JournalEntry {
+  id            String   @id @default(cuid())
+  journalId     String
+  journal       Journal  @relation(fields: [journalId], references: [id], onDelete: Cascade)
+  day           Int
+  photoKey      String?  // objet privé (stockage S3/R2 chiffré, URL signée courte durée)
+  hydration     Int
+  imperfections Int
+  redness       Int
+  glow          Int
+  products      String[]
+  note          String
+  routineDone   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  @@unique([journalId, day])
+}
