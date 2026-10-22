@@ -1,6 +1,7 @@
 import type { Account, LedgerEntry, Order, SavedRoutine } from "@/lib/store";
 import type { RoutineStep } from "@/lib/types";
 import { getProduct } from "@/lib/catalog";
+import { shipping as shippingConfig } from "@/data/config";
 
 /**
  * COMPTES DE TEST — démonstration uniquement (travail d'école, données fictives).
@@ -28,7 +29,7 @@ function line(productId: string, qty = 1) {
 function order(id: string, daysAgo: number, email: string, ids: string[], status: Order["status"]): Order {
   const lines = ids.map((x) => line(x));
   const subtotal = lines.reduce((s, l) => s + l.unit * l.qty, 0);
-  const shipping = subtotal >= 39 ? 0 : 4.9;
+  const shipping = subtotal >= shippingConfig.freeFrom ? 0 : shippingConfig.standardPrice;
   return {
     id, date: now() - daysAgo * DAY, email, lines, subtotal, discount: 0, shipping,
     total: Math.round((subtotal + shipping) * 100) / 100, leaves: Math.floor(subtotal),

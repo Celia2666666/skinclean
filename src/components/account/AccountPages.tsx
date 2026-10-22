@@ -11,6 +11,7 @@ import { Packshot } from "@/components/product/Packshot";
 import { LeafGauge } from "./LeafGauge";
 import { stepLabels } from "@/data/categories";
 import { useUI } from "@/lib/ui";
+import { paymentMethodLabel } from "@/components/checkout/PaymentMethods";
 
 const statusLabel: Record<Order["status"], string> = { test: "Test — non payée", payee: "Payée · en préparation", expediee: "Expédiée", livree: "Livrée", remboursee: "Remboursée", "retour-demande": "Retour demandé" };
 const H = ({ children }: { children: React.ReactNode }) => <h1 className="font-display text-4xl md:text-5xl">{children}</h1>;
@@ -68,7 +69,7 @@ export function Orders() {
           <div className="flex flex-wrap items-center gap-3">
             <p className="font-display text-2xl">{o.id}</p>
             <span className={`chip ${o.status === "test" ? "bg-butter" : "bg-sage"}`}>{statusLabel[o.status]}</span>
-            <span className="ml-auto text-sm text-forest-soft">{frDate(o.date)} · {euro(o.total)}</span>
+            <span className="ml-auto text-sm text-forest-soft">{frDate(o.date)} · {euro(o.total)}{o.paymentMethod ? ` · ${paymentMethodLabel[o.paymentMethod]}` : ""}</span>
           </div>
           {o.status !== "test" && o.status !== "remboursee" && (
             <div className="mt-5 flex items-center">

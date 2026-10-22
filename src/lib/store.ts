@@ -21,7 +21,7 @@ export interface Order {
   id: string; date: number; email: string; lines: OrderLine[];
   subtotal: number; discount: number; shipping: number; total: number; leaves: number;
   gift?: string; status: "test" | "payee" | "expediee" | "livree" | "remboursee" | "retour-demande";
-  paymentMode: "stripe" | "test"; stripeSessionId?: string; address?: Address; code?: string;
+  paymentMode: "stripe" | "test"; paymentMethod?: "card" | "apple-pay" | "google-pay"; stripeSessionId?: string; address?: Address; code?: string;
 }
 export interface SavedRoutine { id: string; name: string; createdAt: number; diagId?: string; items: RoutineItem[]; link?: string; summary?: string }
 export interface WelcomeCode { code: string; percent: number; expiresAt: number; used: boolean; email: string; /** Bon signé par le serveur, vérifié au paiement. */ voucher?: string }

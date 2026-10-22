@@ -22,8 +22,8 @@ export const reviewsConfig = {
 
 export const shipping = {
   currency: "EUR",
-  standardPrice: 4.9,
-  freeFrom: 39,
+  standardPrice: 10,
+  freeFrom: 100,
   label: "Livraison Colissimo 48-72 h",
 };
 
@@ -76,13 +76,12 @@ export const firstOrderGift = {
   minOrder: 0,
 };
 
-/** Remise « Créer mon set » — désactivée par défaut : aucune promo permanente non validée. */
+/** Remise « Créer mon set » : -15 % sur le total du set dès 2 soins, 7 soins maximum. */
 export const setDiscount = {
-  enabled: false,
-  tiers: [
-    { minItems: 3, percent: 10 },
-    { minItems: 5, percent: 15 },
-  ],
+  enabled: true,
+  /** Nombre maximum de soins dans un set « Créer mon set ». */
+  maxItems: 7,
+  tiers: [{ minItems: 2, percent: 15 }],
 };
 
 const baseAnnouncements = [

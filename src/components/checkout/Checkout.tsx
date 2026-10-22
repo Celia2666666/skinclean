@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CartLines, PromoAndRewards, TotalsBlock, useCartTotals } from "@/components/layout/CartContent";
 import { useAccount, useHydrated, useStore } from "@/lib/store";
 import { LockIcon } from "@/components/ui/Icons";
+import { AppleLogo, GoogleLogo, PayButton, PaymentMethodPicker, paymentMethodLabel, type PaymentMethod } from "./PaymentMethods";
 
 type Status = { stripe: boolean; stripeTest: boolean; email: boolean };
 
@@ -27,6 +27,8 @@ export function Checkout() {
   const clearCart = useStore((s) => s.clearCart);
   const [status, setStatus] = useState<Status>();
   const [form, setForm] = useState({ email: "", firstName: "", lastName: "", line1: "", zip: "", city: "", country: "France", phone: "", cgv: false });
+  const [method, setMethod] = useState<PaymentMethod>("card");
+  const formRef = useRef<HTMLFormElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -55,7 +57,7 @@ export function Checkout() {
     email: form.email,
     lines: t.lines.map((l) => ({ productId: l.line.productId, variantId: l.line.variantId, name: l.name, size: l.size, qty: l.line.qty, unit: l.unit, bundle: l.line.bundle?.name })),
     subtotal: t.subtotal, discount: t.bundleDiscount + t.codeDiscount + t.rewardDiscount, shipping: t.shipping, total: t.total, leaves: t.leavesEarned,
-    gift: t.gift?.name, code: t.codeDiscount > 0 ? promoCode : undefined,
+    paymentMethod: method, gift: t.gift?.name, code: t.codeDiscount > 0 ? promoCode : undefined,
     address: { id: "a", name: `${form.firstName} ${form.lastName}`, line1: form.line1, zip: form.zip, city: form.city, country: form.country, phone: form.phone },
   });
 
@@ -91,7 +93,19 @@ export function Checkout() {
       <h1 className="flex items-center gap-3 font-display text-5xl"><LockIcon size={34} /> Paiement sécurisé</h1>
       {search.get("annule") && <p className="mt-4 rounded-[2px] bg-butter p-4 text-sm">Le paiement a été annulé : aucune somme n&apos;a été débitée. Ton panier est intact.</p>}
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
-        <form onSubmit={status?.stripe ? payStripe : testOrder} className="space-y-8">
+        <form ref={formRef} onSubmit={status?.stripe ? payStripe : testOrder} className="space-y-8">
+          <div className="rounded-none bg-ivory p-6">
+            <p className="text-center text-xs font-medium uppercase tracking-[0.08em] text-forest-soft">Paiement express</p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <button type="button" onClick={() => { setMethod("apple-pay"); formRef.current?.requestSubmit(); }} aria-label="Payer avec Apple Pay" className="flex h-12 items-center justify-center rounded-[6px] bg-black text-xl font-semibold text-white transition hover:bg-[#1d1d1f]">
+                <AppleLogo className="mr-[2px] h-6 w-6" />Pay
+              </button>
+              <button type="button" onClick={() => { setMethod("google-pay"); formRef.current?.requestSubmit(); }} aria-label="Payer avec Google Pay" className="flex h-12 items-center justify-center gap-1.5 rounded-[6px] bg-black text-xl font-medium text-white transition hover:bg-[#202124]">
+                <span className="grid h-7 w-7 place-items-center rounded-full bg-white"><GoogleLogo className="h-[18px] w-[18px]" /></span>Pay
+              </button>
+            </div>
+            <p className="mt-3 flex items-center gap-3 text-xs text-forest-soft before:h-px before:flex-1 before:bg-line after:h-px after:flex-1 after:bg-line">ou remplis tes informations</p>
+          </div>
           <fieldset className="space-y-3 rounded-none bg-ivory p-6">
             <legend className="mb-2 font-display text-2xl">1. Coordonnées</legend>
             {!acc && <p className="text-sm text-forest-soft">Déjà client·e ? <Link href="/compte/connexion?retour=/paiement" className="underline">Connecte-toi</Link> pour cumuler tes feuilles.</p>}
@@ -113,15 +127,17 @@ export function Checkout() {
           </fieldset>
           <fieldset className="space-y-4 rounded-none bg-ivory p-6">
             <legend className="mb-2 font-display text-2xl">3. Paiement</legend>
-            <div className="flex flex-wrap gap-2">
-              {["Carte bancaire", " Apple Pay", "Google Pay"].map((m) => <span key={m} className="rounded-[2px] border border-line bg-cream px-3 py-2 text-sm font-semibold">{m}</span>)}
-            </div>
+            <PaymentMethodPicker value={method} onChange={setMethod} />
             {status === undefined ? <p className="text-sm">Vérification du moyen de paiement…</p> : status.stripe ? (
-              <p className="text-sm text-forest-soft">Tu vas être redirigé·e vers la page de paiement sécurisée Stripe. Apple Pay et Google Pay s&apos;affichent automatiquement sur les appareils compatibles. {status.stripeTest && <b>Mode test Stripe : utilise une carte de test, aucun débit réel.</b>}</p>
+              <p className="flex items-start gap-2 text-sm text-forest-soft"><LockIcon size={16} />
+                {method === "card"
+                  ? "Tu saisiras ta carte sur la page de paiement sécurisée Stripe (authentification 3D Secure par ta banque)."
+                  : `La fenêtre ${paymentMethodLabel[method]} s'ouvrira sur la page de paiement sécurisée Stripe, sur les appareils compatibles.`}
+                {status.stripeTest && <b> Mode test Stripe : utilise une carte de test, aucun débit réel.</b>}
+              </p>
             ) : (
-              <div className="rounded-[2px] bg-butter p-4 text-sm">
-                <p><b>Paiement non configuré.</b> Aucune clé Stripe n&apos;est renseignée sur ce serveur : aucun paiement réel ne peut être effectué. Tu peux passer une <b>commande de test</b> pour tester le parcours (fidélité, historique). Elle sera clairement marquée « non payée ».</p>
-                <p className="mt-2 text-xs">Pour activer les paiements : voir la section « Activer les paiements » du README.</p>
+              <div className="rounded-[2px] bg-sage-soft p-4 text-sm">
+                <p><b>Site de démonstration :</b> aucun paiement réel n&apos;est effectué. Le bouton ci-dessous passe une <b>commande de test</b> ({paymentMethodLabel[method]}) pour tester le parcours (fidélité, historique). Elle sera marquée « non payée ».</p>
               </div>
             )}
             <label className="flex items-start gap-2 text-sm">
@@ -129,9 +145,7 @@ export function Checkout() {
               <span>J&apos;accepte les <Link href="/legal/cgv" className="underline" target="_blank">conditions générales de vente</Link> et j&apos;ai lu la <Link href="/legal/confidentialite" className="underline" target="_blank">politique de confidentialité</Link>.</span>
             </label>
             {error && <p className="text-sm text-[#a14d5f]">{error}</p>}
-            <motion.button whileTap={{ scale: 0.97 }} disabled={loading || !status} className="btn btn-primary w-full py-4 text-base">
-              {loading ? "Redirection…" : status?.stripe ? `Payer ${t.total.toFixed(2).replace(".", ",")} €` : "Passer une commande de test (non payée)"}
-            </motion.button>
+            <PayButton method={method} amount={`${t.total.toFixed(2).replace(".", ",")} €`} loading={loading} disabled={!status} test={status ? !status.stripe : false} />
           </fieldset>
         </form>
         <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">

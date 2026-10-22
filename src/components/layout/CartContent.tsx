@@ -171,7 +171,7 @@ export function TotalsBlock() {
       {row("Livraison", t.shipping === 0 ? "Offerte" : euro(t.shipping))}
       <div className="my-2 h-px bg-line" />
       {row("Total TTC", euro(t.total), true)}
-      <p className="text-right text-xs text-forest-soft">Tu gagnes <b>{t.leavesEarned} </b> avec cette commande (créditées à l&apos;{loyalty.creditedOn}).</p>
+      <p className="text-right text-xs text-forest-soft">Tu gagnes <b>{t.leavesEarned} feuilles</b> avec cette commande (créditées à l&apos;{loyalty.creditedOn}).</p>
     </div>
   );
 }

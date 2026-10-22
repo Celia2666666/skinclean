@@ -29,6 +29,7 @@ export async function POST(req: Request) {
     let discountPct = kit ? kit.discountPercent : 0;
     if (!kit && String(l.bundleId ?? "").startsWith("set-") && setDiscount.enabled) {
       const setCount = lines.filter((x) => x.bundleId === l.bundleId).reduce((s, x) => s + (Number(x.qty) || 1), 0);
+      if (setCount > setDiscount.maxItems) return Response.json({ error: `Un set contient ${setDiscount.maxItems} soins maximum.` }, { status: 400 });
       discountPct = [...setDiscount.tiers].reverse().find((t) => setCount >= t.minItems)?.percent ?? 0;
     }
     items.push({ name: `${p.name} — ${v.size}`, unit: v.price, qty, discountPct, isKit: discountPct > 0 });

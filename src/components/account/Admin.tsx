@@ -94,8 +94,6 @@ function ProductsAdmin() {
 function KitsAdmin() {
   const kd = useStore((s) => s.kitDiscounts);
   const setKd = useStore((s) => s.setKitDiscount);
-  const enabled = useStore((s) => s.setDiscountEnabled);
-  const setEnabled = useStore((s) => s.setSetDiscountEnabled);
   return (
     <div className="grid gap-5 lg:grid-cols-2">
       <Box>
@@ -115,9 +113,8 @@ function KitsAdmin() {
       </Box>
       <Box>
         <p className="font-display text-2xl">Promotions</p>
-        <label className="mt-3 flex items-center gap-2 text-sm"><input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} className="accent-[#24392F]" /> Activer la remise « Créer mon set » ({setDiscount.tiers.map((t) => `${t.minItems}+ soins = -${t.percent} %`).join(", ")})</label>
-        <p className="mt-1 text-xs text-forest-soft">Désactivée par défaut : aucune promotion permanente n&apos;est affichée sans validation.</p>
-        <div className="mt-4 space-y-1 text-sm">
+        <div className="mt-3 space-y-1 text-sm">
+          <p><b>Créer mon set :</b> {setDiscount.tiers.map((t) => `-${t.percent} % dès ${t.minItems} soins`).join(", ")}, {setDiscount.maxItems} soins maximum</p>
           <p><b>Offre newsletter :</b> -{welcomeOffer.newsletterPercent} %, {welcomeOffer.validityDays} jours, kits exclus : {welcomeOffer.excludeKits ? "oui" : "non"}, cumul feuilles : {welcomeOffer.combinableWithLeaves ? "oui" : "non"}</p>
           <p><b>Cadeau 1ʳᵉ commande :</b> {firstOrderGift.enabled ? firstOrderGift.name : "désactivé"}</p>
           <p><b>Livraison :</b> {euro(shipping.standardPrice)}, offerte dès {euro(shipping.freeFrom)}</p>

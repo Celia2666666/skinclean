@@ -16,7 +16,6 @@ export function SetBuilder() {
   const [filter, setFilter] = useState<string>("tous");
   const [sel, setSel] = useState<{ productId: string; variantId: string; qty: number }[]>([]);
   const addMany = useStore((s) => s.addMany);
-  const enabled = useStore((s) => s.setDiscountEnabled);
   const overrides = useStore((s) => s.overrides);
   const toast = useUI((s) => s.toast);
   const h = useHydrated();
@@ -25,12 +24,23 @@ export function SetBuilder() {
   const count = sel.reduce((s, x) => s + x.qty, 0);
   const subtotal = sel.reduce((s, x) => s + resolveVariant(all.find((p) => p.id === x.productId)!, x.variantId, h ? overrides : undefined).price * x.qty, 0);
   const tiers = setDiscount.tiers;
-  const pct = h && enabled ? ([...tiers].reverse().find((t) => count >= t.minItems)?.percent ?? 0) : 0;
-  const nextTier = h && enabled ? tiers.find((t) => count < t.minItems) : undefined;
+  const pct = [...tiers].reverse().find((t) => count >= t.minItems)?.percent ?? 0;
+  const nextTier = tiers.find((t) => count < t.minItems);
+  const max = setDiscount.maxItems;
+  const full = count >= max;
   const total = subtotal * (1 - pct / 100);
 
-  const toggle = (id: string) => setSel((s) => (s.some((x) => x.productId === id) ? s.filter((x) => x.productId !== id) : [...s, { productId: id, variantId: "std", qty: 1 }]));
-  const qty = (id: string, d: number) => setSel((s) => s.map((x) => (x.productId === id ? { ...x, qty: Math.max(1, Math.min(5, x.qty + d)) } : x)));
+  const toggle = (id: string) => {
+    if (!sel.some((x) => x.productId === id) && full) {
+      toast({ title: `Un set contient ${max} soins maximum`, icon: "" });
+      return;
+    }
+    setSel((s) => (s.some((x) => x.productId === id) ? s.filter((x) => x.productId !== id) : [...s, { productId: id, variantId: "std", qty: 1 }]));
+  };
+  const qty = (id: string, d: number) => {
+    if (d > 0 && full) return;
+    setSel((s) => s.map((x) => (x.productId === id ? { ...x, qty: Math.max(1, x.qty + d) } : x)));
+  };
 
   const stage = useMemo(() => sel.flatMap((x) => Array.from({ length: x.qty }, (_, k) => ({ ...x, k }))).slice(0, 12), [sel]);
 
@@ -46,8 +56,9 @@ export function SetBuilder() {
           <AnimatePresence mode="popLayout">
             {list.map((p) => {
               const on = sel.some((x) => x.productId === p.id);
+              const locked = !on && full;
               return (
-                <motion.button key={p.id} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} whileHover={{ y: -4 }} whileTap={{ scale: 0.96 }} onClick={() => toggle(p.id)} aria-pressed={on} className={`relative rounded-none border-2 p-3 text-left transition ${on ? "border-forest bg-ivory" : "border-transparent bg-ivory/70"}`}>
+                <motion.button key={p.id} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} whileHover={{ y: -4 }} whileTap={{ scale: 0.96 }} onClick={() => toggle(p.id)} aria-pressed={on} aria-disabled={locked} className={`relative rounded-none border-2 p-3 text-left transition ${on ? "border-forest bg-ivory" : "border-transparent bg-ivory/70"} ${locked ? "cursor-not-allowed opacity-45" : ""}`}>
                   <div className="relative aspect-square rounded-[2px] p-2" style={{ background: p.color.bg }}>
                     <Packshot product={p} className="h-full w-full" showTag={false} sizes="200px" />
                     <span className={`absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full transition ${on ? "bg-forest text-ivory" : "bg-ivory"}`}>{on ? <CheckIcon size={14} /> : <PlusIcon size={14} />}</span>
@@ -84,7 +95,7 @@ export function SetBuilder() {
         </div>
 
         <div className="mt-4 rounded-none bg-ivory p-5 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
-          {sel.length > 0 && <p className="mb-1 text-xs font-medium uppercase tracking-[0.08em] text-forest-soft">Soins choisis ({sel.length})</p>}
+          {sel.length > 0 && <p className="mb-1 text-xs font-medium uppercase tracking-[0.08em] text-forest-soft">Soins choisis ({count}/{max})</p>}
           <ul className="divide-y divide-line lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-1">
             <AnimatePresence initial={false}>
               {sel.map((x) => {
@@ -111,8 +122,9 @@ export function SetBuilder() {
               })}
             </AnimatePresence>
           </ul>
-          {pct > 0 && <p className="mt-3 rounded-[2px] bg-sage-soft px-3 py-2 text-sm">Remise set : -{pct} % appliquée</p>}
-          {nextTier && <p className="mt-3 text-xs text-forest-soft">Encore {nextTier.minItems - count} soin(s) pour -{nextTier.percent} %</p>}
+          {pct > 0 && <p className="mt-3 shrink-0 rounded-[2px] bg-sage-soft px-3 py-2 text-sm">Remise set : -{pct} % appliquée</p>}
+          {nextTier && <p className="mt-3 text-xs text-forest-soft">{count === 0 ? `Compose ton set de ${nextTier.minItems} à ${max} soins : -${nextTier.percent} % sur le total` : `Encore ${nextTier.minItems - count} soin pour -${nextTier.percent} %`}</p>}
+          {full && <p className="mt-3 shrink-0 text-xs text-forest-soft">Ton set est complet ({max} soins maximum).</p>}
           <div className="mt-4 flex shrink-0 items-end justify-between border-t border-line pt-4">
             <div>
               <p className="text-xs text-forest-soft">Total du set</p>

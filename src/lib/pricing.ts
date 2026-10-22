@@ -32,6 +32,9 @@ export interface Totals {
 const r2 = (n: number) => Math.round(n * 100) / 100;
 
 export function computeTotals(cart: CartLine[], promo: PromoState, overrides?: PriceOverrides): Totals {
+  // Remise « Créer mon set » recalculée selon le nombre de soins restant dans chaque set.
+  const setCounts = new Map<string, number>();
+  for (const l of cart) if (!l.gift && l.bundle?.id.startsWith("set-")) setCounts.set(l.bundle.id, (setCounts.get(l.bundle.id) ?? 0) + l.qty);
   const lines = cart
     .filter((l) => !l.gift)
     .map((line) => {
@@ -39,7 +42,8 @@ export function computeTotals(cart: CartLine[], promo: PromoState, overrides?: P
       if (!p) return null;
       const v = resolveVariant(p, line.variantId, overrides);
       const total = r2(v.price * line.qty);
-      const discount = line.bundle?.discountPercent ? r2((total * line.bundle.discountPercent) / 100) : 0;
+      const pct = line.bundle?.id.startsWith("set-") ? setDiscountPercent(setCounts.get(line.bundle.id) ?? 0) : (line.bundle?.discountPercent ?? 0);
+      const discount = pct ? r2((total * pct) / 100) : 0;
       return { line, name: p.name, unit: v.price, total, size: v.size, discount };
     })
     .filter(Boolean) as Totals["lines"];

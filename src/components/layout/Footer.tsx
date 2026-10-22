@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { NewsletterForm } from "./NewsletterForm";
+import { PaymentLogos } from "@/components/checkout/PaymentMethods";
 import { InstagramIcon, PinterestIcon, TiktokIcon, YoutubeIcon } from "@/components/ui/Icons";
 import { typeCategories } from "@/data/categories";
 import { loyalty, welcomeOffer } from "@/data/config";
@@ -48,7 +49,7 @@ export function Footer() {
         </div>
         <div className="mt-14 flex flex-col items-start justify-between gap-6 border-t border-ivory/15 pt-6 md:flex-row md:items-center">
           <div className="flex flex-wrap items-center gap-2" aria-label="Moyens de paiement acceptés">
-            {["Visa", "Mastercard", "CB", "Apple Pay", "Google Pay"].map((m) => <span key={m} className="rounded-md bg-ivory px-2.5 py-1 text-[0.68rem] font-bold text-forest">{m}</span>)}
+            <PaymentLogos />
             <span className="ml-1 text-xs text-ivory/60">Paiement sécurisé via Stripe</span>
           </div>
           <p className="text-xs text-ivory/60">© {new Date().getFullYear()} SKINCLEAN — Marque fictive, projet académique. Conseils cosmétiques, pas de diagnostic médical.</p>

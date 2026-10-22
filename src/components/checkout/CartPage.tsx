@@ -1,4 +1,5 @@
 "use client";
+import { PaymentLogos } from "./PaymentMethods";
 import Link from "next/link";
 import { CartLines, CartSuggestions, FreeShippingBar, PromoAndRewards, TotalsBlock, useCartTotals } from "@/components/layout/CartContent";
 import { useHydrated } from "@/lib/store";
@@ -34,7 +35,7 @@ export function CartPage() {
               <PromoAndRewards />
               <TotalsBlock />
               <Link href="/paiement" className="btn btn-primary w-full py-4 text-base"><LockIcon size={18} /> Passer commande</Link>
-              <p className="text-center text-xs text-forest-soft">Paiement sécurisé : carte bancaire, Apple Pay, Google Pay</p>
+              <div className="space-y-2 text-center"><p className="text-xs text-forest-soft">Paiement sécurisé</p><PaymentLogos className="justify-center" /></div>
             </div>
           </aside>
         </div>
