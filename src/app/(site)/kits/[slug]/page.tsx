@@ -26,7 +26,7 @@ export default async function KitPage({ params }: PageProps<"/kits/[slug]">) {
   return (
     <>
       <PageHero eyebrow={kit.group === "saison" ? "Kit de saison" : kit.group === "voyage" ? "Kit de voyage" : "Routine"} title={kit.name} intro={kit.description} bg={kit.color} crumbs={[{ href: "/kits", label: "Kits & routines" }, { href: `/kits/${kit.slug}`, label: kit.name }]} />
-      <div className="mx-auto grid max-w-[1400px] gap-12 px-4 py-14 md:px-8 lg:grid-cols-[1.4fr_1fr]">
+      <div className="mx-auto grid grid-cols-[minmax(0,1fr)] max-w-[1400px] gap-12 px-4 py-14 md:px-8 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <h2 className="font-display text-4xl">Les {pr.lines.length} soins inclus</h2>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2">

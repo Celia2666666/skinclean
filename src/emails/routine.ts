@@ -40,7 +40,7 @@ export function routineEmail(payload: RoutinePayload, token: string, firstName?:
 </td></tr></table>`
     : "";
 
-  const body = `<h1 style="font-family:Georgia,serif;font-weight:normal;font-size:28px;margin:0 0 8px">${firstName ? `${firstName}, voici` : "Voici"} ta Glow Routine </h1>
+  const body = `<h1 style="font-family:Georgia,serif;font-weight:normal;font-size:28px;margin:0 0 8px">${firstName ? `${firstName}, voici` : "Voici"} ta Glow Routine</h1>
 <p style="font-size:15px;line-height:22px;margin:0">La routine SKINCLEAN imaginée pour ta peau, à garder à portée de main.</p>
 ${profile}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows}</table>

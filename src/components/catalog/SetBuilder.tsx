@@ -45,7 +45,7 @@ export function SetBuilder() {
   const stage = useMemo(() => sel.flatMap((x) => Array.from({ length: x.qty }, (_, k) => ({ ...x, k }))).slice(0, 12), [sel]);
 
   return (
-    <div className="mx-auto grid max-w-[1400px] gap-8 px-4 py-10 md:px-8 lg:grid-cols-[1.25fr_1fr]">
+    <div className="mx-auto grid grid-cols-[minmax(0,1fr)] max-w-[1400px] gap-8 px-4 py-10 md:px-8 lg:grid-cols-[1.25fr_1fr]">
       <div>
         <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-3 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0">
           {[{ slug: "tous", short: "Tous" }, ...typeCategories].map((c) => (
@@ -90,7 +90,7 @@ export function SetBuilder() {
               </AnimatePresence>
             </div>
           </LayoutGroup>
-          {sel.length === 0 && <p className="absolute inset-0 grid place-items-center p-10 text-center font-display text-2xl text-forest/60">Choisis tes soins, ils apparaîtront ici </p>}
+          {sel.length === 0 && <p className="absolute inset-0 grid place-items-center p-10 text-center font-display text-2xl text-forest/60">Choisis tes soins, ils apparaîtront ici</p>}
           <p className="absolute left-5 top-5 chip bg-ivory/90">Mon set · {count} soin{count > 1 ? "s" : ""}</p>
         </div>
 

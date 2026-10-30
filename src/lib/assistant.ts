@@ -34,7 +34,7 @@ export const welcomeQuick: QuickReply[] = [
 
 const diagCta = (prefill?: Answers): BotMessage => ({
   from: "bot",
-  text: "Tu veux une routine vraiment adaptée à ta peau ? Fais ton Skin Diag pour découvrir tous les soins qui te correspondent ! ",
+  text: "Tu veux une routine vraiment adaptée à ta peau ? Fais ton Skin Diag pour découvrir tous les soins qui te correspondent !",
   links: [{ label: prefill ? "Faire mon Skin Diag (avec mes réponses)" : "Faire mon Skin Diag", href: "/skin-diag", prefill }],
   quick: [{ label: "Autre question", value: "menu" }],
 });
@@ -77,7 +77,7 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
   // ── Suite d'un flow en cours ──
   if (s.flow === "acne" && !s.data.freq && ["reg", "occ", "idk"].includes(input)) {
     s.data.freq = input;
-    out.push({ from: "bot", text: "Merci ! Et ta peau a plutôt tendance à briller ou à tirailler ?", quick: [{ label: "Elle brille ", value: "shine" }, { label: "Elle tiraille ", value: "tight" }, { label: "Un peu des deux", value: "mixed" }] });
+    out.push({ from: "bot", text: "Merci ! Et ta peau a plutôt tendance à briller ou à tirailler ?", quick: [{ label: "Elle brille", value: "shine" }, { label: "Elle tiraille", value: "tight" }, { label: "Un peu des deux", value: "mixed" }] });
     return { messages: out, state: s };
   }
   if (s.flow === "acne" && s.data.freq && ["shine", "tight", "mixed"].includes(input)) {
@@ -102,7 +102,7 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
 
   switch (intent) {
     case "menu":
-      out.push({ from: "bot", text: "Je t'écoute ! Choisis un sujet ou écris ta question ", quick: welcomeQuick });
+      out.push({ from: "bot", text: "Je t'écoute ! Choisis un sujet ou écris ta question.", quick: welcomeQuick });
       break;
     case "acne":
       s.flow = "acne";
@@ -115,7 +115,7 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
       out.push(diagCta({ goal: "glowy", concerns: ["terne"] }));
       break;
     case "dry":
-      out.push({ from: "bot", text: "Une peau sèche manque de lipides, souvent aussi d'eau. Le combo gagnant : un sérum hydratant sur peau humide, puis une crème riche pour sceller ", products: ["sc-sr-03", "sc-cr-02"] });
+      out.push({ from: "bot", text: "Une peau sèche manque de lipides, souvent aussi d'eau. Le combo gagnant : un sérum hydratant sur peau humide, puis une crème riche pour sceller.", products: ["sc-sr-03", "sc-cr-02"] });
       out.push(diagCta({ skinType: "seche", concerns: ["secheresse"] }));
       break;
     case "oily":
@@ -123,7 +123,7 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
       out.push(diagCta({ skinType: "grasse", concerns: ["sebum"] }));
       break;
     case "redness":
-      out.push({ from: "bot", text: "Pour les rougeurs, on mise sur la douceur : pas de frottement, des formules apaisantes et une protection solaire minérale ", products: ["sc-sr-04", "sc-cr-04", "sc-sp-02"] });
+      out.push({ from: "bot", text: "Pour les rougeurs, on mise sur la douceur : pas de frottement, des formules apaisantes et une protection solaire minérale.", products: ["sc-sr-04", "sc-cr-04", "sc-sp-02"] });
       out.push({ from: "bot", text: "Si tes rougeurs sont persistantes, s'accompagnent de brûlures ou de boutons, parles-en à un·e professionnel·le de santé." });
       out.push(diagCta({ concerns: ["rougeurs"], reactivity: "parfois" }));
       break;
@@ -136,7 +136,7 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
       out.push(diagCta({ concerns: ["ridules"], goal: "ridules" }));
       break;
     case "routine":
-      out.push({ from: "bot", text: "Le Skin Diag, c'est 10 questions (2 minutes) pour une routine en ~5 étapes, matin et soir, avec les explications pour chaque produit. Tu peux ensuite la modifier, l'ajouter au panier ou la recevoir par e-mail ", links: [{ label: "Faire mon Skin Diag", href: "/skin-diag" }], quick: [{ label: "Autre question", value: "menu" }] });
+      out.push({ from: "bot", text: "Le Skin Diag, c'est 10 questions (2 minutes) pour une routine en ~5 étapes, matin et soir, avec les explications pour chaque produit. Tu peux ensuite la modifier, l'ajouter au panier ou la recevoir par e-mail.", links: [{ label: "Faire mon Skin Diag", href: "/skin-diag" }], quick: [{ label: "Autre question", value: "menu" }] });
       break;
     case "discounts":
       out.push({ from: "bot", text: `Bonne nouvelle ! Inscris-toi à notre newsletter et profite de -${welcomeOffer.newsletterPercent} % sur ta première commande.  En plus, tu reçois ${loyalty.newsletterBonus} feuilles SKINCLEAN CLUB une fois ton inscription confirmée et rattachée à ton compte.`, form: "newsletter" });
@@ -144,7 +144,7 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
       break;
     case "order": {
       if (!ctx.loggedIn && ctx.orders.length === 0) {
-        out.push({ from: "bot", text: "Pour suivre ta commande, connecte-toi à ton compte : toutes tes commandes et leur statut y sont regroupés ", links: [{ label: "Me connecter", href: "/compte/connexion" }, { label: "Livraison & retours", href: "/livraison" }] });
+        out.push({ from: "bot", text: "Pour suivre ta commande, connecte-toi à ton compte : toutes tes commandes et leur statut y sont regroupés.", links: [{ label: "Me connecter", href: "/compte/connexion" }, { label: "Livraison & retours", href: "/livraison" }] });
       } else if (ctx.orders.length === 0) {
         out.push({ from: "bot", text: "Je ne vois pas encore de commande sur ton compte. Dès que tu en passes une, son suivi apparaîtra ici et dans ton espace client.", links: [{ label: "Mon compte", href: "/compte/commandes" }] });
       } else {
@@ -169,7 +169,7 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
       break;
     }
     case "faq-morning":
-      out.push({ from: "bot", text: "Une routine du matin simple et efficace : 1. nettoyant doux, 2. sérum (vitamine C pour l'éclat ou niacinamide pour les imperfections), 3. crème hydratante, 4. SPF — indispensable ", products: ["sc-cl-01", "sc-sr-02", "sc-sp-01"] });
+      out.push({ from: "bot", text: "Une routine du matin simple et efficace : 1. nettoyant doux, 2. sérum (vitamine C pour l'éclat ou niacinamide pour les imperfections), 3. crème hydratante, 4. SPF — indispensable.", products: ["sc-cl-01", "sc-sr-02", "sc-sp-01"] });
       break;
     case "faq-budget": {
       const m = norm(input).match(/(\d+)/);
@@ -188,7 +188,7 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
       out.push({ from: "bot", text: `Au panier, choisis ta récompense : ${loyalty.rewards.map((r) => `${r.leaves}  = -${r.value} €`).join(", ")}. Les feuilles ne se cumulent pas avec un code promo ou un kit remisé, et expirent après ${loyalty.expiryMonthsInactivity} mois sans utilisation.`, links: [{ label: "Mon panier", href: "/panier" }] });
       break;
     case "faq-find-routine":
-      out.push({ from: "bot", text: "Ta routine se retrouve de 3 façons : dans ton compte (Routines sauvegardées), via le lien sécurisé reçu par e-mail, ou en refaisant le Skin Diag. Le lien e-mail préremplit même ton panier ", links: [{ label: "Mes routines", href: "/compte/routines" }] });
+      out.push({ from: "bot", text: "Ta routine se retrouve de 3 façons : dans ton compte (Routines sauvegardées), via le lien sécurisé reçu par e-mail, ou en refaisant le Skin Diag. Le lien e-mail préremplit même ton panier.", links: [{ label: "Mes routines", href: "/compte/routines" }] });
       break;
     case "faq-serum":
     case "serum-help":
@@ -197,7 +197,7 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
     case "product-fit": {
       const p = ctx.productId ? getProduct(ctx.productId) : undefined;
       if (p) {
-        out.push({ from: "bot", text: `${p.name} convient surtout aux peaux : ${p.skinTypes.map((t) => skinTypeLabels[t].replace("Peau ", "")).join(", ")}. Il cible : ${p.concerns.slice(0, 3).map((c) => concernLabels[c].toLowerCase()).join(", ")}.${p.precautions?.length ? ` À savoir : ${p.precautions[0].toLowerCase()}.` : ""} Pour être sûr·e qu'il s'intègre à ta routine, le Skin Diag est le plus fiable.` });
+        out.push({ from: "bot", text: `${p.name} convient surtout aux peaux : ${p.skinTypes.map((t) => skinTypeLabels[t].replace("Peau.", "")).join(", ")}. Il cible : ${p.concerns.slice(0, 3).map((c) => concernLabels[c].toLowerCase()).join(", ")}.${p.precautions?.length ? ` À savoir : ${p.precautions[0].toLowerCase()}.` : ""} Pour être sûr·e qu'il s'intègre à ta routine, le Skin Diag est le plus fiable.` });
         out.push(diagCta());
       } else out.push({ from: "bot", text: "Dis-moi quel produit t'intéresse ou fais le Skin Diag pour une réponse personnalisée.", links: [{ label: "Skin Diag", href: "/skin-diag" }] });
       break;
@@ -228,7 +228,7 @@ function budgetRoutine(budget: number) {
 
 export function cartCheck(cart: CartLine[]): BotMessage {
   const ps = cart.map((l) => getProduct(l.productId)).filter(Boolean) as NonNullable<ReturnType<typeof getProduct>>[];
-  if (!ps.length) return { from: "bot", text: "Ton panier est vide pour l'instant. Ajoute des produits et je vérifierai qu'ils s'accordent bien ", links: [{ label: "Faire mon Skin Diag", href: "/skin-diag" }] };
+  if (!ps.length) return { from: "bot", text: "Ton panier est vide pour l'instant. Ajoute des produits et je vérifierai qu'ils s'accordent bien.", links: [{ label: "Faire mon Skin Diag", href: "/skin-diag" }] };
   const acts = new Set(ps.flatMap((p) => p.actives));
   const warn: string[] = [];
   if (acts.has("retinoide") && (acts.has("aha") || acts.has("bha"))) warn.push("Tu as un rétinoïde et un exfoliant acide : utilise-les des soirs différents.");

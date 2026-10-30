@@ -44,6 +44,13 @@
 
 :root { color-scheme: light; }
 
+/* Une grille sans colonnes explicites ne doit jamais dépasser son conteneur sur mobile
+   (la colonne implicite « auto » s'élargit sinon au contenu le plus large, ex. une rangée d'onglets).
+   Placé en couche « base » : les classes grid-cols-* (y compris md:/lg:) restent prioritaires. */
+@layer base {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+}
+
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   background: var(--color-cream);

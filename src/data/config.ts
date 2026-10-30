@@ -85,11 +85,11 @@ export const setDiscount = {
 };
 
 const baseAnnouncements = [
-  "Un cadeau dans votre première commande ",
-  "Découvrez votre routine personnalisée ",
-  "Cruelty-free & glow-friendly ",
-  "Rejoignez SKINCLEAN CLUB et gagnez des feuilles ",
-  "-20 % sur ta 1ʳᵉ commande avec la newsletter ",
+  "Un cadeau dans ta première commande",
+  "Découvre ta routine personnalisée",
+  "Cruelty-free & glow-friendly",
+  "Rejoins le SKINCLEAN Club et gagne des feuilles",
+  "-20 % sur ta 1ʳᵉ commande avec la newsletter",
 ];
 
 /** Bandeau d'annonces : modifiable depuis le Marketing Hub (Gestion du site). */

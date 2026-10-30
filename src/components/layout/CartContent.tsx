@@ -103,7 +103,7 @@ export function FreeShippingBar() {
     <div className="rounded-[2px] bg-ivory p-3 text-sm">
       <p className="flex items-center gap-2">
         <TruckIcon size={18} />
-        {t.freeShippingRemaining > 0 ? <>Plus que <b>{euro(t.freeShippingRemaining)}</b> pour la livraison offerte</> : <b>Livraison offerte débloquée </b>}
+        {t.freeShippingRemaining > 0 ? <>Plus que <b>{euro(t.freeShippingRemaining)}</b> pour la livraison offerte</> : <b>Livraison offerte</b>}
       </p>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-sage-soft">
         <motion.div className="h-full rounded-full bg-forest" initial={false} animate={{ width: `${pct}%` }} transition={{ type: "spring", stiffness: 120, damping: 20 }} />
@@ -135,7 +135,7 @@ export function PromoAndRewards() {
       {promoCode && (t.codeError ? <p className="text-xs text-[#a14d5f]">{t.codeError}</p> : <p className="text-xs text-forest">Code {promoCode} appliqué ✓</p>)}
       {acc ? (
         <div className="rounded-[2px] bg-sage-soft p-3 text-sm">
-          <p className="font-semibold"> {balance} feuilles disponibles</p>
+          <p className="font-semibold">{balance} feuilles disponibles</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {loyalty.rewards.map((r) => (
               <button

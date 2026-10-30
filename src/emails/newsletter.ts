@@ -3,9 +3,9 @@ import { emailLayout, button } from "./layout";
 export function newsletterConfirmEmail(confirmUrl: string) {
   return emailLayout({
     preheader: "Confirme ton inscription pour recevoir -20 % et 100 feuilles",
-    body: `<h1 style="font-family:Georgia,serif;font-weight:normal;font-size:28px;margin:0 0 12px">Bienvenue dans le Glow Club </h1>
+    body: `<h1 style="font-family:Georgia,serif;font-weight:normal;font-size:28px;margin:0 0 12px">Bienvenue dans le Glow Club</h1>
 <p style="font-size:15px;line-height:22px">Encore un clic pour confirmer ton adresse. Après confirmation, tu recevras :</p>
-<ul style="font-size:15px;line-height:24px"><li><b>-20 %</b> sur ta première commande éligible (code valable 30 jours)</li><li><b>100 feuilles </b> SKINCLEAN CLUB, créditées sur ton compte fidélité</li></ul>
+<ul style="font-size:15px;line-height:24px"><li><b>-20 %</b> sur ta première commande éligible (code valable 30 jours)</li><li><b>100 feuilles</b> SKINCLEAN CLUB, créditées sur ton compte fidélité</li></ul>
 <div style="text-align:center;margin:24px 0">${button(confirmUrl, "Je confirme mon inscription")}</div>
 <p style="font-size:12px;color:#7a8a82">Si tu n'es pas à l'origine de cette demande, ignore simplement cet e-mail.</p>`,
   });

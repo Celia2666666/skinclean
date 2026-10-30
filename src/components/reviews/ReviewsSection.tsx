@@ -52,7 +52,7 @@ export function ReviewsSection({ productId, productName, isAccessory = false }: 
         {stats.count === 0 ? (
           <p className="mt-6 max-w-xl text-forest-soft">Aucun avis pour l&apos;instant. Seuls les clients ayant commandé ce produit peuvent publier un avis, sans filtre ni sélection.</p>
         ) : (
-          <div className="mt-10 grid gap-10 lg:grid-cols-[320px_1fr]">
+          <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[320px_1fr]">
             {/* Synthèse */}
             <aside className="lg:sticky lg:top-28 lg:self-start">
               <p className="font-display text-6xl">{stats.avg.toFixed(1).replace(".", ",")}<span className="text-2xl text-forest-soft"> / 5</span></p>
@@ -118,7 +118,7 @@ export function ReviewsSection({ productId, productName, isAccessory = false }: 
                           {r.title && <p className="mt-2 font-medium">{r.title}</p>}
                           <p className="mt-1 leading-relaxed text-forest/85">{r.text}</p>
                           <button onClick={() => vote(r.id)} aria-pressed={voted} className={`mt-3 text-xs underline-offset-4 hover:underline ${voted ? "text-forest" : "text-forest-soft"}`}>
-                            {voted ? "Merci !" : "Cet avis vous a été utile ?"} ({(r.helpful ?? 0) + (voted ? 1 : 0)})
+                            {voted ? "Merci !" : "Cet avis t'a été utile ?"} ({(r.helpful ?? 0) + (voted ? 1 : 0)})
                           </button>
                         </div>
                       </motion.li>

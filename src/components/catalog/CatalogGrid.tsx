@@ -82,6 +82,7 @@ export function CatalogGrid({ products, hideType = false, hideConcern = false }:
         )}
       </AnimatePresence>
 
+      <h2 className="sr-only">Liste des soins</h2>
       <p className="mb-6 text-sm text-forest-soft" aria-live="polite">{list.length} soin{list.length > 1 ? "s" : ""}</p>
       <motion.div layout className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4">
         <AnimatePresence mode="popLayout">
@@ -92,7 +93,7 @@ export function CatalogGrid({ products, hideType = false, hideConcern = false }:
           ))}
         </AnimatePresence>
       </motion.div>
-      {list.length === 0 && <p className="py-20 text-center text-forest-soft">Aucun soin ne correspond à ces filtres. Essaie d&apos;en retirer un ou fais ton Skin Diag </p>}
+      {list.length === 0 && <p className="py-20 text-center text-forest-soft">Aucun soin ne correspond à ces filtres. Essaie d&apos;en retirer un ou fais ton Skin Diag.</p>}
     </div>
   );
 }

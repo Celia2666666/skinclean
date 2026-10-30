@@ -47,9 +47,9 @@ export function OrderConfirmed({ mode, sessionId, orderId, email }: { mode: "str
         <div className="mt-8 rounded-none bg-ivory p-6 text-left">
           <p className="font-semibold">Commande {order.id}</p>
           <ul className="mt-3 space-y-1 text-sm">{order.lines.map((l, i) => <li key={i} className="flex justify-between"><span>{l.qty} × {l.name} ({l.size})</span><span>{euro(l.unit * l.qty)}</span></li>)}</ul>
-          {order.gift && <p className="mt-2 text-sm"> {order.gift}</p>}
+          {order.gift && <p className="mt-2 text-sm">Cadeau offert : {order.gift}</p>}
           <p className="mt-3 flex justify-between border-t border-line pt-3 font-semibold"><span>Total</span><span>{euro(order.total)}</span></p>
-          {order.leaves > 0 && <p className="mt-2 text-sm"> {order.leaves} feuilles {acc ? "en attente — créditées à l'expédition" : "à gagner en créant un compte la prochaine fois"}</p>}
+          {order.leaves > 0 && <p className="mt-2 text-sm">{order.leaves} feuilles {acc ? "en attente — créditées à l'expédition" : "à gagner en créant un compte la prochaine fois"}</p>}
         </div>
       )}
       <div className="mt-8 flex flex-wrap justify-center gap-3">

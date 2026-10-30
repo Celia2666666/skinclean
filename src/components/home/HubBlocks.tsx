@@ -72,7 +72,7 @@ export function FeaturedCollection() {
   const items = f.productIds.map((id) => getProduct(id)).filter((p): p is NonNullable<typeof p> => !!p).slice(0, 4);
   return (
     <section className="bg-sage-soft py-20 md:py-28">
-      <div className="mx-auto grid max-w-[1400px] gap-10 px-4 md:px-8 lg:grid-cols-[1fr_2fr]">
+      <div className="mx-auto grid grid-cols-[minmax(0,1fr)] max-w-[1400px] gap-10 px-4 md:px-8 lg:grid-cols-[1fr_2fr]">
         <div className="flex flex-col justify-center">
           <p className="eyebrow text-forest-soft">{f.eyebrow}</p>
           <h2 className="title-caps mt-3 font-display text-4xl md:text-5xl">{f.title}</h2>

@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   if (body?.consent !== true) return Response.json({ error: "Merci d'accepter de recevoir nos e-mails." }, { status: 400 });
   const token = sign({ email, kind: "newsletter", exp: Date.now() + 7 * 864e5 });
   const confirmUrl = `${siteUrl()}/newsletter/confirmation?token=${token}`;
-  const res = await sendEmail(email, "Confirme ton inscription au Glow Club ", newsletterConfirmEmail(confirmUrl));
+  const res = await sendEmail(email, "Confirme ton inscription au Glow Club", newsletterConfirmEmail(confirmUrl));
   if (res.error) return Response.json({ error: "L'envoi a échoué, réessaie plus tard." }, { status: 502 });
   return Response.json({ mode: res.mode, confirmUrl: res.mode === "demo" ? `/newsletter/confirmation?token=${token}` : undefined });
 }

@@ -20,7 +20,7 @@ export function Footer() {
         <path d="M0 0h1440v20c-240 40-480 40-720 10S240 0 0 30Z" fill="currentColor" />
       </svg>
       <div className="mx-auto max-w-[1400px] px-5 pb-10 pt-24 md:px-8">
-        <div className="grid gap-12 lg:grid-cols-[1.2fr_2fr]">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
             <div className="flex items-center gap-3">
               <div className="rounded-[2px] bg-cream p-2"><Image src="/media/brand/logo-mark.png" alt="" width={40} height={50} className="h-12 w-auto mix-blend-multiply" /></div>
@@ -31,8 +31,8 @@ export function Footer() {
             <p className="mt-2 max-w-md text-sm text-ivory/75">-{welcomeOffer.newsletterPercent} % sur ta première commande éligible et {loyalty.newsletterBonus} feuilles après confirmation de ton inscription.</p>
             <div className="mt-5 max-w-md"><NewsletterForm variant="dark" /></div>
             <div className="mt-8 flex gap-3">
-              {[{ I: InstagramIcon, l: "Instagram" }, { I: TiktokIcon, l: "TikTok" }, { I: PinterestIcon, l: "Pinterest" }, { I: YoutubeIcon, l: "YouTube" }].map(({ I, l }) => (
-                <a key={l} href="#" aria-label={`${l} (lien à configurer)`} className="grid h-11 w-11 place-items-center rounded-full bg-ivory/10 transition hover:-translate-y-1 hover:bg-sage hover:text-forest"><I size={20} /></a>
+              {[{ I: InstagramIcon, l: "Instagram", h: "https://www.instagram.com/" }, { I: TiktokIcon, l: "TikTok", h: "https://www.tiktok.com/" }, { I: PinterestIcon, l: "Pinterest", h: "https://www.pinterest.fr/" }, { I: YoutubeIcon, l: "YouTube", h: "https://www.youtube.com/" }].map(({ I, l, h }) => (
+                <a key={l} href={h} target="_blank" rel="noopener noreferrer" aria-label={`${l} (nouvel onglet)`} className="grid h-11 w-11 place-items-center rounded-full bg-ivory/10 transition hover:-translate-y-1 hover:bg-sage hover:text-forest"><I size={20} /></a>
               ))}
             </div>
           </div>

@@ -34,7 +34,7 @@ export function QuickCircles() {
       ),
     },
     {
-      href: "/club", title: "SKINCLEAN Club", sub: "Gagne des feuilles ", bg: "#EFEEEA",
+      href: "/club", title: "SKINCLEAN Club", sub: "Gagne des feuilles", bg: "#EFEEEA",
       visual: (
         <svg viewBox="0 0 200 200" className="h-full w-full p-[12%]" aria-hidden>
           <path d="M60 170 C 90 130, 110 90, 150 40" stroke="#6B7F6A" strokeWidth="3" fill="none" strokeLinecap="round" />

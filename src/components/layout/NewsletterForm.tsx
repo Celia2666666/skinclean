@@ -31,7 +31,7 @@ export function NewsletterForm({ variant = "light", cta = "Je m'inscris" }: { va
       <AnimatePresence mode="wait">
         {state === "sent" ? (
           <motion.div key="ok" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`rounded-none p-5 ${dark ? "bg-ivory/10" : "bg-ivory"}`} role="status">
-            <p className="font-display text-xl">Vérifie ta boîte mail </p>
+            <p className="font-display text-xl">Vérifie ta boîte mail</p>
             <p className="mt-1 text-sm opacity-80">Clique sur le lien de confirmation pour recevoir ton code -{welcomeOffer.newsletterPercent} % et tes {loyalty.newsletterBonus} feuilles.</p>
             {demoLink && (
               <p className="mt-3 rounded-[2px] bg-butter p-3 text-xs text-forest">

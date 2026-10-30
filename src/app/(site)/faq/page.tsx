@@ -15,7 +15,7 @@ const sections = [
   ]},
   { t: "Commande & livraison", q: [
     ["Quels sont les délais et frais de livraison ?", `${shipping.label} : ${shipping.standardPrice.toFixed(2).replace(".", ",")} €, offerte dès ${shipping.freeFrom} €.`],
-    ["Quels moyens de paiement acceptez-vous ?", "Carte bancaire, Apple Pay et Google Pay, via notre prestataire sécurisé Stripe. Nous ne stockons jamais tes données bancaires."],
+    ["Quels moyens de paiement sont acceptés ?", "Carte bancaire, Apple Pay et Google Pay, via notre prestataire sécurisé Stripe. Nous ne stockons jamais tes données bancaires."],
     ["Comment retourner un produit ?", "Tu disposes de 14 jours après réception pour exercer ton droit de rétractation sur les produits non ouverts. Demande ton retour depuis « Mes commandes »."],
     ["Quel est le cadeau de première commande ?", firstOrderGift.enabled ? `${firstOrderGift.name} : ${firstOrderGift.description}. Il s'ajoute automatiquement à ta première commande.` : "Aucun cadeau actif actuellement."],
   ]},

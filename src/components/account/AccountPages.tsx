@@ -24,10 +24,10 @@ export function Dashboard() {
   return (
     <div className="space-y-6">
       <H>Mon espace</H>
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="flex items-center gap-4 rounded-none bg-butter p-5 md:col-span-2">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-3">
+        <div className="flex flex-col items-center gap-4 rounded-none bg-butter p-5 text-center sm:flex-row sm:text-left md:col-span-2">
           <LeafGauge value={leavesBalance(acc)} max={next?.min ?? leavesBalance(acc)} size={150} label="feuilles" />
-          <div>
+          <div className="min-w-0">
             <p className="text-sm">Palier <b>{tier.name}</b></p>
             {next && <p className="text-xs text-forest-soft">Prochain palier : {next.name}</p>}
             <Link href="/club" className="btn btn-primary mt-3 px-4 py-2 text-sm">Mes récompenses</Link>
@@ -38,7 +38,7 @@ export function Dashboard() {
           {diags[0] ? <><p className="mt-1 text-sm">{diags[0].skinTypeLabel} · {diags[0].goal}</p><Link href={`/skin-diag/resultats?id=${diags[0].id}`} className="mt-3 inline-block text-sm underline">Voir ma routine</Link></> : <Link href="/skin-diag" className="btn btn-primary mt-3 px-4 py-2 text-sm">Faire mon Skin Diag</Link>}
         </div>
       </div>
-      {welcome.length > 0 && <p className="rounded-[2px] bg-blush p-4 text-sm"> Ton code de bienvenue <b>{welcome[0].code}</b> (-{welcome[0].percent} %) est valable jusqu&apos;au {frDate(welcome[0].expiresAt)}.</p>}
+      {welcome.length > 0 && <p className="rounded-[2px] bg-blush p-4 text-sm">Ton code de bienvenue <b>{welcome[0].code}</b> (-{welcome[0].percent} %) est valable jusqu&apos;au {frDate(welcome[0].expiresAt)}.</p>}
       <div className="grid gap-4 md:grid-cols-3">
         {[
           { href: "/compte/commandes", t: "Commandes", v: `${acc.orders.length}`, bg: "#FFFEFB" },
@@ -86,7 +86,7 @@ export function Orders() {
             </div>
           )}
           <ul className="mt-4 space-y-1 text-sm">{o.lines.map((l, i) => <li key={i}>{l.qty} × {l.name} ({l.size}) — {euro(l.unit * l.qty)}</li>)}</ul>
-          {o.gift && <p className="mt-1 text-sm"> {o.gift}</p>}
+          {o.gift && <p className="mt-1 text-sm">Cadeau offert : {o.gift}</p>}
           <div className="mt-4 flex flex-wrap gap-2">
             {o.status === "livree" && <button onClick={() => setStatus(acc.email, o.id, "retour-demande")} className="btn btn-ghost px-4 py-2 text-sm">Demander un retour</button>}
             {o.status === "retour-demande" && <p className="text-sm text-forest-soft">Retour demandé : tu recevras une étiquette par e-mail. Les feuilles de cette commande seront retirées au remboursement.</p>}

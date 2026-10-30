@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   const token = sign(payload);
   const firstName = typeof body.firstName === "string" ? body.firstName.slice(0, 40).replace(/[<>]/g, "") : undefined;
   const html = routineEmail(payload, token, firstName);
-  const res = await sendEmail(body.email, "Ta routine SKINCLEAN personnalisée ", html);
+  const res = await sendEmail(body.email, "Ta routine SKINCLEAN personnalisée", html);
   if (res.error) return Response.json({ error: "L'envoi a échoué, réessaie plus tard." }, { status: 502 });
   return Response.json({
     mode: res.mode,

@@ -51,7 +51,7 @@ export function SkinJournal() {
   if (!j.enabled) {
     return (
       <div className="space-y-6">
-        <h1 className="font-display text-4xl md:text-5xl">Mon Skin Journal </h1>
+        <h1 className="font-display text-4xl md:text-5xl">Mon Skin Journal</h1>
         <div className="overflow-hidden rounded-none bg-blush-soft p-6 md:p-10">
           <p className="max-w-2xl text-lg">Suis l&apos;évolution de ta peau pendant ta routine : un état initial (J0), puis des bilans à J7, J14 et J30 — et au-delà si tu le souhaites. Photos, ressentis, régularité : tout reste privé.</p>
           <div className="mt-6 grid gap-3 md:grid-cols-4">
@@ -97,7 +97,7 @@ export function SkinJournal() {
     <div className="space-y-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-4xl md:text-5xl">Mon Skin Journal </h1>
+          <h1 className="font-display text-4xl md:text-5xl">Mon Skin Journal</h1>
           <p className="mt-1 text-forest-soft">Jour {day} de ton suivi{routine ? ` · ${routine.name}` : ""}</p>
         </div>
         <CheckinButton />

@@ -16,14 +16,14 @@ export function CartPage() {
       <h1 className="font-display text-5xl md:text-6xl">Mon panier</h1>
       {t.itemCount === 0 ? (
         <div className="mt-10 rounded-none bg-ivory p-10 text-center">
-          <p className="font-display text-3xl">Ton panier est vide </p>
+          <p className="font-display text-3xl">Ton panier est vide</p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link href="/skin-diag" className="btn btn-primary">Faire mon Skin Diag</Link>
             <Link href="/best-sellers" className="btn btn-ghost">Voir les best-sellers</Link>
           </div>
         </div>
       ) : (
-        <div className="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr]">
+        <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[1.5fr_1fr]">
           <div className="space-y-6">
             <FreeShippingBar />
             <div className="rounded-none bg-ivory/60 px-5"><CartLines /><ClearCartButton className="border-t border-line py-3" /></div>

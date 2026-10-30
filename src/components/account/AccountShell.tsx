@@ -23,7 +23,7 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
   if (!h) return <div className="min-h-[60vh]" />;
   if (!acc) return <AuthForms mode="login" />;
   return (
-    <div className="mx-auto grid max-w-[1300px] gap-8 px-4 py-10 md:px-8 lg:grid-cols-[260px_1fr]">
+    <div className="mx-auto grid grid-cols-[minmax(0,1fr)] max-w-[1300px] gap-8 px-4 py-10 md:px-8 lg:grid-cols-[260px_1fr]">
       <aside className="lg:sticky lg:top-24 lg:self-start">
         <div className="rounded-none bg-sage p-5">
           <p className="text-sm">Bonjour</p>

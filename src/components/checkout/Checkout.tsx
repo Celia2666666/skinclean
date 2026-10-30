@@ -92,7 +92,7 @@ export function Checkout() {
     <div className="mx-auto max-w-[1300px] px-4 py-12 md:px-8">
       <h1 className="flex items-center gap-3 font-display text-5xl"><LockIcon size={34} /> Paiement sécurisé</h1>
       {search.get("annule") && <p className="mt-4 rounded-[2px] bg-butter p-4 text-sm">Le paiement a été annulé : aucune somme n&apos;a été débitée. Ton panier est intact.</p>}
-      <div className="mt-10 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+      <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[1.4fr_1fr]">
         <form ref={formRef} onSubmit={status?.stripe ? payStripe : testOrder} className="space-y-8">
           <div className="rounded-none bg-ivory p-6">
             <p className="text-center text-xs font-medium uppercase tracking-[0.08em] text-forest-soft">Paiement express</p>

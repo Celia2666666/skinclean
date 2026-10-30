@@ -64,7 +64,7 @@ export function ClubView() {
                     </div>
                     <p className="mt-2 text-xs text-forest-soft">Encore {next.min - earned} feuilles gagnées (sur {loyalty.tierWindowMonths} mois) pour devenir <b>{next.name}</b></p>
                   </>
-                ) : <p className="mt-2 text-xs">Tu as atteint le palier ultime </p>}
+                ) : <p className="mt-2 text-xs">Tu as atteint le palier ultime.</p>}
                 {pending > 0 && <p className="mt-2 text-xs">⏳ {pending} feuilles en attente (créditées à l&apos;expédition)</p>}
               </div>
             ) : <p className="mt-4 text-sm text-forest-soft">Connecte-toi pour voir ton solde.</p>}
@@ -89,7 +89,7 @@ export function ClubView() {
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             <div className="rounded-none bg-blush-soft p-6">
               <p className="font-display text-2xl">Offre de bienvenue</p>
-              <p className="mt-2 text-sm">Newsletter : <b>-{welcomeOffer.newsletterPercent} %</b> sur ta 1ʳᵉ commande éligible (code valable {welcomeOffer.validityDays} jours, une seule fois par personne) + <b>{loyalty.newsletterBonus} feuilles</b>. {firstOrderGift.enabled && <>Et pour ta 1ʳᵉ commande : {firstOrderGift.description.toLowerCase()}.</>}</p>
+              <p className="mt-2 text-sm">Newsletter : <b>-{welcomeOffer.newsletterPercent} %</b> sur ta 1ʳᵉ commande éligible (code valable {welcomeOffer.validityDays} jours, une seule fois par personne) + <b>{loyalty.newsletterBonus} feuilles</b>. {firstOrderGift.enabled && <>Et pour ta 1ʳᵉ commande : {firstOrderGift.description}.</>}</p>
               <div className="mt-4"><NewsletterForm /></div>
             </div>
             <div className="rounded-none bg-sky-soft p-6 text-sm">
@@ -114,7 +114,7 @@ export function ClubView() {
                 <Reveal key={r.id} delay={i * 0.08}>
                   <div className={`relative overflow-hidden rounded-none p-6 ${ok ? "bg-sage" : "bg-ivory"}`}>
                     <p className="font-display text-5xl">-{r.value} €</p>
-                    <p className="mt-2 text-sm">{r.leaves} </p>
+                    <p className="mt-2 text-sm">{r.leaves} feuilles</p>
                     <div className="mt-4 h-2 overflow-hidden rounded-full bg-cream"><motion.div className="h-full bg-forest" initial={{ width: 0 }} whileInView={{ width: `${Math.min(100, (balance / r.leaves) * 100)}%` }} viewport={{ once: true }} transition={{ duration: 1.2 }} /></div>
                     <p className="mt-2 text-xs">{ok ? "Disponible au panier ✓" : `Encore ${r.leaves - balance} feuilles`}</p>
                   </div>
@@ -151,7 +151,7 @@ export function ClubView() {
                   <span className="text-forest-soft">{frDate(l.date)}</span>
                   <span className="flex-1">{l.label}</span>
                   <span className="chip bg-cream">{({ credited: "Créditées", pending: "En attente", used: "Utilisées", cancelled: "Annulées" } as const)[l.status]}</span>
-                  <span className={`w-16 text-right font-semibold ${l.delta < 0 ? "text-[#a14d5f]" : ""}`}>{l.delta > 0 ? "+" : ""}{l.delta} </span>
+                  <span className={`w-24 text-right font-semibold ${l.delta < 0 ? "text-[#a14d5f]" : ""}`}>{l.delta > 0 ? "+" : ""}{l.delta}</span>
                 </li>
               ))}
             </ul>

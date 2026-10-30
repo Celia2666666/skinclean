@@ -26,8 +26,8 @@ export function ShopByCategory() {
   const pastel = ["#EFEEEA", "#EFEEEA", "#EFEEEA", "#EFEEEA", "#EFEEEA", "#EFEEEA", "#EFEEEA", "#EFEEEA"];
   return (
     <section className={`${wrap} py-24 md:py-32`}>
-      <SectionTitle eyebrow="Shop by category" title="Trouve le soin qui te ressemble" />
-      <Stagger className="no-scrollbar -mx-4 mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:px-0">
+      <SectionTitle eyebrow="Nos catégories" title="Trouve le soin qui te ressemble" />
+      <Stagger className="no-scrollbar -mx-4 mt-12 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:px-0">
         {cats.map((c, i) => {
           const p = all.find((x) => c.types.includes(x.type) && x.bestseller) ?? all.find((x) => c.types.includes(x.type))!;
           const count = all.filter((x) => c.types.includes(x.type)).length;
@@ -69,7 +69,7 @@ export function Bestsellers() {
           </div>
         </div>
       </div>
-      <div ref={track} className="no-scrollbar mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-6 md:px-[max(2rem,calc((100vw-1400px)/2+2rem))]">
+      <div ref={track} className="no-scrollbar mt-12 flex snap-x snap-mandatory scroll-px-4 gap-5 overflow-x-auto px-4 pb-6 md:scroll-px-[max(2rem,calc((100vw-1400px)/2+2rem))] md:px-[max(2rem,calc((100vw-1400px)/2+2rem))]">
         {items.map((p, i) => (
           <Reveal key={p.id} delay={i * 0.06} className="w-[72vw] shrink-0 snap-start sm:w-[44vw] md:w-[30vw] lg:w-[23vw]">
             <p className="mb-3 border-b border-forest/15 pb-2 text-xs font-semibold tracking-[0.2em] text-forest/50">{String(i + 1).padStart(2, "0")}</p>
@@ -101,7 +101,7 @@ export function ShopByConcern() {
   const all = getProducts();
   return (
     <section className={`${wrap} py-24 md:py-32`}>
-      <SectionTitle eyebrow="Shop by skin concern" title="Ta peau, tes besoins" intro="Chaque peau est unique. Choisis ta préoccupation, on s'occupe du reste." />
+      <SectionTitle eyebrow="Par préoccupation" title="Ta peau, tes besoins" intro="Chaque peau est unique. Choisis ta préoccupation, on s'occupe du reste." />
       <div className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
         {pick.map((x, i) => {
           const prods = all.filter((p) => p.concerns.some((c) => x.c.concerns.includes(c)));
@@ -130,7 +130,7 @@ export function ShopByConcern() {
 /* ───────── SECTION 6 — Philosophie ───────── */
 export function Philosophy() {
   const vals = [
-    { t: "Cruelty-free", d: "Un engagement de la marque : aucun test sur les animaux. Allégation à faire valider avant commercialisation.", bg: "#EFEEEA" },
+    { t: "Cruelty-free", d: "Aucun test sur les animaux, ni sur nos produits finis ni sur nos ingrédients.", bg: "#EFEEEA" },
     { t: "Ingrédients d'origine naturelle", d: "Une forte proportion d'ingrédients d'origine naturelle — le pourcentage exact est indiqué produit par produit dès validation.", bg: "#EFEEEA" },
     { t: "Transparence", d: "Listes INCI complètes, rôle de chaque ingrédient clé, précautions : tout est sur la fiche.", bg: "#EFEEEA" },
     { t: "Des routines pour chacun·e", d: "Le Skin Diag construit une routine adaptée à ta peau, ton temps et ton budget.", bg: "#EFEEEA" },

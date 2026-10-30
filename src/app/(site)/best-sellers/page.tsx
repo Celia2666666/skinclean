@@ -11,6 +11,7 @@ export default function Bestsellers() {
   return (
     <>
       <PageHero eyebrow="Nos 7 best-sellers" title="The Glow Favorites" intro="Sept soins devenus les essentiels de notre communauté. Une base idéale pour construire ta routine." bg="#EFEEEA" crumbs={[{ href: "/best-sellers", label: "Best-sellers" }]} />
+      <h2 className="sr-only">Les 7 best-sellers</h2>
       <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-x-4 gap-y-12 px-4 py-14 md:grid-cols-3 md:gap-x-6 md:px-8 lg:grid-cols-4">
         {items.map((p, i) => (
           <Reveal key={p.id} delay={i * 0.06}>

@@ -89,7 +89,7 @@ function ResultView({ diag }: { diag: DiagResult }) {
       <div className="mx-auto max-w-[1200px] px-4 md:px-8">
         {diag.notes.length > 0 && (
           <div className="-mt-8 space-y-2">
-            {diag.notes.map((n) => <p key={n} className="relative rounded-[2px] bg-butter p-4 text-sm shadow-[var(--shadow-soft)]"> {n}</p>)}
+            {diag.notes.map((n) => <p key={n} className="relative rounded-[2px] bg-butter p-4 text-sm shadow-[var(--shadow-soft)]">{n}</p>)}
           </div>
         )}
 
@@ -179,7 +179,7 @@ function ResultView({ diag }: { diag: DiagResult }) {
 
         <section className="mt-10 grid gap-4 md:grid-cols-2">
           <div className="rounded-none bg-blush-soft p-6">
-            <p className="font-display text-2xl">Suis l&apos;évolution de ta peau </p>
+            <p className="font-display text-2xl">Suis l&apos;évolution de ta peau</p>
             <p className="mt-2 text-sm text-forest-soft">Active ton Skin Journal : photos et observations à J0, J7, J14 et J30, en privé.</p>
             <Link href="/compte/journal" className="btn btn-primary mt-4">Activer mon Skin Journal</Link>
           </div>
