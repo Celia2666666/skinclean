@@ -105,6 +105,25 @@ const byType: Record<string, { pos: string[]; detail: string[]; meh: string[] }>
 };
 
 const skinTypes: SkinType[] = ["seche", "grasse", "mixte", "normale", "sensible"];
+
+/** Photos d'avis de démonstration (images Pexels, licence Pexels — voir mentions légales), par type de soin. */
+const photo = (id: string) => `/media/reviews/avis-${id}.webp`;
+const photosByType: Record<string, string[]> = {
+  nettoyant: ["5927790", "8298623", "8996171"],
+  demaquillant: ["8141578", "7250822", "8996171"],
+  toner: ["8141578", "7250822", "8131891"],
+  serum: ["6925815", "8131886", "8131891", "12322647"],
+  creme: ["6975305", "5524950", "8131887"],
+  brume: ["7019499", "8131891"],
+  "contour-yeux": ["6925816", "8131887"],
+  masque: ["5937888", "7467138"],
+  "toner-pads": ["7250822", "8141578"],
+  exfoliant: ["8131886", "8131891"],
+  "soin-cible": ["12322647", "8131891"],
+  spf: ["6975305", "5927885"],
+  patchs: ["12322647", "6925816"],
+  accessoire: ["7019513"],
+}
 const REF = new Date("2026-10-01T12:00:00Z").getTime();
 
 function reviewsFor(p: Product): Review[] {
@@ -120,6 +139,9 @@ function reviewsFor(p: Product): Review[] {
     if (rating === 5 && r() > 0.5) parts.push(`Je rachèterai ${p.name}.`);
     const st = p.type === "accessoire" ? undefined : p.skinTypes.length ? (r() > 0.25 ? pick(p.skinTypes) : pick(skinTypes)) : undefined;
     const daysAgo = Math.floor(r() * 300) + 3;
+    const pics = photosByType[p.type] ?? [];
+    const withPhoto = rating >= 4 && pics.length > 0 && r() < 0.3;
+    const photos = withPhoto ? [photo(pick(pics)), ...(r() > 0.6 ? [photo(pick(pics))] : [])].filter((x, k, a) => a.indexOf(x) === k) : undefined;
     out.push({
       id: `${p.id}-demo-${i}`,
       productId: p.id,
@@ -132,6 +154,7 @@ function reviewsFor(p: Product): Review[] {
       verified: false,
       demo: true,
       helpful: Math.floor(r() * 14),
+      photos,
     });
   }
   return out.sort((a, b) => b.date.localeCompare(a.date));

@@ -24,18 +24,21 @@ export function ReviewsSection({ productId, productName, isAccessory = false }: 
   const [rating, setRating] = useState<number | null>(null);
   const [skin, setSkin] = useState<SkinType | "">("");
   const [sort, setSort] = useState<Sort>("recent");
+  const [withPhotos, setWithPhotos] = useState(false);
+  const [zoom, setZoom] = useState<string>();
   const [shown, setShown] = useState(reviewsConfig.perPage);
   const [writing, setWriting] = useState(false);
 
   const list = useMemo(() => {
-    const l = all.filter((r) => (rating ? r.rating === rating : true) && (skin ? r.skinType === skin : true));
+    const l = all.filter((r) => (rating ? r.rating === rating : true) && (skin ? r.skinType === skin : true) && (withPhotos ? !!r.photos?.length : true));
     const k = [...l];
     if (sort === "best") k.sort((a, b) => b.rating - a.rating);
     if (sort === "worst") k.sort((a, b) => a.rating - b.rating);
     if (sort === "helpful") k.sort((a, b) => (b.helpful ?? 0) - (a.helpful ?? 0));
     if (sort === "recent") k.sort((a, b) => Number(!!a.demo) - Number(!!b.demo) || b.date.localeCompare(a.date));
     return k;
-  }, [all, rating, skin, sort]);
+  }, [all, rating, skin, sort, withPhotos]);
+  const photoCount = all.filter((r) => r.photos?.length).length;
 
   const hasDemo = all.some((r) => r.demo);
 
@@ -89,6 +92,9 @@ export function ReviewsSection({ productId, productName, isAccessory = false }: 
                     </select>
                   </>
                 )}
+                {photoCount > 0 && (
+                  <button onClick={() => { setWithPhotos(!withPhotos); setShown(reviewsConfig.perPage); }} aria-pressed={withPhotos} className={`chip px-3 py-2 text-sm transition ${withPhotos ? "bg-forest text-ivory" : "bg-ivory hover:bg-sage-soft"}`}>Avec photos ({photoCount})</button>
+                )}
                 <label htmlFor={`sort-${productId}`} className="sr-only">Trier</label>
                 <select id={`sort-${productId}`} value={sort} onChange={(e) => setSort(e.target.value as Sort)} className="ml-auto border border-line bg-ivory px-3 py-2 text-sm">
                   <option value="recent">Les plus récents</option>
@@ -117,6 +123,16 @@ export function ReviewsSection({ productId, productName, isAccessory = false }: 
                           </div>
                           {r.title && <p className="mt-2 font-medium">{r.title}</p>}
                           <p className="mt-1 leading-relaxed text-forest/85">{r.text}</p>
+                          {r.photos?.length ? (
+                            <div className="mt-3 flex gap-2">
+                              {r.photos.map((src) => (
+                                <button key={src} onClick={() => setZoom(src)} className="h-20 w-20 overflow-hidden bg-sky" aria-label="Agrandir la photo">
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img src={src} alt={`Photo de ${r.author}`} loading="lazy" className="h-full w-full object-cover transition hover:scale-105" />
+                                </button>
+                              ))}
+                            </div>
+                          ) : null}
                           <button onClick={() => vote(r.id)} aria-pressed={voted} className={`mt-3 text-xs underline-offset-4 hover:underline ${voted ? "text-forest" : "text-forest-soft"}`}>
                             {voted ? "Merci !" : "Cet avis t'a été utile ?"} ({(r.helpful ?? 0) + (voted ? 1 : 0)})
                           </button>
@@ -132,6 +148,14 @@ export function ReviewsSection({ productId, productName, isAccessory = false }: 
           </div>
         )}
       </div>
+      <AnimatePresence>
+        {zoom && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setZoom(undefined)} className="fixed inset-0 z-[90] grid place-items-center bg-forest/70 p-6 backdrop-blur-sm" role="dialog" aria-label="Photo de l'avis">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <motion.img initial={{ scale: 0.9 }} animate={{ scale: 1 }} src={zoom} alt="Photo de l'avis agrandie" className="max-h-[85vh] max-w-full object-contain" />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

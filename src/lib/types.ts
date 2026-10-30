@@ -71,6 +71,8 @@ export interface Review {
   /** Avis fictif de démonstration — jamais présenté comme un vrai avis. */
   demo?: boolean;
   helpful?: number;
+  /** Photos jointes à l'avis (chemins publics ou images compressées pour les avis publiés depuis le site). */
+  photos?: string[];
   /** Interne : auteur d'un avis publié depuis le site (jamais affiché). */
   authorEmail?: string;
 }
