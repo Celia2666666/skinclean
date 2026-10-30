@@ -1,7 +1,7 @@
 "use client";
 import { PaymentLogos } from "./PaymentMethods";
 import Link from "next/link";
-import { CartLines, CartSuggestions, FreeShippingBar, PromoAndRewards, TotalsBlock, useCartTotals } from "@/components/layout/CartContent";
+import { CartLines, CartSuggestions, ClearCartButton, FreeShippingBar, PromoAndRewards, TotalsBlock, useCartTotals } from "@/components/layout/CartContent";
 import { useHydrated } from "@/lib/store";
 import { useUI } from "@/lib/ui";
 import { ChatIcon, LockIcon } from "@/components/ui/Icons";
@@ -26,7 +26,7 @@ export function CartPage() {
         <div className="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr]">
           <div className="space-y-6">
             <FreeShippingBar />
-            <div className="rounded-none bg-ivory/60 px-5"><CartLines /></div>
+            <div className="rounded-none bg-ivory/60 px-5"><CartLines /><ClearCartButton className="border-t border-line py-3" /></div>
             <button onClick={() => openAssistant("cart-check")} className="flex w-full items-center gap-3 rounded-[2px] bg-sky-soft p-4 text-left transition hover:bg-sky"><ChatIcon /> Tu veux vérifier que tes produits fonctionnent bien ensemble ? Demande au Glow Assistant.</button>
             <CartSuggestions />
           </div>

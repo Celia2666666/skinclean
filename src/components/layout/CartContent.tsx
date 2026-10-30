@@ -203,3 +203,22 @@ export function CartSuggestions() {
     </div>
   );
 }
+
+/** « Vider mon panier » avec une étape de confirmation pour éviter les clics accidentels. */
+export function ClearCartButton({ className = "" }: { className?: string }) {
+  const clearCart = useStore((s) => s.clearCart);
+  const [confirm, setConfirm] = useState(false);
+  return (
+    <div className={`flex items-center justify-end gap-3 text-sm ${className}`}>
+      {confirm ? (
+        <>
+          <span className="text-forest-soft">Retirer tous les articles ?</span>
+          <button onClick={() => { clearCart(); setConfirm(false); }} className="font-semibold text-forest underline underline-offset-4">Oui, vider</button>
+          <button onClick={() => setConfirm(false)} className="text-forest-soft hover:text-forest">Annuler</button>
+        </>
+      ) : (
+        <button onClick={() => setConfirm(true)} className="flex items-center gap-1.5 text-forest-soft transition hover:text-forest"><TrashIcon size={16} /> Vider mon panier</button>
+      )}
+    </div>
+  );
+}

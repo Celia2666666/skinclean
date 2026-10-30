@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useHydrated, useStore } from "@/lib/store";
 import { useUI } from "@/lib/ui";
 import { BagIcon, CloseIcon, ChatIcon } from "@/components/ui/Icons";
-import { CartLines, CartSuggestions, FreeShippingBar, TotalsBlock, useCartTotals } from "./CartContent";
+import { CartLines, CartSuggestions, ClearCartButton, FreeShippingBar, TotalsBlock, useCartTotals } from "./CartContent";
 
 export function CartDrawer() {
   const open = useStore((s) => s.drawerOpen);
@@ -49,6 +49,7 @@ export function CartDrawer() {
                 <div className="flex-1 space-y-5 overflow-y-auto px-5 py-4">
                   <FreeShippingBar />
                   <CartLines />
+                  <ClearCartButton />
                   <button onClick={() => openAssistant("cart-check")} className="flex w-full items-center gap-2 rounded-[2px] bg-sky-soft p-3 text-left text-sm transition hover:bg-sky">
                     <ChatIcon size={18} /> Tu veux vérifier que tes produits fonctionnent bien ensemble ?
                   </button>
