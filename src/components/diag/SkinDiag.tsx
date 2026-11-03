@@ -75,7 +75,17 @@ export function SkinDiag() {
 
   const canNext = q?.multi ? Array.isArray(value) && value.length > 0 : !!value;
 
-  if (!h) return <div className="min-h-[80vh]" />;
+  // Avant hydratation : écran d'attente au fond du questionnaire (évite une page blanche).
+  if (!h) {
+    return (
+      <div className="grid min-h-[calc(100svh-100px)] place-items-center bg-[radial-gradient(120%_90%_at_10%_0%,#EFEEEA,#F4F3EF_55%,#EFEEEA)]" aria-busy="true" aria-label="Chargement du Skin Diag">
+        <div className="flex flex-col items-center gap-4 text-forest-soft">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-sage border-t-forest" />
+          <p className="eyebrow">Skin Diag</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-[calc(100svh-100px)] overflow-hidden bg-[radial-gradient(120%_90%_at_10%_0%,#EFEEEA,#F4F3EF_55%,#EFEEEA)]">
@@ -84,7 +94,7 @@ export function SkinDiag() {
           <motion.div key="intro" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }} className="relative mx-auto flex min-h-[calc(100svh-100px)] max-w-3xl flex-col items-center justify-center px-5 py-16 text-center">
             <motion.div animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.06, 1] }} transition={{ repeat: Infinity, duration: 6 }} className="mb-6 grid h-24 w-24 place-items-center rounded-full bg-ivory text-4xl text-sage-deep shadow-[var(--shadow-soft)]"><DropIcon size={34} /></motion.div>
             <p className="eyebrow text-sage-deep">Skin Diag · 2 minutes</p>
-            <h1 className="mt-4 font-display text-[clamp(2.8rem,8vw,5.5rem)] leading-[0.92]">Faisons connaissance avec ta peau</h1>
+            <h2 className="mt-4 font-display text-[clamp(2.8rem,8vw,5.5rem)] leading-[0.92]">Faisons connaissance avec ta peau</h2>
             <p className="mt-5 max-w-xl text-forest-soft">Une dizaine de questions pour construire une routine matin & soir adaptée à ton type de peau, tes préoccupations, ta sensibilité, ton temps et ton budget.</p>
             {prefill && search.get("prefill") && (
               <div className="mt-6 rounded-none bg-ivory p-4 text-sm">

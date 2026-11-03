@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { metaDescription, pageTitle } from "@/lib/seo-text";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getKit, getKits, kitPricing } from "@/lib/catalog";
@@ -15,7 +16,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/kits/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const k = getKit(slug);
-  return k ? { title: k.name, description: k.description } : {};
+  return k ? { title: pageTitle(`${k.name} — ${k.tagline}`, `${k.name} — coffret skincare`, k.name), description: metaDescription(k.description, `Routine en ${k.items.length} soins, avec les étapes d'utilisation.`, k.routine.join(". ") + ".") } : {};
 }
 
 export default async function KitPage({ params }: PageProps<"/kits/[slug]">) {
@@ -55,6 +56,13 @@ export default async function KitPage({ params }: PageProps<"/kits/[slug]">) {
               </Reveal>
             ))}
           </ol>
+          <h2 className="mt-14 font-display text-4xl">Ce que contient le {kit.name}</h2>
+          <div className="mt-6 space-y-4 leading-relaxed text-forest-soft">
+            {pr.lines.map((l) => (
+              <p key={l.product.id}><Link href={`/produits/${l.product.slug}`} className="font-semibold text-forest underline underline-offset-4">{l.product.name}</Link> ({l.product.kind.toLowerCase()}) : {l.product.tagline.toLowerCase()}. {l.product.description}</p>
+            ))}
+            <p>Le prix du kit est calculé à partir des prix catalogue de ces {pr.lines.length} soins, avec une remise de {kit.discountPercent} %. Pour vérifier que cette routine convient à ta peau, fais le <Link href="/skin-diag" className="underline">Skin Diag</Link>.</p>
+          </div>
         </div>
         <div className="lg:sticky lg:top-28 lg:self-start"><KitBuy kit={kit} /></div>
       </div>

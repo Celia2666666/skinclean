@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import { SeoBlock } from "@/components/catalog/SeoBlock";
 import { getBestsellers } from "@/lib/catalog";
 import { PageHero } from "@/components/catalog/PageHero";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Reveal } from "@/components/ui/Reveal";
 
-export const metadata: Metadata = { title: "Nos 7 best-sellers", description: "The Glow Favorites : les 7 soins SKINCLEAN préférés de notre communauté." };
+export const metadata: Metadata = {
+  title: "Best-sellers skincare : les 7 soins favoris",
+  description: "The Glow Favorites : les 7 soins SKINCLEAN préférés de notre communauté, du sérum niacinamide à la vitamine C, pour bâtir une routine simple.",
+};
 
 export default function Bestsellers() {
   const items = getBestsellers();
@@ -20,6 +24,10 @@ export default function Bestsellers() {
           </Reveal>
         ))}
       </div>
+      <SeoBlock title="Les essentiels de la communauté SKINCLEAN" links={[{ href: "/skin-diag", label: "Faire mon Skin Diag" }, { href: "/soins-visage", label: "Tous les soins visage" }, { href: "/kits", label: "Kits & routines" }]}>
+        <p>Nos best-sellers couvrent les grandes étapes d&apos;une routine efficace : un nettoyage qui respecte la peau, un sérum ciblé selon ta préoccupation, une hydratation adaptée et une protection solaire au quotidien.</p>
+        <p>Ce sont souvent les premiers soins choisis pour démarrer avec SKINCLEAN : ils se combinent facilement entre eux et conviennent à de nombreux types de peau. Pour savoir lesquels t&apos;iront le mieux, fais le Skin Diag : en deux minutes, il compose ta routine du matin et du soir.</p>
+      </SeoBlock>
     </>
   );
 }

@@ -13,6 +13,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { MoonIcon, SunIcon } from "@/components/ui/Icons";
 import { siteUrlPublic } from "@/lib/site";
 import { productSeo } from "@/lib/site-overrides";
+import { metaDescription, productTitle } from "@/lib/seo-text";
 import { realRatingStats } from "@/lib/reviews";
 import { RatingSummary } from "@/components/reviews/RatingSummary";
 import { ReviewsSection } from "@/components/reviews/ReviewsSection";
@@ -27,8 +28,8 @@ export async function generateMetadata({ params }: PageProps<"/produits/[slug]">
   if (!p) return {};
   const seo = productSeo(p.id); // titre / meta description optimisés depuis le Marketing Hub (module SEO)
   return {
-    title: seo.seoTitle || `${p.name} — ${p.kind}`,
-    description: seo.seoDescription || `${p.tagline}. ${p.description.slice(0, 140)}`,
+    title: seo.seoTitle || productTitle(p),
+    description: seo.seoDescription || metaDescription(`${p.tagline}.`, p.description, p.benefits.map((b, i) => (i ? b.charAt(0).toLowerCase() + b.slice(1) : b)).join(", ") + "."),
     openGraph: { images: p.media.packshot ? [p.media.packshot] : ["/media/brand/logo-full.webp"] },
     alternates: { canonical: `/produits/${p.slug}` },
   };

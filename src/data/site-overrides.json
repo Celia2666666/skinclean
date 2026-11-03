@@ -1,1 +1,14 @@
-{}
+{
+  "products": {
+    "sc-sr-07": {
+      "seoTitle": "Sérum Hydratant Progressif",
+      "seoDescription": "Un hâle doré qui monte en douceur. Hâle progressif et modulable, hydrate la peau. Formule lisible, conseils d'utilisation et routine avec le Skin Diag."
+    },
+    "sc-sp-02": {
+      "seoTitle": "Mineral Calm SPF 50",
+      "seoDescription": "Protection douce pour peaux réactives. Filtres minéraux, sans parfum. Formule lisible, conseils d'utilisation et routine avec le Skin Diag."
+    }
+  },
+  "updatedAt": "2026-10-30T15:03:03.510Z",
+  "updatedBy": "SKINCLEAN"
+}
