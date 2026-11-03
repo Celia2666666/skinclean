@@ -6,6 +6,7 @@ import type { Product } from "@/lib/types";
 import { Packshot } from "./Packshot";
 import { AddToCartButton, FavoriteButton } from "./AddToCart";
 import { PriceTag } from "./PriceTag";
+import { CompareButton } from "./CompareButton";
 import { RatingSummary } from "@/components/reviews/RatingSummary";
 import { concernLabels } from "@/data/categories";
 
@@ -95,7 +96,10 @@ export function ProductCard({ product, priority = false, badge }: { product: Pro
       </Link>
       {/* Actions hors du lien (pas de bouton imbriqué dans un lien) */}
       <div className="pointer-events-none absolute inset-x-0 top-0 aspect-[4/5]">
-        <div className="pointer-events-auto absolute right-3 top-3 z-10"><FavoriteButton productId={product.id} /></div>
+        <div className="pointer-events-auto absolute right-3 top-3 z-10 flex flex-col gap-2">
+          <FavoriteButton productId={product.id} />
+          <CompareButton productId={product.id} className="transition-all duration-300 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100 md:aria-pressed:opacity-100" />
+        </div>
         <div className="pointer-events-auto absolute bottom-3 right-3 z-10 transition-all duration-500 md:translate-y-3 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 md:focus-within:translate-y-0 md:focus-within:opacity-100">
           <AddToCartButton productId={product.id} compact />
         </div>

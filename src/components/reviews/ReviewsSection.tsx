@@ -165,6 +165,21 @@ function ReviewForm({ productId, productName, isAccessory, onDone }: { productId
   const addReview = useStore((s) => s.addReview);
   const toast = useUI((s) => s.toast);
   const [f, setF] = useState({ rating: 0, title: "", text: "", skinType: "" as SkinType | "", consent: false });
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [busy, setBusy] = useState(false);
+
+  const addPhotos = async (files: FileList | null) => {
+    if (!files?.length) return;
+    setBusy(true);
+    const next = [...photos];
+    for (const file of Array.from(files)) {
+      if (next.length >= MAX_PHOTOS) break;
+      if (!file.type.startsWith("image/")) continue;
+      try { next.push(await compressImage(file)); } catch { setError("Cette image n'a pas pu être lue."); }
+    }
+    setPhotos(next);
+    setBusy(false);
+  };
   const [error, setError] = useState<string>();
   const hasOrdered = !!acc?.orders.some((o) => o.lines.some((l) => l.productId === productId));
 
@@ -172,7 +187,7 @@ function ReviewForm({ productId, productName, isAccessory, onDone }: { productId
     e.preventDefault();
     if (!f.rating) { setError("Choisis une note en feuilles."); return; }
     if (f.text.trim().length < 20) { setError("Ton avis doit faire au moins 20 caractères."); return; }
-    const res = addReview({ productId, rating: f.rating, title: f.title.trim() || undefined, text: f.text.trim(), skinType: f.skinType || undefined });
+    const res = addReview({ productId, rating: f.rating, title: f.title.trim() || undefined, text: f.text.trim(), skinType: f.skinType || undefined, photos: photos.length ? photos : undefined });
     if (!res.ok) { setError(res.error); return; }
     toast({ title: "Merci pour ton avis !", body: res.leaves ? `+${res.leaves} feuilles SKINCLEAN Club` : undefined });
     onDone();
@@ -201,6 +216,25 @@ function ReviewForm({ productId, productName, isAccessory, onDone }: { productId
               )}
             </div>
             <div><label className="label" htmlFor="rv-text">Ton avis</label><textarea id="rv-text" rows={4} className="input" maxLength={1200} value={f.text} onChange={(e) => setF({ ...f, text: e.target.value })} placeholder="Texture, ressenti, résultats observés sur ta peau…" /></div>
+            <div>
+              <p className="label">Photos (facultatif, {MAX_PHOTOS} maximum)</p>
+              <div className="flex flex-wrap gap-2">
+                {photos.map((src, i) => (
+                  <div key={i} className="relative h-20 w-20">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={src} alt={`Photo ${i + 1} de ton avis`} className="h-full w-full object-cover" />
+                    <button type="button" onClick={() => setPhotos(photos.filter((_, k) => k !== i))} aria-label={`Retirer la photo ${i + 1}`} className="absolute -right-1.5 -top-1.5 grid h-6 w-6 place-items-center rounded-full bg-forest text-xs text-ivory">×</button>
+                  </div>
+                ))}
+                {photos.length < MAX_PHOTOS && (
+                  <label className="grid h-20 w-20 cursor-pointer place-items-center border border-dashed border-line text-center text-xs text-forest-soft transition hover:bg-cream">
+                    {busy ? "…" : <span>+ Ajouter<br />une photo</span>}
+                    <input type="file" accept="image/*" multiple className="sr-only" onChange={(e) => { addPhotos(e.target.files); e.target.value = ""; }} />
+                  </label>
+                )}
+              </div>
+              <p className="mt-1 text-xs text-forest-soft">Texture, flacon, résultat : pas de visage d&apos;une autre personne sans son accord.</p>
+            </div>
             <label className="flex items-start gap-2 text-sm"><input type="checkbox" required checked={f.consent} onChange={(e) => setF({ ...f, consent: e.target.checked })} className="mt-1 accent-[#1F3329]" /><span>Je certifie que cet avis reflète ma propre expérience. Mon prénom et l&apos;initiale de mon nom seront affichés.</span></label>
             {error && <p className="text-sm text-[#a14d5f]" role="alert">{error}</p>}
             <div className="flex flex-wrap items-center gap-4">
@@ -212,4 +246,25 @@ function ReviewForm({ productId, productName, isAccessory, onDone }: { productId
       </div>
     </motion.div>
   );
+}
+
+const MAX_PHOTOS = 3;
+
+/** Réduit une photo (640 px, JPEG) avant de l'enregistrer : avis stockés dans le navigateur en mode démo. */
+function compressImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, 640 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * scale);
+      c.height = Math.round(img.height * scale);
+      c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL("image/jpeg", 0.72));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("image")); };
+    img.src = url;
+  });
 }

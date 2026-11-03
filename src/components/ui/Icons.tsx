@@ -38,3 +38,5 @@ export const InstagramIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><re
 export const TiktokIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.5 2.5 2.5 4.5 5 4.5" /></svg>);
 export const PinterestIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><circle cx="12" cy="12" r="9" /><path d="M11 8.5c3-1 5 .5 5 3 0 2.5-1.8 4-3.5 3.5-1-.3-1.5-1-1.5-1L10 20" /></svg>);
 export const YoutubeIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><rect x="2.5" y="5.5" width="19" height="13" rx="4" /><path d="m10 9 5 3-5 3V9Z" fill="currentColor" /></svg>);
+export const CompareIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><path d="M12 3v18" /><path d="M5 7h4l-2.5 6a2.8 2.8 0 0 1-3 0Z" /><path d="M15 7h4l2.5 6a2.8 2.8 0 0 1-3 0" transform="translate(-2.5 0)" /><path d="M5 7h14" /><path d="M8 21h8" /></svg>);
+export const RefillIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8" /><path d="M4 4v4h4" /><path d="M4 13a8 8 0 0 0 14.6 4.5L20 16" /><path d="M20 20v-4h-4" /></svg>);

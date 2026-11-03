@@ -41,6 +41,12 @@ export const loyalty = {
   birthdayBonus: 50,
   journalBonus: 0,
   /** Récompenses échangeables au panier. */
+  /** Cadeaux à échanger contre des feuilles (page Club), joints à la commande suivante. */
+  giftRewards: [
+    { id: "g-mini-dew", leaves: 150, name: "Mini Dew Drop", description: "Notre toner hydratant en format voyage (30 ml).", productId: "sc-tn-01" },
+    { id: "g-masque", leaves: 300, name: "Masque Hydra Bloom", description: "Le masque hydratant en taille réelle, pour un soin cocooning.", productId: "sc-ms-01" },
+    { id: "g-gua-sha", leaves: 600, name: "Gua sha en jade", description: "L'outil de massage pour défatiguer le visage le matin.", productId: "sc-ac-03" },
+  ],
   rewards: [
     { id: "r5", leaves: 200, value: 5, label: "5 € de réduction" },
     { id: "r10", leaves: 400, value: 10, label: "10 € de réduction" },

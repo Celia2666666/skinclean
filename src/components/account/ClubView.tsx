@@ -9,10 +9,13 @@ import { frDate } from "@/lib/format";
 import { LeafGauge } from "./LeafGauge";
 import { Reveal } from "@/components/ui/Reveal";
 import { NewsletterForm } from "@/components/layout/NewsletterForm";
+import { GiftExchange } from "./GiftExchange";
 
 export function ClubView() {
-  const acc = useAccount();
   const h = useHydrated();
+  const account = useAccount();
+  // Rendu identique serveur / client avant hydratation (compte lu dans le navigateur).
+  const acc = h ? account : undefined;
   const balance = h ? leavesBalance(acc) : 0;
   const earned = h ? leavesEarned12m(acc) : 0;
   const pending = h ? pendingLeavesOf(acc) : 0;
@@ -105,8 +108,11 @@ export function ClubView() {
           </div>
         </section>
 
+        <GiftExchange />
+
         <section>
-          <h2 className="font-display text-5xl">Tes récompenses</h2>
+          <h2 className="font-display text-5xl">Ou une réduction</h2>
+          <p className="mt-2 text-forest-soft">À utiliser directement dans ton panier.</p>
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             {loyalty.rewards.map((r, i) => {
               const ok = balance >= r.leaves;

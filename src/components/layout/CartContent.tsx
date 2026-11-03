@@ -38,8 +38,10 @@ export function CartLines({ editable = true }: { editable?: boolean }) {
   const setQty = useStore((s) => s.setQty);
   const removeLine = useStore((s) => s.removeLine);
   const totals = useCartTotals();
+  const acc = useAccount();
   const h = useHydrated();
   if (!h) return null;
+  const clubGifts = (acc?.gifts ?? []).filter((g) => !g.orderId);
 
   return (
     <ul className="divide-y divide-line">
@@ -79,6 +81,21 @@ export function CartLines({ editable = true }: { editable?: boolean }) {
           );
         })}
       </AnimatePresence>
+      {totals.lines.length > 0 && clubGifts.map((g) => {
+        const gp = getProduct(loyalty.giftRewards.find((x) => x.id === g.giftId)?.productId ?? "");
+        return (
+          <motion.li key={g.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex items-center gap-4 py-4">
+            <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-[2px] p-1.5" style={{ background: gp?.color.bg ?? "#EFEEEA" }}>
+              {gp ? <Packshot product={gp} className="h-full w-full" showTag={false} sizes="80px" /> : <GiftIcon size={30} />}
+            </div>
+            <div className="flex-1">
+              <p className="font-display text-lg">{g.name}</p>
+              <span className="chip mt-1 bg-sage-soft">Cadeau SKINCLEAN Club</span>
+            </div>
+            <p className="font-semibold">Offert</p>
+          </motion.li>
+        );
+      })}
       {totals.gift && (
         <motion.li initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex items-center gap-4 py-4">
           <div className="grid h-20 w-20 shrink-0 place-items-center rounded-[2px] bg-butter text-forest"><GiftIcon size={30} /></div>

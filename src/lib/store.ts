@@ -39,7 +39,10 @@ export interface Account {
   addresses: Address[];
   newsletter: { status: "none" | "pending" | "confirmed"; confirmedAt?: number; marketing: boolean };
   ledger: LedgerEntry[]; orders: Order[]; routines: SavedRoutine[]; journal: Journal; favorites: string[];
+  /** Cadeaux échangés contre des feuilles, joints automatiquement à la commande suivante. */
+  gifts?: ClaimedGift[];
 }
+export interface ClaimedGift { id: string; giftId: string; name: string; claimedAt: number; orderId?: string }
 
 interface State {
   // Panier
@@ -74,6 +77,11 @@ interface State {
   pendingLeaves: Record<string, number>;
   confirmNewsletter: (email: string, issued: { code: string; voucher: string; expiresAt: number }) => { status: "ok" | "already"; code?: string; leavesCredited: boolean };
   addLedger: (e: Omit<LedgerEntry, "id" | "date"> & { date?: number }) => void;
+  claimGift: (giftId: string) => { ok: boolean; error?: string };
+  // Comparateur (3 soins maximum)
+  compare: string[];
+  toggleCompare: (id: string) => boolean;
+  clearCompare: () => void;
   // Commandes
   recordOrder: (o: Omit<Order, "id" | "date"> & { id?: string }) => Order;
   setOrderStatus: (email: string, orderId: string, status: Order["status"]) => void;
@@ -236,9 +244,39 @@ export const useStore = create<State>()(
         },
         addLedger: (entry) => patchAccount((a) => ({ ...a, ledger: [...a.ledger, { id: uid("l_"), date: entry.date ?? Date.now(), ...entry }] })),
 
-        recordOrder: (o) => {
-          const order: Order = { ...o, id: o.id ?? "SC-" + Date.now().toString(36).toUpperCase(), date: Date.now() };
+        claimGift: (giftId) => {
+          const g = loyalty.giftRewards.find((x) => x.id === giftId);
           const email = get().session;
+          const acc = email ? get().accounts[email] : undefined;
+          if (!g) return { ok: false, error: "Cadeau introuvable." };
+          if (!acc) return { ok: false, error: "Connecte-toi pour échanger tes feuilles." };
+          const balance = acc.ledger.filter((l) => l.status === "credited" || l.status === "used").reduce((s, l) => s + l.delta, 0);
+          if (balance < g.leaves) return { ok: false, error: `Il te manque ${g.leaves - balance} feuilles.` };
+          if ((acc.gifts ?? []).some((x) => x.giftId === g.id && !x.orderId)) return { ok: false, error: "Ce cadeau t'attend déjà pour ta prochaine commande." };
+          patchAccount((a) => ({
+            ...a,
+            gifts: [...(a.gifts ?? []), { id: uid("g_"), giftId: g.id, name: g.name, claimedAt: Date.now() }],
+            ledger: [...a.ledger, { id: uid("l_"), date: Date.now(), delta: -g.leaves, label: `Cadeau échangé : ${g.name}`, status: "used" }],
+          }));
+          return { ok: true };
+        },
+
+        compare: [],
+        toggleCompare: (id) => {
+          const c = get().compare;
+          if (c.includes(id)) { set({ compare: c.filter((x) => x !== id) }); return true; }
+          if (c.length >= 3) return false;
+          set({ compare: [...c, id] });
+          return true;
+        },
+        clearCompare: () => set({ compare: [] }),
+
+        recordOrder: (o) => {
+          const email = get().session;
+          // Cadeaux Club en attente : joints à cette commande
+          const pendingGifts = email ? (get().accounts[email]?.gifts ?? []).filter((g) => !g.orderId) : [];
+          const giftNames = [o.gift, ...pendingGifts.map((g) => g.name)].filter(Boolean).join(" + ");
+          const order: Order = { ...o, gift: giftNames || undefined, id: o.id ?? "SC-" + Date.now().toString(36).toUpperCase(), date: Date.now() };
           // Code de bienvenue consommé
           if (o.code) set({ welcomeCodes: get().welcomeCodes.map((c) => (c.code === o.code ? { ...c, used: true } : c)) });
           if (email && get().accounts[email]) {
@@ -246,6 +284,7 @@ export const useStore = create<State>()(
             patchAccount((a) => ({
               ...a,
               orders: [order, ...a.orders],
+              gifts: (a.gifts ?? []).map((g) => (g.orderId ? g : { ...g, orderId: order.id })),
               ledger: [
                 ...a.ledger,
                 ...(rw && o.discount > 0 ? [{ id: uid("l_"), date: Date.now(), delta: -rw.leaves, label: `Récompense utilisée : ${rw.label}`, status: "used" as const, orderId: order.id }] : []),

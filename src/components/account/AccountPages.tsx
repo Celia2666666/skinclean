@@ -12,6 +12,7 @@ import { LeafGauge } from "./LeafGauge";
 import { stepLabels } from "@/data/categories";
 import { useUI } from "@/lib/ui";
 import { paymentMethodLabel } from "@/components/checkout/PaymentMethods";
+import { RefillReminders } from "./RefillReminders";
 
 const statusLabel: Record<Order["status"], string> = { test: "Test — non payée", payee: "Payée · en préparation", expediee: "Expédiée", livree: "Livrée", remboursee: "Remboursée", "retour-demande": "Retour demandé" };
 const H = ({ children }: { children: React.ReactNode }) => <h1 className="font-display text-4xl md:text-5xl">{children}</h1>;
@@ -38,6 +39,7 @@ export function Dashboard() {
           {diags[0] ? <><p className="mt-1 text-sm">{diags[0].skinTypeLabel} · {diags[0].goal}</p><Link href={`/skin-diag/resultats?id=${diags[0].id}`} className="mt-3 inline-block text-sm underline">Voir ma routine</Link></> : <Link href="/skin-diag" className="btn btn-primary mt-3 px-4 py-2 text-sm">Faire mon Skin Diag</Link>}
         </div>
       </div>
+      <RefillReminders />
       {welcome.length > 0 && <p className="rounded-[2px] bg-blush p-4 text-sm">Ton code de bienvenue <b>{welcome[0].code}</b> (-{welcome[0].percent} %) est valable jusqu&apos;au {frDate(welcome[0].expiresAt)}.</p>}
       <div className="grid gap-4 md:grid-cols-3">
         {[

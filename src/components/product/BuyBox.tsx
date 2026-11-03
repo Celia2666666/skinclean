@@ -9,6 +9,8 @@ import { loyalty, shipping, firstOrderGift } from "@/data/config";
 import { euro } from "@/lib/format";
 import { resolveVariant } from "@/lib/catalog";
 import { useHydrated, useStore } from "@/lib/store";
+import { RefillNote } from "@/components/account/RefillReminders";
+import { CompareButton } from "./CompareButton";
 
 export function BuyBox({ product }: { product: Product }) {
   const [variantId, setVariantId] = useState(product.variants[0].id);
@@ -47,6 +49,9 @@ export function BuyBox({ product }: { product: Product }) {
         <AddToCartButton productId={product.id} variantId={variantId} qty={qty} className="flex-1 py-4" />
         <FavoriteButton productId={product.id} className="h-[52px] w-[52px] bg-ivory" />
       </div>
+
+      <RefillNote productId={product.id} />
+      <CompareButton productId={product.id} variant="text" />
 
       <div className="grid gap-2 text-sm">
         <p className="flex items-center gap-2 rounded-[2px] bg-sage-soft px-4 py-3"><LeafIcon size={18} /> Tu gagnes <b>{leaves} feuilles</b> SKINCLEAN CLUB avec cet achat</p>

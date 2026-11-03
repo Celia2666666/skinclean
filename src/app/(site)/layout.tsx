@@ -6,6 +6,7 @@ import { SearchOverlay } from "@/components/layout/SearchOverlay";
 import { Toasts } from "@/components/layout/Toasts";
 import { CookieBanner } from "@/components/layout/CookieBanner";
 import { GlowAssistant } from "@/components/assistant/GlowAssistant";
+import { CompareBar } from "@/components/product/CompareButton";
 
 /** Habillage du site e-commerce (toutes les pages publiques). */
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -20,6 +21,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <SearchOverlay />
       <Toasts />
       <CookieBanner />
+      <CompareBar />
       <GlowAssistant />
     </>
   );
