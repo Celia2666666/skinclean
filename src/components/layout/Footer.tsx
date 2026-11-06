@@ -9,7 +9,7 @@ import { loyalty, welcomeOffer } from "@/data/config";
 const cols = [
   { title: "Soins", links: [{ href: "/soins-visage", label: "Tous les soins" }, ...typeCategories.slice(0, 6).map((c) => ({ href: `/soins-visage/${c.slug}`, label: c.short })), { href: "/best-sellers", label: "Best-sellers" }, { href: "/kits", label: "Kits & routines" }] },
   { title: "Accompagnement", links: [{ href: "/skin-diag", label: "Skin Diag" }, { href: "/creer-mon-set", label: "Créer mon set" }, { href: "/club", label: "SKINCLEAN Club" }, { href: "/compte/journal", label: "Skin Journal" }, { href: "/compte", label: "Mon compte" }] },
-  { title: "Aide", links: [{ href: "/faq", label: "FAQ" }, { href: "/faq#contact", label: "Contact" }, { href: "/livraison", label: "Livraison & retours" }, { href: "/notre-histoire", label: "Notre histoire" }, { href: "/nos-engagements", label: "Nos engagements" }] },
+  { title: "Aide", links: [{ href: "/faq", label: "FAQ" }, { href: "/contact", label: "Contact & SAV" }, { href: "/livraison", label: "Livraison & retours" }, { href: "/notre-histoire", label: "Notre histoire" }, { href: "/nos-engagements", label: "Nos engagements" }] },
   { title: "Légal", links: [{ href: "/legal/cgv", label: "CGV" }, { href: "/legal/mentions-legales", label: "Mentions légales" }, { href: "/legal/confidentialite", label: "Confidentialité" }, { href: "/legal/cookies", label: "Cookies" }, { href: welcomeOffer.conditionsHref, label: "Conditions des offres" }] },
 ];
 

@@ -20,6 +20,24 @@ export const reviewsConfig = {
   perPage: 6,
 };
 
+/**
+ * Coordonnées du service client (SAV).
+ * Marque fictive : le numéro appartient à la plage 01 99 00 xx xx réservée par l'ARCEP aux œuvres de fiction,
+ * et l'e-mail utilise le domaine réservé « .test ». Remplacer par les vraies coordonnées avant une mise en ligne réelle.
+ */
+export const customerService = {
+  phone: "01 99 00 26 26",
+  phoneHref: "+33199002626",
+  phoneNote: "Appel non surtaxé, prix d'un appel local",
+  email: "serviceclient@skinclean.test",
+  hours: [
+    { days: "Lundi – vendredi", time: "9 h – 18 h" },
+    { days: "Samedi", time: "10 h – 13 h" },
+  ],
+  emailDelay: "48 h ouvrées",
+  returnsAddress: ["SKINCLEAN — Service retours", "24 rue de la Fontaine", "69002 Lyon", "France"],
+};
+
 export const shipping = {
   currency: "EUR",
   standardPrice: 10,

@@ -19,7 +19,7 @@ const pages: Record<string, { title: string; body: string[] }> = {
     "Crédits : vidéos de démonstration des produits et photos avant/après issues de Pexels (pexels.com), utilisées selon la licence Pexels à titre d'illustration. Photos du comparateur « imperfections » : images fournies pour le projet, usage pédagogique uniquement. Photographies produits et vidéo d'accueil : SKINCLEAN.",
   ]},
   confidentialite: { title: "Politique de confidentialité", body: [
-    "Responsable de traitement : SKINCLEAN (projet académique). Pour toute question, utilise le formulaire de contact de la page FAQ.",
+    "Responsable de traitement : SKINCLEAN (projet académique). Pour toute question : page Contact du site (formulaire, téléphone, e-mail).",
     "Données traitées : identité, coordonnées, commandes, réponses au Skin Diag, données du Skin Journal (photos, observations cutanées — données sensibles traitées uniquement sur consentement explicite).",
     "Finalités : gestion des commandes, compte client, programme de fidélité, envoi de la routine demandée, newsletter (sur consentement, double opt-in), suivi Skin Journal.",
     "Durées de conservation : compte — 3 ans après la dernière activité ; Skin Journal — 12 mois maximum, suppression à tout moment ; prospects newsletter — 3 ans.",

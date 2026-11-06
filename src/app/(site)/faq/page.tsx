@@ -1,6 +1,8 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/catalog/PageHero";
 import { Accordion } from "@/components/ui/Accordion";
+import { ContactInfo } from "@/components/layout/ContactInfo";
 import { ContactForm } from "@/components/layout/ContactForm";
 import { loyalty, shipping, welcomeOffer, firstOrderGift } from "@/data/config";
 
@@ -39,7 +41,8 @@ export default function Page() {
         ))}
         <section id="contact" className="scroll-mt-28 rounded-none bg-ivory p-6 md:p-10">
           <h2 className="font-display text-4xl">Nous contacter</h2>
-          <p className="mb-6 mt-2 text-forest-soft">Réponse sous 48 h ouvrées. Pour un conseil immédiat, ouvre le Glow Assistant en bas à droite.</p>
+          <p className="mb-6 mt-2 text-forest-soft">Réponse sous 48 h ouvrées. Pour un conseil immédiat, ouvre le Glow Assistant en bas à droite. Toutes nos coordonnées sont sur la page <Link href="/contact" className="underline">Contact & service client</Link>.</p>
+          <div className="mb-8"><ContactInfo compact /></div>
           <ContactForm />
         </section>
       </div>

@@ -40,3 +40,7 @@ export const PinterestIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><ci
 export const YoutubeIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><rect x="2.5" y="5.5" width="19" height="13" rx="4" /><path d="m10 9 5 3-5 3V9Z" fill="currentColor" /></svg>);
 export const CompareIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><path d="M12 3v18" /><path d="M5 7h4l-2.5 6a2.8 2.8 0 0 1-3 0Z" /><path d="M15 7h4l2.5 6a2.8 2.8 0 0 1-3 0" transform="translate(-2.5 0)" /><path d="M5 7h14" /><path d="M8 21h8" /></svg>);
 export const RefillIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><path d="M20 11a8 8 0 0 0-14.6-4.5L4 8" /><path d="M4 4v4h4" /><path d="M4 13a8 8 0 0 0 14.6 4.5L20 16" /><path d="M20 20v-4h-4" /></svg>);
+export const PhoneIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><path d="M5 4h3.5l1.5 4-2 1.5a11 11 0 0 0 6.5 6.5L16 14l4 1.5V19a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z" /></svg>);
+export const MailIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></svg>);
+export const ClockIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>);
+export const PinIcon = ({ size, ...p }: P) => (<svg {...base(size, p)}><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12Z" /><circle cx="12" cy="9" r="2.5" /></svg>);
