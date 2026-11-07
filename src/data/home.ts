@@ -19,10 +19,10 @@ const baseHomeMedia = {
    */
   beforeAfter: [
     // Vraie paire avant/après (même personne), fournie par la marque ; « après » recalé sur l'« avant » (décalage + zoom ×1,07).
-    { productId: "sc-sr-01", demo: "imperfections" as const, before: "/media/before-after/acne-avant.webp" as string | undefined, after: "/media/before-after/acne-apres.webp" as string | undefined, illustrative: true, caption: "Peau avec imperfections → peau plus nette" },
+    { productId: "sc-sr-01", demo: "imperfections" as const, before: "/media/before-after/acne-avant.webp" as string | undefined, after: "/media/before-after/acne-apres.webp" as string | undefined, illustrative: true, caption: "Peau avec imperfections → peau plus nette", duration: "8 semaines", usage: "matin et soir" },
     // Rougeurs : photo fournie (visage en miroir) ; « après » = moitié droite retournée et recalée sur la gauche.
-    { productId: "sc-sr-04", demo: "rougeurs" as const, before: "/media/before-after/rougeurs-avant.webp" as string | undefined, after: "/media/before-after/rougeurs-apres.webp" as string | undefined, illustrative: true, caption: "Rougeurs visibles → teint plus uniforme" },
-    { productId: "sc-sr-02", demo: "eclat" as const, before: undefined as string | undefined, after: undefined as string | undefined, illustrative: true, caption: "Peau terne → teint plus lumineux" },
+    { productId: "sc-sr-04", demo: "rougeurs" as const, before: "/media/before-after/rougeurs-avant.webp" as string | undefined, after: "/media/before-after/rougeurs-apres.webp" as string | undefined, illustrative: true, caption: "Rougeurs visibles → teint plus uniforme", duration: "4 semaines", usage: "matin et soir" },
+    { productId: "sc-sr-02", demo: "eclat" as const, before: undefined as string | undefined, after: undefined as string | undefined, illustrative: true, caption: "Peau terne → teint plus lumineux", duration: "6 semaines", usage: "chaque matin" },
   ],
 };
 

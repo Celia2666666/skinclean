@@ -90,38 +90,57 @@ export function Bestsellers() {
 /* ───────── SECTION 5 — Shop by skin concern ───────── */
 export function ShopByConcern() {
   const pick = [
-    { slug: "acne-imperfections", title: "Imperfections" },
-    { slug: "peau-deshydratee", title: "Hydratation" },
-    { slug: "glow-eclat", title: "Glow" },
-    { slug: "rougeurs", title: "Rougeurs" },
-    { slug: "peau-grasse", title: "Peau grasse" },
-    { slug: "cernes", title: "Cernes" },
-    { slug: "rides-ridules", title: "Premières ridules" },
+    { slug: "acne-imperfections", title: "Imperfections", heroId: "sc-sr-01" },
+    { slug: "peau-deshydratee", title: "Hydratation", heroId: "sc-sr-03" },
+    { slug: "glow-eclat", title: "Glow", heroId: "sc-sr-02" },
+    { slug: "rougeurs", title: "Rougeurs", heroId: "sc-sr-04" },
+    { slug: "peau-grasse", title: "Peau grasse", heroId: "sc-cr-03" },
+    { slug: "cernes", title: "Cernes", heroId: "sc-ey-01" },
+    { slug: "rides-ridules", title: "Premières ridules", heroId: "sc-sr-05" },
   ].map((x) => ({ ...x, c: concernCategories.find((c) => c.slug === x.slug)! }));
   const all = getProducts();
+  // Un produit différent par carte : en priorité un soin dont la préoccupation principale correspond.
+  const used = new Set<string>();
+  const tiles = pick.map((x) => {
+    const prods = all.filter((p) => p.concerns.some((c) => x.c.concerns.includes(c)));
+    const ranked = [...prods].sort((a, b) => Number(x.c.concerns.includes(b.concerns[0])) - Number(x.c.concerns.includes(a.concerns[0])) || Number(!!b.bestseller) - Number(!!a.bestseller));
+    const hero = prods.find((p) => p.id === x.heroId) ?? ranked.find((p) => !used.has(p.id) && p.type !== "accessoire") ?? ranked[0];
+    if (hero) used.add(hero.id);
+    return { ...x, prods, hero };
+  });
   return (
     <section className={`${wrap} py-24 md:py-32`}>
       <SectionTitle eyebrow="Par préoccupation" title="Ta peau, tes besoins" intro="Chaque peau est unique. Choisis ta préoccupation, on s'occupe du reste." />
       <div className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
-        {pick.map((x, i) => {
-          const prods = all.filter((p) => p.concerns.some((c) => x.c.concerns.includes(c)));
-          const hero = prods.find((p) => p.bestseller) ?? prods[0];
-          return (
-            <Reveal key={x.slug} delay={i * 0.05} className={i === 0 ? "col-span-2 row-span-2" : ""}>
-              <Link href={`/soins-visage/${x.slug}`} className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-[var(--radius-card)] p-5 transition-all duration-500 hover:shadow-[var(--shadow-lift)] ${i === 0 ? "min-h-[360px] md:min-h-[480px]" : "min-h-[200px] md:min-h-[230px]"}`} style={{ background: x.c.bg }}>
-                <div className={`absolute bottom-0 right-2 ${i === 0 ? "h-[70%] w-[55%]" : "h-[62%] w-[46%]"} transition-transform duration-700 group-hover:-translate-y-2 group-hover:rotate-3`}>
-                  {hero && <Packshot product={hero} className="h-full w-full" showTag={false} sizes="25vw" />}
-                </div>
-                <span className="relative eyebrow text-forest/50">{String(i + 1).padStart(2, "0")}</span>
-                <div className="relative">
-                  <p className={`font-display leading-none ${i === 0 ? "text-5xl md:text-6xl" : "text-2xl md:text-3xl"}`}>{x.title}</p>
-                  <p className="mt-2 text-xs text-forest-soft">{prods.length} soins adaptés</p>
-                  {i === 0 && <p className="mt-3 max-w-[50%] text-sm">{x.c.intro}</p>}
-                </div>
-              </Link>
-            </Reveal>
-          );
-        })}
+        {tiles.map((x, i) => (
+          <Reveal key={x.slug} delay={i * 0.05} className={i === 0 ? "col-span-2 row-span-2" : ""}>
+            <Link href={`/soins-visage/${x.slug}`} className={`@container group relative flex h-full flex-col justify-between overflow-hidden rounded-[var(--radius-card)] p-5 transition-all duration-500 hover:shadow-[var(--shadow-lift)] ${i === 0 ? "min-h-[360px] md:min-h-[480px]" : "min-h-[200px] md:min-h-[230px]"}`} style={{ background: x.c.bg }}>
+              <div className={`absolute right-2 ${i === 0 ? "bottom-0 h-[70%] w-[44%]" : "top-2 h-[50%] w-[44%] md:bottom-0 md:top-auto md:h-[58%] md:w-[38%]"} transition-transform duration-700 group-hover:-translate-y-2 group-hover:rotate-3`}>
+                {x.hero && <Packshot product={x.hero} className="h-full w-full" showTag={false} sizes="25vw" />}
+              </div>
+              <span className="relative eyebrow text-forest/50">{String(i + 1).padStart(2, "0")}</span>
+              {/* Le texte reste à gauche du flacon */}
+              <div className={`relative ${i === 0 ? "max-w-[56%]" : "md:max-w-[60%]"}`}>
+                <p className={`font-display leading-[0.95] ${i === 0 ? "text-[clamp(1.75rem,8cqw,3.75rem)]" : "text-[clamp(1.15rem,10.5cqw,1.875rem)] md:text-[clamp(1.15rem,8.5cqw,1.875rem)]"}`}>{x.title}</p>
+                <p className="mt-2 text-xs text-forest-soft">{x.prods.length} soins adaptés</p>
+                {i === 0 && <p className="mt-3 text-sm">{x.c.intro}</p>}
+              </div>
+            </Link>
+          </Reveal>
+        ))}
+        {/* Dernière ligne complétée : accès au Skin Diag */}
+        <Reveal delay={tiles.length * 0.05} className="col-span-2">
+          <Link href="/skin-diag" className="group flex h-full min-h-[200px] flex-col justify-between bg-forest p-5 text-ivory transition-all duration-500 hover:shadow-[var(--shadow-lift)] md:min-h-[230px] md:p-7">
+            <span className="eyebrow text-ivory/60">Skin Diag</span>
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="font-display text-2xl leading-[0.95] md:text-4xl">Pas sûr·e de ta préoccupation ?</p>
+                <p className="mt-2 max-w-sm text-sm text-ivory/75">10 questions, 2 minutes : on identifie ton type de peau et on compose ta routine.</p>
+              </div>
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-ivory text-forest transition group-hover:translate-x-1"><ArrowIcon /></span>
+            </div>
+          </Link>
+        </Reveal>
       </div>
     </section>
   );
@@ -176,8 +195,9 @@ export function BeforeAfterSection() {
           const p = getProduct(b.productId)!;
           return (
             <Reveal key={i} delay={i * 0.1}>
-              <BeforeAfter demo={b.demo} before={b.before} after={b.after} caption={b.caption} illustrative={b.illustrative} simulated={"simulated" in b && !!b.simulated} />
-              <Link href={`/produits/${p.slug}`} className="mt-2 inline-flex items-center gap-2 text-sm font-semibold hover:underline">Avec {p.name} <ArrowIcon size={16} /></Link>
+              <BeforeAfter demo={b.demo} before={b.before} after={b.after} labelAfter={`Après ${b.duration}`} caption={b.caption} illustrative={b.illustrative} simulated={"simulated" in b && !!b.simulated} />
+              <p className="mt-2 text-sm text-forest-soft"><b className="font-medium text-forest">{b.duration}</b> avec {p.name}, {b.usage}</p>
+              <Link href={`/produits/${p.slug}`} className="mt-1 inline-flex items-center gap-2 text-sm font-semibold hover:underline">Découvrir {p.name} <ArrowIcon size={16} /></Link>
             </Reveal>
           );
         })}
