@@ -2,6 +2,7 @@ import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
 import { ymdhm } from "@/lib/hub/dates";
 import { shipping, loyalty, welcomeOffer } from "@/data/config";
+import { stepLabels, stepOrder } from "@/data/categories";
 import { all, one } from "./db";
 import { ORDER_STATUS_LABEL, type Order, type SupportAi, type Ticket } from "./types";
 
@@ -65,7 +66,9 @@ function templateReply(t: Ticket, triageResult: { triage: string }): string {
     return `${hello}Le code de bienvenue (−${welcomeOffer.newsletterPercent} % sur ta première commande) est valable ${welcomeOffer.validityDays} jours après ton inscription à la newsletter. Il ne s'applique pas aux coffrets, déjà remisés, et n'est pas cumulable avec un autre code ni avec les feuilles du Club. Si ton panier contient un coffret, retire-le puis réessaie le code.${sign}`;
   if (/(feuille|club|fid[ée]lit|points?)/.test(text))
     return `${hello}Les feuilles du SKINCLEAN Club sont créditées à l'${loyalty.creditedOn} (${loyalty.leavesPerEuro} feuille par euro dépensé). Elles apparaissent donc dans ton espace Club dès que ta commande est partie. Tu peux les échanger au panier : ${loyalty.rewards.map((r) => `${r.leaves} feuilles = ${r.value} €`).join(", ")}.${sign}`;
-  if (/(routine|conseil|peau|matin|soir|ordre|s[ée]rum|cr[eè]me)/.test(text))
+  if (/(ordre|appliqu|avant ou apr[eè]s|en premier)/.test(text))
+    return `${hello}La règle d'or : du plus fluide au plus épais. Voici l'ordre SKINCLEAN :\n${stepOrder.map((s, i) => `${i + 1}. ${stepLabels[s]}`).join("\n")}\n\nLe soir, on saute le SPF ; le matin, on termine toujours par lui. Laisse 30 secondes entre le sérum et la crème pour qu'il pénètre bien.${sign}`;
+  if (/(routine|conseil|peau|matin|soir|s[ée]rum|cr[eè]me)/.test(text))
     return `${hello}Merci pour ta question ! Pour une routine vraiment adaptée, le plus fiable est le Skin Diag (10 questions, 2 minutes) : il te propose une routine matin et soir avec l'explication de chaque soin. Notre règle d'or : du plus fluide au plus épais, et un SPF chaque matin.\n\nSi tu le souhaites, réponds avec ton type de peau et tes préoccupations, nous t'orienterons vers les bons soins.${sign}`;
   if (/(stock|rupture|dispo|revient)/.test(text))
     return `${hello}Ce produit est momentanément victime de son succès. Inscris-toi à l'alerte « Me prévenir du retour en stock » sur sa fiche produit : tu recevras un e-mail dès qu'il sera de nouveau disponible.${sign}`;
