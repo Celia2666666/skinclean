@@ -42,10 +42,14 @@ yarn-error.log*
 next-env.d.ts
 
 # serveur de dev secondaire
-/.next-hub/
+/.next-*/
 
 # Marketing Hub : base locale SQLite
 /data/hub/
+/data/crm/
 /.next-preview/
 /.claude/
 /.next-build/
+
+# Fichiers importés dans le Marketing Hub (contenu local, jamais publié)
+/public/media/uploads/

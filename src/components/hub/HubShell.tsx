@@ -4,18 +4,19 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import clsx from "clsx";
-import { Avatar, Drawer, ToastProvider, UserProvider, hubApi, type ClientUser } from "./ui";
+import { Avatar, ToastProvider, UserProvider, hubApi, type ClientUser } from "./ui";
 import { CopilotChat } from "./Copilot";
 import { ROLE_LABEL, type Notification } from "@/lib/hub/types";
 import {
-  AdsI, BellI, CalendarI, ChartI, ChatI, HomeI, LogoutI, MailI, MegaphoneI, MenuI, PaletteI, RoadmapI, SearchI, ShareI, SparkI, StoreI, TargetI, UserI, XI, ArrowRightI,
+  AdsI, BellI, CalendarI, EyeI, ChartI, ChatI, HomeI, LogoutI, MailI, MegaphoneI, MenuI, PaletteI, RoadmapI, SearchI, ShareI, SparkI, StoreI, TargetI, UserI, XI, ArrowRightI,
 } from "./icons";
 
-export const NAV = [
+export const NAV: { href: string; label: string; icon: (p: { size?: number }) => React.ReactElement; sub?: boolean }[] = [
   { href: "/hub", label: "Mon Marketing Hub", icon: HomeI },
   { href: "/hub/strategie", label: "Ma stratégie marketing", icon: TargetI },
   { href: "/hub/calendrier", label: "Calendrier éditorial", icon: CalendarI },
   { href: "/hub/reseaux-sociaux", label: "Réseaux sociaux", icon: ShareI },
+  { href: "/hub/mes-comptes", label: "Mes comptes Instagram, TikTok…", icon: EyeI, sub: true },
   { href: "/hub/studio", label: "Studio créatif", icon: PaletteI },
   { href: "/hub/campagnes", label: "Campagnes marketing", icon: MegaphoneI },
   { href: "/hub/seo", label: "SEO", icon: SearchI },
@@ -58,7 +59,7 @@ export function HubShell({ user, children, unread, badges }: { user: ClientUser;
     window.location.href = "/hub/connexion";
   };
 
-  const active = (href: string) => (href === "/hub" ? path === "/hub" : path.startsWith(href));
+  const active = (href: string) => (href === "/hub" ? path === "/hub" : path === href || path.startsWith(`${href}/`));
   const sidebar = (
     <nav aria-label="Navigation du Marketing Hub" className="flex h-full flex-col">
       <Link href="/hub" className="flex items-center gap-2.5 px-5 pb-4 pt-5">
@@ -69,14 +70,15 @@ export function HubShell({ user, children, unread, badges }: { user: ClientUser;
         </span>
       </Link>
       <ul className="hub-scroll flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">
-        {NAV.map((n, i) => {
+        {NAV.map((n) => {
           const Icon = n.icon;
           const b = badges[n.href];
+          const num = NAV.filter((x) => !x.sub).indexOf(n) + 1;
           return (
             <li key={n.href}>
               <Link href={n.href} aria-current={active(n.href) ? "page" : undefined}
-                className={clsx("group flex items-center gap-3 rounded-md px-3 py-2 text-[0.83rem] transition", active(n.href) ? "bg-white/12 font-medium text-white" : "text-white/70 hover:bg-white/6 hover:text-white")}>
-                <span className="w-4 text-right text-[0.65rem] tabular-nums text-white/35">{i + 1}</span>
+                className={clsx("group flex items-center gap-3 rounded-md px-3 text-[0.83rem] transition", n.sub ? "ml-7 py-1.5 text-[0.78rem]" : "py-2", active(n.href) ? "bg-white/12 font-medium text-white" : "text-white/70 hover:bg-white/6 hover:text-white")}>
+                {!n.sub && <span className="w-4 text-right text-[0.65rem] tabular-nums text-white/35">{num}</span>}
                 <Icon size={17} />
                 <span className="flex-1 truncate">{n.label}</span>
                 {!!b && <span className="rounded-full bg-[#F2C14E] px-1.5 text-[0.65rem] font-semibold text-forest">{b}</span>}
@@ -86,8 +88,9 @@ export function HubShell({ user, children, unread, badges }: { user: ClientUser;
         })}
       </ul>
       <div className="border-t border-white/10 p-4 text-[0.7rem] leading-relaxed text-white/50">
-        Outil de stratégie, création et pilotage marketing. La gestion commerciale (clients, commandes) relève du CRM.
-        <Link href="/" target="_blank" className="mt-2 flex items-center gap-1 text-white/80 hover:text-white">Voir le site SKINCLEAN <ArrowRightI size={12} /></Link>
+        Outil de stratégie, création et pilotage marketing. La gestion commerciale (clients, commandes, stock) relève du CRM.
+        <Link href="/crm" className="mt-2 flex items-center gap-1 text-white/80 hover:text-white">Ouvrir le CRM <ArrowRightI size={12} /></Link>
+        <Link href="/" target="_blank" className="mt-1 flex items-center gap-1 text-white/80 hover:text-white">Voir le site SKINCLEAN <ArrowRightI size={12} /></Link>
       </div>
     </nav>
   );
@@ -95,15 +98,15 @@ export function HubShell({ user, children, unread, badges }: { user: ClientUser;
   return (
     <UserProvider user={user}>
       <ToastProvider>
-        <div className="min-h-screen bg-[#F6F5F1] text-forest lg:pl-[268px]">
-          <aside className="fixed inset-y-0 left-0 z-40 hidden w-[268px] bg-forest lg:block">{sidebar}</aside>
+        <div className="min-h-screen bg-[#F6F5F1] text-forest lg:pl-[268px] print:bg-white print:pl-0">
+          <aside className="fixed inset-y-0 left-0 z-40 hidden w-[268px] bg-forest lg:block print:hidden">{sidebar}</aside>
           {menu && (
             <div className="fixed inset-0 z-[120] lg:hidden" onClick={() => setMenu(false)}>
               <div className="absolute inset-0 bg-black/40" />
               <aside className="absolute inset-y-0 left-0 w-[280px] bg-forest" onClick={(e) => e.stopPropagation()}>{sidebar}</aside>
             </div>
           )}
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line bg-white/90 px-4 backdrop-blur md:px-6">
+          <header className="sticky top-0 z-30 flex h-14 print:hidden items-center gap-3 border-b border-line bg-white/90 px-4 backdrop-blur md:px-6">
             <button className="hub-btn hub-btn-ghost lg:hidden" onClick={() => setMenu(true)} aria-label="Ouvrir le menu"><MenuI /></button>
             <p className="hidden truncate text-sm text-forest-soft md:block">{NAV.find((n) => active(n.href))?.label ?? "Marketing Hub"}</p>
             <div className="ml-auto flex items-center gap-2">
@@ -151,9 +154,26 @@ export function HubShell({ user, children, unread, badges }: { user: ClientUser;
             </div>
           </header>
           <main className="mx-auto max-w-[1500px] px-4 py-6 md:px-8 md:py-8">{children}</main>
-          <Drawer open={copilot} onClose={() => setCopilot(false)} width="max-w-xl" title={<span className="flex items-center gap-2"><SparkI size={18} /> SKINCLEAN Marketing Copilot</span>}>
-            <div className="-m-5 h-[calc(100vh-57px)]"><CopilotChat compact /></div>
-          </Drawer>
+          {/* Assistant IA toujours accessible : bulle en bas à droite sur toutes les pages */}
+          {path !== "/hub/assistant" && (
+            <>
+              {copilot && (
+                <section role="dialog" aria-label="Assistant marketing IA" className="fixed bottom-24 right-4 z-[140] flex h-[min(620px,calc(100vh-8rem))] w-[min(410px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-2xl md:right-6">
+                  <header className="flex items-center gap-2 border-b border-line bg-forest px-4 py-3 text-white">
+                    <SparkI size={18} />
+                    <span className="flex-1"><span className="block text-sm font-semibold">Assistant marketing IA</span><span className="block text-[0.7rem] text-white/70">Pose ta question, je t&apos;aide sur tout le Hub</span></span>
+                    <Link href="/hub/assistant" className="rounded-md px-2 py-1 text-xs text-white/80 hover:bg-white/10" onClick={() => setCopilot(false)}>Plein écran</Link>
+                    <button onClick={() => setCopilot(false)} className="rounded-md p-1 hover:bg-white/10" aria-label="Fermer l'assistant"><XI size={16} /></button>
+                  </header>
+                  <div className="min-h-0 flex-1"><CopilotChat compact /></div>
+                </section>
+              )}
+              <button onClick={() => setCopilot((x) => !x)} aria-label={copilot ? "Fermer l'assistant IA" : "Ouvrir l'assistant IA"} title="Assistant marketing IA (Ctrl/⌘ K)"
+                className="fixed bottom-5 right-4 z-[140] flex h-14 items-center gap-2 rounded-full bg-forest pl-4 pr-5 text-sm font-medium text-white shadow-xl transition hover:scale-[1.03] hover:bg-[#2a4437] md:right-6">
+                {copilot ? <XI size={20} /> : <SparkI size={20} />}<span className="hidden sm:inline">{copilot ? "Fermer" : "Une question ?"}</span>
+              </button>
+            </>
+          )}
         </div>
       </ToastProvider>
     </UserProvider>

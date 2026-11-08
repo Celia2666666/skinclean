@@ -1,49 +1,56 @@
 import "server-only";
 import { listUsers } from "./auth";
-import { connectorFor, publishToPlatform } from "./connectors";
-import { readPublic } from "./files";
-import { emitEvent, ensureSeeded, list, logActivity, notify, update } from "./repo";
+import { claim, ensureSeeded, list, notify, update } from "./repo";
 import { can } from "./permissions";
 import { nowIso } from "./db";
 import { ymdhm } from "./dates";
 import { PLATFORM_LABEL } from "./types";
-import { siteUrlPublic } from "@/lib/site";
+import { destinationFor, publishPost } from "./publish";
+import { applyPublishOutcome } from "./handlers";
 
 /**
- * Planificateur local (toutes les minutes, lancé par src/instrumentation.ts) :
- * - contenus programmés arrivés à échéance → publication via l'API si la plateforme est connectée,
- *   sinon rappel de publication manuelle (jamais de faux statut « publié ») ;
+ * Planificateur local (toutes les minutes, lancé par src/instrumentation.ts au démarrage du serveur).
+ * Les contenus « Programmés » arrivés à leur date et heure sont publiés automatiquement :
+ * vrai compte s'il est connecté, sinon compte de test local. Aucune connexion de l'utilisateur n'est nécessaire,
+ * il suffit que le serveur local tourne. Si le serveur était éteint à l'heure prévue, le contenu part au redémarrage
+ * (signalé « avec retard »).
  */
-type G = typeof globalThis & { __hubScheduler?: NodeJS.Timeout };
+type G = typeof globalThis & { __hubScheduler?: NodeJS.Timeout; __hubTickRunning?: boolean };
 
 export async function tick() {
-  await ensureSeeded();
-  const now = ymdhm(new Date());
-  const publishers = listUsers().filter((u) => can(u.role, "content.publish")).map((u) => u.id);
-  for (const p of list("posts").filter((x) => x.status === "programme" && !x.reminderSent && x.date <= now)) {
-    const c = connectorFor(p.platform);
-    if (c?.connected) {
-      let base64: string | undefined;
-      try { if (p.scheduledMedia) base64 = readPublic(p.scheduledMedia).toString("base64"); } catch { /* visuel absent */ }
-      const out = await publishToPlatform({ platform: p.platform, caption: [p.caption, p.hashtags.join(" ")].join("\n\n"), title: p.title, link: siteUrlPublic(), imagePublicPath: p.scheduledMedia, imageBase64: base64, videoPath: p.visual?.kind === "video" ? p.visual.src : undefined });
-      if (out.ok) {
-        update("posts", p.id, { status: "publie", reminderSent: true, publish: { mode: "api", at: nowIso(), by: "Programmation automatique", externalId: out.externalId, url: out.url } });
-        logActivity({ userId: "system", userName: "Programmation", action: "publication", entity: "post", entityId: p.id, label: p.title, detail: `Publié automatiquement (${out.externalId})` });
-        emitEvent("post.published", { postId: p.id, platform: p.platform, externalId: out.externalId });
-        notify(publishers, { title: "Publication effectuée", body: `${PLATFORM_LABEL[p.platform]} — ${p.title}`, href: `/hub/calendrier?post=${p.id}`, kind: "publication" });
+  const g = globalThis as G;
+  if (g.__hubTickRunning) return;
+  g.__hubTickRunning = true;
+  try {
+    await ensureSeeded();
+    const now = ymdhm(new Date());
+    const publishers = listUsers().filter((u) => can(u.role, "content.publish")).map((u) => u.id);
+    const due = list("posts").filter((x) => x.status === "programme" && !x.publishClaimed && x.date <= now && !x.library);
+    for (const p of due) {
+      if (!claim("posts", p.id, "publishClaimed")) continue; // déjà pris en charge par un autre serveur
+      const late = (Date.now() - new Date(p.date).getTime()) / 60000 > 15;
+      if (destinationFor(p.platform).mode === "aucune") {
+        notify(publishers, { title: `À publier maintenant sur ${PLATFORM_LABEL[p.platform]}`, body: `${p.title} — visuel et légende prêts à copier.`, href: `/hub/calendrier?post=${p.id}`, kind: "publication" });
         continue;
       }
-      update("posts", p.id, { status: "echec", reminderSent: true, publish: { mode: "api", at: nowIso(), by: "Programmation automatique", message: out.reason } });
-      notify(publishers, { title: "Échec de publication", body: `${p.title} : ${out.reason}`, href: `/hub/calendrier?post=${p.id}`, kind: "publication" });
-      continue;
+      const out = await publishPost(p, { paths: p.scheduledPages ?? (p.scheduledMedia ? [p.scheduledMedia] : []) }, "Publication automatique", { late });
+      if (out.ok) {
+        applyPublishOutcome(p, out, "Publication automatique", late);
+        notify(publishers, { title: out.mode === "sandbox" ? `Publié sur ${out.label}` : "Publication effectuée", body: `${PLATFORM_LABEL[p.platform]} — ${p.title}${late ? " (avec retard)" : ""}`, href: out.url ?? `/hub/calendrier?post=${p.id}`, kind: "publication" });
+      } else {
+        update("posts", p.id, { status: "echec", reminderSent: true, publish: { mode: "api", at: nowIso(), by: "Publication automatique", message: out.reason } });
+        notify(publishers, { title: "Échec de publication", body: `${p.title} : ${out.reason}`, href: `/hub/calendrier?post=${p.id}`, kind: "publication" });
+      }
     }
-    update("posts", p.id, { reminderSent: true });
-    notify(publishers, { title: `À publier maintenant sur ${PLATFORM_LABEL[p.platform]}`, body: `${p.title} — visuel et légende prêts à copier.`, href: `/hub/calendrier?post=${p.id}`, kind: "publication" });
+  } finally {
+    g.__hubTickRunning = false;
   }
 }
 
 export function startScheduler() {
   const g = globalThis as G;
   if (g.__hubScheduler) return;
+  // Premier passage peu après le démarrage (rattrape les publications prévues pendant que le serveur était éteint)
+  setTimeout(() => { tick().catch((e) => console.error("[hub scheduler]", e)); }, 8000);
   g.__hubScheduler = setInterval(() => { tick().catch((e) => console.error("[hub scheduler]", e)); }, 60_000);
 }

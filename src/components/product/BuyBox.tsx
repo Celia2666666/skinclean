@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import type { Product } from "@/lib/types";
 import { AddToCartButton, FavoriteButton } from "./AddToCart";
+import { StockAlertForm } from "./StockAlert";
 import { PriceTag, StockBadge } from "./PriceTag";
 import { MinusIcon, PlusIcon, TruckIcon, GiftIcon, LeafIcon } from "@/components/ui/Icons";
 import { loyalty, shipping, firstOrderGift } from "@/data/config";
@@ -50,6 +51,7 @@ export function BuyBox({ product }: { product: Product }) {
         <FavoriteButton productId={product.id} className="h-[52px] w-[52px] bg-ivory" />
       </div>
 
+      {h && v.stock <= 0 && <StockAlertForm productId={product.id} variantId={v.id} origin="fiche_produit" />}
       <RefillNote productId={product.id} />
       <CompareButton productId={product.id} variant="text" />
 

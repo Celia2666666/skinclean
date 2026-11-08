@@ -11,6 +11,7 @@ import { Packshot } from "@/components/product/Packshot";
 import { AddToCartButton } from "@/components/product/AddToCart";
 import { PriceTag } from "@/components/product/PriceTag";
 import { NewsletterForm } from "@/components/layout/NewsletterForm";
+import { StockAlertForm } from "@/components/product/StockAlert";
 import { CloseIcon, LeafIcon, ArrowIcon } from "@/components/ui/Icons";
 import { euro } from "@/lib/format";
 
@@ -64,10 +65,11 @@ export function GlowAssistant() {
     const userMsg: BotMessage = { from: "user", text: label ?? value };
     setMessages((m) => [...m, userMsg]);
     setTyping(true);
-    const { messages: replies, state } = respond(value, flow, {
+    const { messages: replies, state, intent: detected } = respond(value, flow, {
       cart, loggedIn: !!acc, productId,
       orders: (acc?.orders ?? guestOrders).map((o) => ({ id: o.id, status: o.status, date: o.date })),
     });
+    logQuestion(label ?? value, detected, pathname);
     setFlow(state);
     replies.forEach((r, i) => setTimeout(() => {
       setMessages((m) => [...m, r]);
@@ -136,6 +138,7 @@ export function GlowAssistant() {
               <div className="absolute -right-6 -top-8 h-24 w-24 rounded-full bg-sky/70 blur-xl" />
               <p className="relative font-display text-xl">Glow Assistant</p>
               <p className="relative text-xs text-forest/75">Assistant guidé SKINCLEAN · réponses prédéfinies, pas une IA</p>
+              <p className="relative mt-0.5 text-[0.65rem] text-forest/60">Tes questions sont enregistrées de façon anonyme pour améliorer l’assistant.</p>
             </div>
             <div ref={scroller} className="flex-1 space-y-3 overflow-y-auto px-4 py-4" aria-live="polite">
               {messages.map((m, i) => <Message key={i} m={m} onQuick={send} onDiag={goDiag} onNavigate={close} last={i === messages.length - 1} />)}
@@ -200,6 +203,8 @@ function Message({ m, onQuick, onDiag, onNavigate, last }: { m: BotMessage; onQu
         </div>
       )}
       {m.form === "newsletter" && <div className="mt-2 w-full rounded-[2px] bg-ivory p-3"><NewsletterForm variant="compact" cta="Je profite de -20 %" /></div>}
+      {m.form === "stock-alert" && (m.checkStock && m.formProductId ? <LiveStock productId={m.formProductId} onNavigate={onNavigate} /> : <div className="mt-2 w-full rounded-[2px] bg-ivory p-3"><StockAlertForm productId={m.formProductId} origin="chatbot" compact /></div>)}
+      {m.form === "contact" && <div className="mt-2 w-full rounded-[2px] bg-ivory p-3"><ChatContactForm /></div>}
       {m.links && (
         <div className="mt-2 flex flex-wrap gap-2">
           {m.links.map((l) =>
@@ -221,5 +226,59 @@ function Message({ m, onQuick, onDiag, onNavigate, last }: { m: BotMessage; onQu
         </div>
       )}
     </motion.div>
+  );
+}
+
+/** Identifiant de conversation anonyme (onglet en cours), pour regrouper les questions dans le CRM. */
+function chatSession() {
+  try {
+    let id = sessionStorage.getItem("glow-session");
+    if (!id) { id = Math.random().toString(36).slice(2, 12); sessionStorage.setItem("glow-session", id); }
+    return id;
+  } catch { return "anonyme"; }
+}
+function logQuestion(text: string, intent: string, page: string) {
+  fetch("/api/assistant/log", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ session: chatSession(), text, intent, page }), keepalive: true }).catch(() => {});
+}
+
+function ChatContactForm() {
+  const [f, setF] = useState({ name: "", email: "", message: "" });
+  const [state, setState] = useState<"idle" | "sending" | "ok" | "demo" | "error">("idle");
+  const [crm, setCrm] = useState(false);
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setState("sending");
+    const r = await fetch("/api/contact", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...f, subject: "Message via le Glow Assistant", origin: "chatbot" }) }).catch(() => null);
+    const d = await r?.json().catch(() => ({}));
+    setCrm(!!d?.crm);
+    setState(!r?.ok ? "error" : d?.mode === "demo" ? "demo" : "ok");
+  };
+  if (state === "ok" || state === "demo") return <p className="text-sm">Merci ! {state === "demo" ? (crm ? "Mode démo : le message est enregistré dans le CRM local mais aucun e-mail n'a été transmis." : "Mode démo : le service e-mail n'est pas configuré, le message n'a pas été transmis.") : "L'équipe te répond sous 48 h ouvrées."}</p>;
+  return (
+    <form onSubmit={submit} className="space-y-2">
+      <input className="input py-2 text-sm" placeholder="Ton prénom" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} aria-label="Prénom" />
+      <input className="input py-2 text-sm" type="email" required placeholder="Ton e-mail" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} aria-label="E-mail" />
+      <textarea className="input py-2 text-sm" required rows={3} placeholder="Ton message" value={f.message} onChange={(e) => setF({ ...f, message: e.target.value })} aria-label="Message" />
+      {state === "error" && <p className="text-xs text-[#a14d5f]">Merci de vérifier les champs.</p>}
+      <button disabled={state === "sending"} className="btn btn-primary px-4 py-2 text-xs">{state === "sending" ? "Envoi…" : "Envoyer à l'équipe"}</button>
+    </form>
+  );
+}
+
+/** Disponibilité en direct d'un produit cité (« je ne trouve plus… »), puis alerte de retour en stock si besoin. */
+function LiveStock({ productId, onNavigate }: { productId: string; onNavigate: () => void }) {
+  const [d, setD] = useState<{ variants: { id: string; size: string; available: boolean }[] } | null>(null);
+  useEffect(() => { fetch(`/api/disponibilite?produit=${productId}`).then((r) => r.json()).then(setD).catch(() => setD({ variants: [] })); }, [productId]);
+  const p = getProduct(productId);
+  if (!p) return null;
+  if (!d) return <p className="mt-2 text-xs text-forest-soft">Vérification du stock…</p>;
+  const out = d.variants.filter((v) => !v.available);
+  const ok = d.variants.filter((v) => v.available);
+  return (
+    <div className="mt-2 w-full space-y-2 rounded-[2px] bg-ivory p-3 text-sm">
+      {ok.length > 0 && <p>✓ <b>{p.name}</b> est disponible{d.variants.length > 1 ? ` en ${ok.map((v) => v.size).join(" et ")}` : ""}. <Link href={`/produits/${p.slug}`} onClick={onNavigate} className="underline">Voir le produit</Link></p>}
+      {out.length > 0 && <p><b>{p.name}{d.variants.length > 1 ? ` (${out.map((v) => v.size).join(", ")})` : ""}</b> est victime de son succès : momentanément en rupture. Laisse ton e-mail, tu seras prévenu·e automatiquement dès son retour.</p>}
+      {out.length > 0 ? <StockAlertForm productId={productId} variantId={out[0].id} origin="chatbot" compact /> : <p className="text-xs text-forest-soft">Tu ne le trouves pas sur le site ? Utilise la recherche (loupe) ou demande-moi « Parler à l’équipe ».</p>}
+    </div>
   );
 }

@@ -4,14 +4,16 @@ import { useState } from "react";
 export function ContactForm() {
   const [f, setF] = useState({ name: "", email: "", subject: "Question produit", order: "", message: "" });
   const [state, setState] = useState<"idle" | "sending" | "ok" | "demo" | "error">("idle");
+  const [crm, setCrm] = useState(false);
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setState("sending");
     const r = await fetch("/api/contact", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(f) });
     const d = await r.json().catch(() => ({}));
+    setCrm(!!d.crm);
     setState(!r.ok ? "error" : d.mode === "demo" ? "demo" : "ok");
   };
-  if (state === "ok" || state === "demo") return <p className="rounded-[2px] bg-sage-soft p-5">Merci ! {state === "demo" ? "Mode démo : le service e-mail n'est pas configuré, le message n'a pas été transmis." : "Nous te répondons sous 48 h ouvrées."}</p>;
+  if (state === "ok" || state === "demo") return <p className="rounded-[2px] bg-sage-soft p-5">Merci ! {state === "demo" ? (crm ? "Mode démo : ton message est enregistré dans le CRM SKINCLEAN, mais aucun e-mail n'a été envoyé." : "Mode démo : le service e-mail n'est pas configuré, le message n'a pas été transmis.") : "Nous te répondons sous 48 h ouvrées."}</p>;
   return (
     <form onSubmit={submit} className="grid gap-3 sm:grid-cols-2">
       <div><label className="label" htmlFor="cn">Nom</label><input id="cn" className="input" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>

@@ -42,6 +42,7 @@ export const discoverLinks: { href: string; label: string }[] = [
   { href: "/kits/travel-essentials", label: "Kits de voyage" },
   { href: "/kits-de-saison", label: "Kits de saison" },
   { href: "/kits", label: "Routines complètes" },
+  { href: "/conseils", label: "Conseils skincare" },
 ];
 
 export type CategoryDef = {

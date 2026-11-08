@@ -25,7 +25,14 @@ function analyse(url: string, status: number, html: string, productId?: string):
   const description = decode(metaTags.map((m) => (/name=["']description["']/i.test(m) ? attr(m, "content") : undefined)).find(Boolean) ?? "");
   const ogImage = metaTags.some((m) => /property=["']og:image["']/i.test(m));
   const canonical = /<link[^>]+rel=["']canonical["']/i.test(html);
-  const main = /<main[\s\S]*?<\/main>/i.exec(html)?.[0] ?? html;
+  // Contenu utile : tout le document sauf en-tête, pied de page, scripts et squelette de chargement
+  // (avec le streaming, le contenu réel de la page arrive après le squelette, hors de <main>).
+  const main = html
+    .replace(/<header[\s\S]*?<\/header>/gi, " ")
+    .replace(/<footer[\s\S]*?<\/footer>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<template[\s\S]*?<\/template>/gi, " ")
+    .replace(/<nav[\s\S]*?<\/nav>/gi, " ");
   const h1 = (main.match(/<h1[\s>]/gi) ?? []).length;
   const imgs = main.match(/<img[^>]*>/gi) ?? [];
   const imagesWithoutAlt = imgs.filter((t) => !/\salt=/.test(t)).length;

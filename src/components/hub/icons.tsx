@@ -72,3 +72,4 @@ export const FacebookI = I(<path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l
 export const PinterestI = I(<><circle cx="12" cy="12" r="9" /><path d="M11 8.5c3-1 5 .5 5 3 0 2.5-1.8 4-3.5 3.5-1-.3-1.5-1-1.5-1L10 20" /></>);
 export const StoryI = I(<><circle cx="12" cy="12" r="9" strokeDasharray="3 2.2" /><circle cx="12" cy="12" r="5" /></>);
 export const BlogI = I(<><path d="M5 4h10l4 4v12H5V4Z" /><path d="M9 12h6M9 16h6M9 8h3" /></>);
+export const EyeOffI = I(<><path d="M3 3l18 18" /><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17.7 17.7 0 0 1-3.2 4.2M6.6 6.6C3.9 8.4 2 12 2 12s3.5 7 10 7c1.8 0 3.4-.5 4.7-1.3" /><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" /></>);

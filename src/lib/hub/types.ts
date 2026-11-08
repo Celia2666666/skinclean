@@ -15,6 +15,7 @@ export type PostStatus =
   | "programme"
   | "publie" // confirmé par l'API de la plateforme
   | "publie_manuel" // publié à la main, déclaré par un utilisateur
+  | "publie_test" // publié sur un compte de test local (aucune diffusion réelle)
   | "echec";
 
 export type PostFormat = "post" | "carrousel" | "reel" | "story" | "video" | "epingle" | "article" | "newsletter";
@@ -29,6 +30,8 @@ export interface TextLayer {
   text: string; size: number; weight: 400 | 500 | 600 | 700; color: string;
   align: "left" | "center" | "right"; font: "display" | "body"; upper?: boolean; lineHeight?: number; letterSpacing?: number;
   bg?: string; pad?: number; opacity?: number;
+  /** Boîte de texte : hauteur maximale (la taille diminue automatiquement pour tenir) et alignement vertical dans la boîte. */
+  maxH?: number; valign?: "top" | "middle" | "bottom";
 }
 export interface ImageLayer {
   id: string; type: "image"; x: number; y: number; w: number; h: number; src: string;
@@ -62,7 +65,7 @@ export interface VideoScript {
   duration?: string;
 }
 
-export interface PublishResult { mode: "api" | "manuel"; at: string; by: string; externalId?: string; url?: string; message?: string }
+export interface PublishResult { mode: "api" | "manuel" | "sandbox"; at: string; by: string; externalId?: string; url?: string; message?: string }
 
 export interface Post {
   id: string;
@@ -88,10 +91,16 @@ export interface Post {
   publish?: PublishResult;
   /** Visuel rendu au moment de la programmation (publication automatique à l'heure prévue). */
   scheduledMedia?: string;
+  /** Toutes les pages rendues (carrousel) pour la publication programmée. */
+  scheduledPages?: string[];
   reminderSent?: boolean;
+  /** Réservé par le planificateur au moment de la publication automatique (évite les doublons). */
+  publishClaimed?: boolean;
   /** Modèle de la bibliothèque (non planifié dans le calendrier). */
   library?: boolean;
   libraryCategory?: string;
+  /** Mis en avant en tête de la bibliothèque. */
+  featured?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -120,8 +129,14 @@ export interface Campaign {
   budget: { label: string; amount: number }[];
   kpis: { label: string; target: string }[];
   productIds: string[];
-  plan: { day: number; platform: Platform; format: PostFormat; title: string; hour: string; idea: string; cta?: string }[];
+  plan: {
+    day: number; platform: Platform; format: PostFormat; title: string; hour: string; idea: string; cta?: string;
+    /** Contenu finalisé (texte, visuel ou vidéo, script) repris tel quel à l'activation de la campagne. */
+    content?: { caption: string; hashtags: string[]; visual?: Visual; script?: VideoScript; slides?: string[]; productIds?: string[]; articleId?: string };
+  }[];
   emailIds: string[]; adIds: string[]; banner?: { title: string; text: string; cta: string };
+  /** Campagne exemple entièrement finalisée, affichée en tête de liste. */
+  example?: boolean;
   scripts: { title: string; hook: string; scenes: string[] }[];
   activatedAt?: string; activatedBy?: string; budgetValidatedAt?: string; budgetValidatedBy?: string;
   createdAt: string; updatedAt: string;
@@ -209,6 +224,10 @@ export interface Settings {
   frequencies: Record<string, { perWeek?: number; perMonth?: number; label: string }>;
   brand: { colors: { name: string; hex: string }[]; tone: string[] };
   demoMode: boolean;
+  /** Valider un contenu le programme automatiquement à sa date du calendrier. */
+  autoSchedule?: boolean;
+  /** Comptes de test locaux (Instagram, TikTok, Facebook, Pinterest) utilisés quand aucun vrai compte n'est connecté. */
+  sandbox?: { enabled: boolean; handle: string };
   publishingRules: { requireValidation: boolean; validatorRoles: Role[] };
 }
 
@@ -222,12 +241,18 @@ export const PLATFORM_COLOR: Record<Platform, string> = {
 };
 export const STATUS_LABEL: Record<PostStatus, string> = {
   brouillon: "Brouillon", a_valider: "À valider", modifications: "Modifications demandées", valide: "Validé", programme: "Programmé",
-  publie: "Publié (confirmé)", publie_manuel: "Publié manuellement", echec: "Échec",
+  publie: "Publié (confirmé)", publie_manuel: "Publié manuellement", publie_test: "Publié · simulé", echec: "Échec",
 };
 export const ROLE_LABEL: Record<Role, string> = {
-  admin: "Administrateur", marketing: "Responsable marketing", createur: "Créateur de contenu", validateur: "Client validateur",
+  admin: "Accès complet", marketing: "Responsable marketing", createur: "Créateur de contenu", validateur: "Client validateur",
 };
 export const AD_PLATFORM_LABEL: Record<AdPlatform, string> = { google_ads: "Google Ads", meta_ads: "Meta Ads", tiktok_ads: "TikTok Ads" };
 
 /** Document à créer (identifiant et dates gérés par la base). */
 export type NewDoc<T> = Omit<T, "id" | "createdAt" | "updatedAt"> & { id?: string; createdAt?: string };
+
+/** Publication reçue par un compte de test local (réseau social fictif, aucune diffusion réelle). */
+export interface SandboxPost {
+  id: string; platform: Platform; postId: string; title: string; caption: string; hashtags: string[];
+  images: string[]; video?: string; publishedAt: string; scheduledFor: string; late?: boolean; by: string; createdAt: string; updatedAt: string;
+}

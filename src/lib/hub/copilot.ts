@@ -91,7 +91,7 @@ function guided(u: HubUser, q: string): CopilotReply {
     return {
       mode: "guide", links: [{ label: `Voir ${monthLabel(key)}`, href: `/hub/calendrier?view=mois&date=${start}` }],
       reply: existing.length >= plan.length && existing.length > 40
-        ? `Le calendrier de ${monthLabel(key)} est déjà préparé : ${existing.length} contenus planifiés. Je peux néanmoins compléter les créneaux libres (${plan.length} propositions).`
+        ? `Le calendrier de ${monthLabel(key)} est déjà préparé : ${existing.length} contenus planifiés. ${plan.length ? `Je peux compléter ${plan.length} créneau(x) encore libre(s) aux fréquences de ta stratégie.` : "Tous les créneaux de ta stratégie sont couverts : il ne reste qu'à valider les contenus."}`
         : `Je te propose ${plan.length} contenus pour ${monthLabel(key)}, aux fréquences de ta stratégie : ${by("instagram")} posts Instagram, ${by("story")} stories, ${by("tiktok")} TikTok, ${by("facebook")} Facebook et ${by("pinterest")} épingles. Piliers couverts : ${themes.join(", ")}.\n\nIls seront créés en brouillon : rien n'est publié sans ta validation.`,
       actions: plan.length ? [{ id: aid(), kind: "plan_posts", label: `Créer ${plan.length} brouillons pour ${monthLabel(key)}`, summary: plan.slice(0, 5).map((p) => `${p.date.slice(0, 10)} · ${PLATFORM_LABEL[p.platform]} · ${p.title}`).join("\n") + (plan.length > 5 ? `\n… et ${plan.length - 5} autres` : ""), payload: { start: start < t ? t : start, end } }] : [],
     };
@@ -176,7 +176,7 @@ function guided(u: HubUser, q: string): CopilotReply {
       { day: 2, platform: "instagram", format: "carrousel", hour: "12:30", title: `${p.name} : mode d'emploi`, idea: p.usage },
       { day: 3, platform: "story", format: "story", hour: "12:00", title: `Quiz : ${p.name} est-il fait pour toi ?`, idea: "Story quiz + lien Skin Diag." },
       { day: 4, platform: "pinterest", format: "epingle", hour: "20:30", title: `Routine avec ${p.name}`, idea: "Épingle routine." },
-      { day: 5, platform: "facebook", format: "post", hour: "13:00", title: `Pourquoi on aime ${p.name}`, idea: p.benefits.join(", ") },
+      { day: 5, platform: "facebook", format: "post", hour: "13:00", title: `Pourquoi on aime ${p.name}`, idea: p.benefits.map((b, i) => (i && !/^[A-ZÀ-Ý]{2,}/.test(b) ? b.charAt(0).toLowerCase() + b.slice(1) : b)).join(", ") },
       { day: 7, platform: "newsletter", format: "newsletter", hour: "09:00", title: `Newsletter ${p.name}`, idea: "Focus produit + conseils." },
       { day: 9, platform: "tiktok", format: "video", hour: "19:00", title: `ASMR texture ${p.name}`, idea: p.textureLabel },
       { day: 12, platform: "instagram", format: "post", hour: "18:00", title: `${p.name} en majesté`, idea: "Visuel produit." },

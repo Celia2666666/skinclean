@@ -2,6 +2,7 @@ import { products } from "@/data/products";
 import { kits } from "@/data/kits";
 import { allCategoryDefs, typeCategories } from "@/data/categories";
 import type { Kit, Product, Variant } from "./types";
+import { liveStockOf } from "./live-stock";
 
 export type PriceOverrides = Record<string, Record<string, { price?: number; stock?: number }>>;
 
@@ -16,11 +17,15 @@ export const getCategoryProducts = (slug: string) => {
 };
 export const categoryOfType = (p: Product) => typeCategories.find((c) => c.types.includes(p.type));
 
-/** Variante avec surcharges admin éventuelles (prix/stock). */
+/**
+ * Variante avec surcharges admin éventuelles (prix/stock) et stock du CRM quand il est disponible (local).
+ * Le stock du CRM n'est appliqué que si `overrides` est fourni : les composants ne le passent qu'après hydratation,
+ * ce qui évite tout écart entre le rendu serveur (stock du catalogue) et le navigateur.
+ */
 export function resolveVariant(p: Product, variantId?: string, overrides?: PriceOverrides): Variant {
   const base = p.variants.find((v) => v.id === variantId) ?? p.variants[0];
   const o = overrides?.[p.id]?.[base.id];
-  return { ...base, price: o?.price ?? base.price, stock: o?.stock ?? base.stock };
+  return { ...base, price: o?.price ?? base.price, stock: o?.stock ?? (overrides ? liveStockOf(p.id, base.id) : undefined) ?? base.stock };
 }
 
 export const getKits = () => kits;

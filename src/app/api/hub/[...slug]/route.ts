@@ -1,5 +1,9 @@
 import { cookies } from "next/headers";
-import { HttpError, SESSION_COOKIE, login, logout, requireApiUser } from "@/lib/hub/auth";
+import { HttpError, SESSION_COOKIE, createResetToken, hubAvailable, login, logout, passwordProblem, requireApiUser, resetPasswordWithToken } from "@/lib/hub/auth";
+import { rmSync, writeFileSync } from "node:fs";
+import path from "node:path";
+import { DATA_DIR } from "@/lib/hub/db";
+import { sendEmail } from "@/emails/send";
 import { ensureSeeded, events, get, list, logActivity } from "@/lib/hub/repo";
 import { getHandler } from "@/lib/hub/handlers";
 import { saveBuffer, MAX_UPLOAD } from "@/lib/hub/files";
@@ -27,6 +31,7 @@ const attempts = new Map<string, { n: number; until: number }>();
 export async function POST(req: Request, ctx: RouteContext<"/api/hub/[...slug]">) {
   const { slug } = await ctx.params;
   const name = slug.join("/");
+  if (!hubAvailable()) return json({ error: "Marketing Hub indisponible sur cet hébergement." }, 404);
   try {
     await ensureSeeded();
     if (name === "auth/login") {
@@ -43,6 +48,40 @@ export async function POST(req: Request, ctx: RouteContext<"/api/hub/[...slug]">
       (await cookies()).set(SESSION_COOKIE, r.token, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 14 * 86400 });
       logActivity({ userId: r.user.id, userName: r.user.name, action: "connexion", entity: "user", entityId: r.user.id, label: "Connexion" });
       return json({ user: r.user });
+    }
+    if (name === "auth/forgot") {
+      // Réponse identique que le compte existe ou non (on ne révèle pas les e-mails enregistrés)
+      const ip = req.headers.get("x-forwarded-for") ?? "local";
+      const a = attempts.get(`reset:${ip}`);
+      if (a && a.n >= 5 && a.until > Date.now()) return json({ error: "Trop de demandes. Réessaie dans quelques minutes." }, 429);
+      attempts.set(`reset:${ip}`, { n: (a?.n ?? 0) + 1, until: Date.now() + 15 * 60_000 });
+      const b = await req.json().catch(() => ({}));
+      const delivery = process.env.RESEND_API_KEY ? "email" : "fichier";
+      const r = createResetToken(String(b.email ?? ""));
+      if (r) {
+        const link = `${new URL(req.url).origin}/hub/reinitialiser?token=${r.token}`;
+        const until = new Date(r.expiresAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+        if (delivery === "email") {
+          await sendEmail(r.user.email, "Réinitialise ton mot de passe — Marketing Hub SKINCLEAN", `<p>Bonjour ${r.user.name},</p><p>Pour choisir un nouveau mot de passe, clique sur ce lien (valable jusqu'à ${until}, utilisable une seule fois) :</p><p><a href="${link}">${link}</a></p><p>Si tu n'es pas à l'origine de cette demande, ignore cet e-mail.</p>`);
+        } else {
+          const file = path.join(DATA_DIR, "lien-reinitialisation.txt");
+          writeFileSync(file, `Marketing Hub SKINCLEAN — réinitialisation du mot de passe\n\nCompte : ${r.user.email}\nLien (valable jusqu'à ${until}, utilisable une seule fois) :\n${link}\n`);
+          console.log(`\n[Marketing Hub] Lien de réinitialisation du mot de passe (${r.user.email}) : ${link}\n`);
+        }
+        logActivity({ userId: r.user.id, userName: r.user.name, action: "securite", entity: "user", entityId: r.user.id, label: "Demande de réinitialisation du mot de passe" });
+      }
+      return json({ ok: true, delivery, file: delivery === "fichier" ? "data/hub/lien-reinitialisation.txt" : undefined });
+    }
+    if (name === "auth/reset") {
+      const b = await req.json().catch(() => ({}));
+      const pw = String(b.password ?? "");
+      const problem = passwordProblem(pw);
+      if (problem) return json({ error: problem }, 400);
+      const u = resetPasswordWithToken(String(b.token ?? ""), pw);
+      if (!u) return json({ error: "Ce lien est invalide, expiré ou déjà utilisé. Fais une nouvelle demande." }, 400);
+      rmSync(path.join(DATA_DIR, "lien-reinitialisation.txt"), { force: true }); // le lien utilisé ne reste pas sur le disque
+      logActivity({ userId: u.id, userName: u.name, action: "securite", entity: "user", entityId: u.id, label: "Mot de passe réinitialisé" });
+      return json({ ok: true });
     }
     if (name === "auth/logout") {
       const c = await cookies();
@@ -90,6 +129,7 @@ export async function GET(req: Request, ctx: RouteContext<"/api/hub/[...slug]">)
   const { slug } = await ctx.params;
   const name = slug.join("/");
   const url = new URL(req.url);
+  if (!hubAvailable()) return json({ error: "Marketing Hub indisponible sur cet hébergement." }, 404);
   try {
     await ensureSeeded();
     const u = await requireApiUser();

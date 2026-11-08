@@ -14,11 +14,11 @@ describe("Marketing Hub — contenus initiaux", () => {
     await repo.ensureSeeded();
   });
 
-  it("crée les 4 rôles et permet la connexion", async () => {
+  it("crée un compte universel avec tous les droits et permet la connexion", async () => {
     const { seedPassword } = await import("@/lib/hub/seed");
-    expect(auth.listUsers().map((u) => u.role).sort()).toEqual(["admin", "createur", "marketing", "validateur"]);
-    expect(auth.login("client@skinclean.local", seedPassword())).not.toBeNull();
-    expect(auth.login("client@skinclean.local", "mauvais")).toBeNull();
+    expect(auth.listUsers().map((u) => [u.email, u.role])).toEqual([["skinclean@skinclean.local", "admin"]]);
+    expect(auth.login("skinclean@skinclean.local", seedPassword())).not.toBeNull();
+    expect(auth.login("skinclean@skinclean.local", "mauvais")).toBeNull();
   });
 
   it("prépare un calendrier ≥ 3 mois aux fréquences demandées", () => {
@@ -49,5 +49,21 @@ describe("Marketing Hub — contenus initiaux", () => {
     expect(posts.some((p) => p.status === "publie" || p.status === "publie_manuel")).toBe(false);
     expect(repo.list("metrics").every((m) => m.source === "demo")).toBe(true);
     expect(repo.list("ads").some((a) => a.status === "active")).toBe(false);
+  });
+});
+
+describe("Marketing Hub — publication automatique", () => {
+  it("publie à l'heure prévue sur le compte de test un contenu validé et programmé, une seule fois", async () => {
+    const repo = await import("@/lib/hub/repo");
+    const { tick } = await import("@/lib/hub/scheduler");
+    await repo.ensureSeeded();
+    const p = repo.list("posts").find((x) => x.platform === "instagram" && !x.library)!;
+    repo.update("posts", p.id, { status: "programme", date: "2020-01-01T10:00", scheduledPages: ["/media/brand/logo-mark.png"], reminderSent: true, publishClaimed: false });
+    await tick();
+    await tick(); // un second passage ne doit pas republier
+    const after = repo.get("posts", p.id)!;
+    expect(after.status).toBe("publie_test");
+    expect(after.publish?.mode).toBe("sandbox");
+    expect(repo.list("sandbox").filter((s) => s.postId === p.id)).toHaveLength(1);
   });
 });

@@ -1,6 +1,7 @@
 import "server-only";
 import { Resend } from "resend";
 import { siteUrlPublic } from "@/lib/site";
+import { settings } from "./repo";
 import type { Platform } from "./types";
 
 /**
@@ -28,6 +29,7 @@ export function connectors(): ConnectorInfo[] {
     { id: "google_ads", name: "Google Ads", scope: "Publicité", connected: false, env: ["GOOGLE_ADS_DEVELOPER_TOKEN", "GOOGLE_ADS_CUSTOMER_ID"], capability: "Export CSV au format Google Ads Editor. Activation via API : connecteur à brancher.", limits: "L'activation passe par Google Ads Editor ou l'interface Google Ads ; le Hub enregistre la déclaration et la validation du budget." },
     { id: "meta_ads", name: "Meta Ads", scope: "Publicité", connected: false, env: ["META_ADS_ACCOUNT_ID"], capability: "Export des campagnes (audience, annonces, budget, UTM). Activation via API : connecteur à brancher." },
     { id: "tiktok_ads", name: "TikTok Ads", scope: "Publicité", connected: false, env: ["TIKTOK_ADS_ADVERTISER_ID"], capability: "Export des campagnes. Activation via API : connecteur à brancher." },
+    { id: "sandbox", name: "Simulation locale des comptes (Instagram, TikTok, Facebook, Pinterest)", scope: "Réseaux sociaux", connected: !!settings().sandbox?.enabled, env: [], capability: "Tant qu'un réseau n'est pas connecté, ses publications sont simulées dans « Mes comptes » (/hub/mes-comptes) à l'heure prévue, sans diffusion réelle.", limits: "Activables ou désactivables ci-dessous." },
     { id: "anthropic", name: "Claude (Assistant IA)", scope: "IA", connected: has("ANTHROPIC_API_KEY"), env: ["ANTHROPIC_API_KEY"], capability: "Marketing Copilot génératif (rédaction de brouillons à partir des données du Hub).", limits: "Sans clé : assistant guidé (règles + données du Hub), indiqué comme tel." },
   ];
 }

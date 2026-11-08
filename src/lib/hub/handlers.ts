@@ -4,12 +4,14 @@ import { HttpError, checkPassword, createUser, deleteUser, getUser, listUsers, s
 import { nowIso, uid } from "./db";
 import { activity, create, emitEvent, get, list, logActivity, nextTicketNumber, notify, put, remove, settings, update, type CollectionName, type Collections } from "./repo";
 import { can, type Permission } from "./permissions";
-import { connectorFor, publishToPlatform, searchConsoleQuery, sendBroadcast, sendTestEmail } from "./connectors";
+import { searchConsoleQuery, sendBroadcast, sendTestEmail } from "./connectors";
+import { destinationFor, publishPost, type PostPublishOutcome } from "./publish";
 import { saveDataUrl } from "./files";
 import { patchOverrides } from "./site-sync";
 import { renderEmailHtml } from "./email-html";
 import { addDays, todayYmd, ymdhm } from "./dates";
-import { tplVideoCover, tplProductHero } from "./templates";
+import { tplBanner, tplCarousel, tplProductHero, tplStoryPoll, tplVideoCover } from "./templates";
+import { products as catalog } from "@/data/products";
 import type { NewDoc, AdCampaign, Article, Asset, Campaign, Comment, EmailCampaign, HubUser, Keyword, Metric, Objective, Persona, Post, RoadmapMonth, Role, Settings, StrategySection, Ticket } from "./types";
 import { PLATFORM_LABEL, ROLE_LABEL } from "./types";
 import type { Product, Kit } from "@/lib/types";
@@ -57,23 +59,49 @@ function savePostImage(post: Post, dataUrl: unknown, folder: string) {
   return saveDataUrl(dataUrl, `${post.id}.png`, folder);
 }
 
-async function doPublish(u: HubUser, post: Post, imageDataUrl?: unknown) {
+/** Enregistre les pages rendues côté navigateur (carrousel : plusieurs pages) et renvoie leurs chemins publics. */
+function savePostPages(post: Post, images: unknown, folder: string): string[] {
+  const list = Array.isArray(images) ? images : typeof images === "string" ? [images] : [];
+  return list.slice(0, 10).map((d, i) => (typeof d === "string" && d.startsWith("data:") ? saveDataUrl(d, `${post.id}-${i + 1}.jpg`, folder).url : null)).filter(Boolean) as string[];
+}
+
+/** Applique le résultat d'une publication (vrai compte ou compte de test) au contenu. */
+export function applyPublishOutcome(post: Post, out: Extract<PostPublishOutcome, { ok: true }>, by: string, late = false) {
+  const sandbox = out.mode === "sandbox";
+  const next = update("posts", post.id, {
+    status: sandbox ? "publie_test" : "publie", reminderSent: true,
+    publish: { mode: out.mode, at: nowIso(), by, externalId: out.externalId, url: out.url, message: sandbox ? `Publié sur ${out.label} — simulé en local${late ? ", avec retard : le serveur local était éteint à l'heure prévue" : ""}.` : undefined },
+  })!;
+  logActivity({ userId: "system", userName: by, action: "publication", entity: "post", entityId: post.id, label: post.title, detail: sandbox ? `${out.label} (simulé en local)` : `Publié via l'API ${PLATFORM_LABEL[post.platform]} (id ${out.externalId})` });
+  emitEvent(sandbox ? "post.published_sandbox" : "post.published", { postId: post.id, platform: post.platform, externalId: out.externalId, campaignId: post.campaignId });
+  return next;
+}
+
+async function doPublish(u: HubUser, post: Post, images?: unknown) {
   const s = settings();
   if (s.publishingRules.requireValidation && !["valide", "programme"].includes(post.status))
     throw new HttpError(409, "Ce contenu doit d'abord être validé.");
   if (post.platform === "newsletter" || post.platform === "blog")
     throw new HttpError(400, post.platform === "blog" ? "Les articles se publient depuis le module SEO." : "Les newsletters s'envoient depuis le module E-mailing.");
-  const img = savePostImage(post, imageDataUrl, "publications");
-  const out = await publishToPlatform({
-    platform: post.platform, caption: [post.caption, post.hashtags.join(" ")].filter(Boolean).join("\n\n"), title: post.title,
-    link: `${siteUrlPublic()}/`, imagePublicPath: img?.url ?? post.scheduledMedia, imageBase64: img?.base64,
-    videoPath: post.visual?.kind === "video" ? post.visual.src : undefined,
-  });
+  const paths = savePostPages(post, images, "publications");
+  const out = await publishPost(post, { paths: paths.length ? paths : post.scheduledPages ?? (post.scheduledMedia ? [post.scheduledMedia] : []) }, u.name);
   if (!out.ok) return { published: false, reason: out.reason, needsConnection: out.needsConnection };
-  const next = update("posts", post.id, { status: "publie", publish: { mode: "api", at: nowIso(), by: u.name, externalId: out.externalId, url: out.url } })!;
-  log(u, "publication", "post", post.id, post.title, `Publié via l'API ${PLATFORM_LABEL[post.platform]} (id ${out.externalId})`);
-  emitEvent("post.published", { postId: post.id, platform: post.platform, externalId: out.externalId, campaignId: post.campaignId });
-  return { published: true, post: next };
+  const next = applyPublishOutcome(post, out, u.name);
+  return { published: true, mode: out.mode, label: out.label, url: out.url, post: next };
+}
+
+/** Objectif court (sans couper un mot) pour les publications d'une campagne. */
+const shortObjective = (o: string) => { const t = o.split(/[—.]/)[0].trim(); return t.length <= 60 ? t : t.slice(0, 60).replace(/\s+\S*$/, "") + "…"; };
+
+/** Visuel d'une action de campagne sans contenu finalisé : gabarit adapté au format, avec le packshot du produit de la campagne. */
+function campaignVisual(c: Campaign, step: Campaign["plan"][number]): Post["visual"] {
+  const packshot = catalog.find((p) => p.id === c.productIds[0])?.media.packshot;
+  if (step.format === "video" || step.format === "reel") return { kind: "design", design: tplVideoCover({ headline: step.title, packshot }) };
+  if (step.platform === "newsletter" || step.platform === "blog") return { kind: "design", design: tplBanner({ format: "newsletter", headline: step.title.split(":")[0], eyebrow: c.name, packshot }) };
+  if (step.platform === "story") return { kind: "design", design: tplStoryPoll({ eyebrow: c.name, headline: step.title.replace(/^Story\s*(sondage)?\s*[—:-]\s*/i, ""), items: ["Oui", "Pas encore"], packshot }) };
+  if (step.format === "carrousel") return { kind: "design", design: tplCarousel({ headline: step.title, eyebrow: c.name, packshot, items: [c.message, step.idea || c.concept, step.cta ?? c.banner?.cta ?? "Découvre-le sur skinclean.fr"].filter(Boolean) }) };
+  const format = step.platform === "pinterest" ? "pinterest" : step.platform === "facebook" ? "facebook" : "instagram";
+  return { kind: "design", design: tplProductHero({ format, headline: step.title, eyebrow: c.name, sub: c.message, packshot }) };
 }
 
 const H: Record<string, Handler> = {
@@ -156,14 +184,14 @@ const H: Record<string, Handler> = {
     const p = postOr404(b.id);
     if (p.status === "publie") throw new HttpError(409, "Contenu déjà publié.");
     const date = str(b.date, "date");
-    const next = update("posts", p.id, { date, reminderSent: false })!;
+    const next = update("posts", p.id, { date, reminderSent: true, publishClaimed: false })!;
     log(u, "deplacement", "post", p.id, p.title, `${p.date} → ${date}`);
     return next;
   } },
   "posts/postpone": { perm: "content.edit", fn: (u, b) => {
     const p = postOr404(b.id);
     const date = typeof b.date === "string" ? b.date : addDays(p.date, Number(b.days ?? 1));
-    const next = update("posts", p.id, { date, reminderSent: false })!;
+    const next = update("posts", p.id, { date, reminderSent: true, publishClaimed: false })!;
     log(u, "report", "post", p.id, p.title, `Reporté au ${date.replace("T", " à ")}`);
     return next;
   } },
@@ -198,14 +226,19 @@ const H: Record<string, Handler> = {
     const ids = Array.isArray(b.ids) ? (b.ids as string[]) : [String(b.id)];
     const out = ids.map((id) => {
       const p = postOr404(id);
-      if (["publie", "publie_manuel"].includes(p.status)) return p;
-      const next = update("posts", p.id, { status: "valide", comments: [...p.comments, comment(u, String(b.comment || "Contenu validé."), "validation")] })!;
+      if (["publie", "publie_manuel", "publie_test"].includes(p.status)) return p;
+      // Les visuels rendus par le navigateur sont enregistrés : le contenu peut ensuite se publier seul à son heure
+      const paths = savePostPages(p, (b.media as Record<string, unknown> | undefined)?.[p.id], "programmes");
+      const pages = paths.length ? paths : p.scheduledPages;
+      const auto = settings().autoSchedule && !["newsletter", "blog"].includes(p.platform) && p.date > ymdhm(new Date()) && (!!pages?.length || p.visual?.kind === "video") && destinationFor(p.platform).mode !== "aucune";
+      const next = update("posts", p.id, { status: auto ? "programme" : "valide", scheduledPages: pages, scheduledMedia: pages?.[0], reminderSent: true, publishClaimed: false, comments: [...p.comments, comment(u, String(b.comment || (auto ? `Contenu validé et programmé le ${p.date.replace("T", " à ")}.` : "Contenu validé.")), "validation")] })!;
       log(u, "validation", "post", p.id, p.title, b.comment ? String(b.comment) : undefined);
       emitEvent("post.validated", { postId: p.id, by: u.id });
       return next;
     });
     notify(usersWith("content.edit").filter((x) => x !== u.id), { title: ids.length > 1 ? `${ids.length} contenus validés` : "Contenu validé", body: out[0]?.title ?? "", href: "/hub/calendrier", kind: "validation" });
-    return ids.length > 1 ? out : out[0];
+    const scheduled = out.filter((p) => p.status === "programme");
+    return { posts: out, scheduled: scheduled.length, message: scheduled.length ? `${ids.length > 1 ? `${ids.length} contenus validés` : "Contenu validé"} : ${scheduled.length} programmé(s), publication automatique à l'heure prévue.` : ids.length > 1 ? `${ids.length} contenus validés` : "Contenu validé" };
   } },
   "posts/request-changes": { perm: "content.validate", fn: (u, b) => {
     const p = postOr404(b.id);
@@ -224,11 +257,12 @@ const H: Record<string, Handler> = {
     if (settings().publishingRules.requireValidation && p.status !== "valide" && p.status !== "programme") throw new HttpError(409, "Ce contenu doit d'abord être validé.");
     const date = typeof b.date === "string" ? b.date : p.date;
     if (date < ymdhm(new Date())) throw new HttpError(400, "La date de programmation est passée.");
-    const img = savePostImage(p, b.imageDataUrl, "programmes");
-    const next = update("posts", p.id, { status: "programme", date, scheduledMedia: img?.url ?? p.scheduledMedia, reminderSent: false })!;
-    const c = connectorFor(p.platform);
+    const paths = savePostPages(p, b.images ?? b.imageDataUrl, "programmes");
+    const pages = paths.length ? paths : p.scheduledPages;
+    const next = update("posts", p.id, { status: "programme", date, scheduledPages: pages, scheduledMedia: pages?.[0] ?? p.scheduledMedia, reminderSent: true, publishClaimed: false })!;
+    const dest = destinationFor(p.platform);
     log(u, "programmation", "post", p.id, p.title, `Programmé le ${date.replace("T", " à ")}`);
-    return { post: next, automatic: !!c?.connected, message: c?.connected ? `Publication automatique via ${c.name} à l'heure prévue.` : `${c?.name ?? PLATFORM_LABEL[p.platform]} n'est pas connecté : tu recevras un rappel à l'heure prévue pour publier manuellement.` };
+    return { post: next, automatic: dest.mode !== "aucune", message: dest.mode !== "aucune" ? `Programmé : publication automatique sur ${dest.label} le ${date.slice(8, 10)}/${date.slice(5, 7)} à ${date.slice(11, 16)}.` : `${dest.label} n'est pas connecté : tu recevras un rappel à l'heure prévue pour publier manuellement.` };
   } },
   "posts/unschedule": { perm: "content.publish", fn: (u, b) => {
     const p = postOr404(b.id);
@@ -236,7 +270,7 @@ const H: Record<string, Handler> = {
     log(u, "deprogrammation", "post", p.id, p.title);
     return next;
   } },
-  "posts/publish": { perm: "content.publish", fn: async (u, b) => doPublish(u, postOr404(b.id), b.imageDataUrl) },
+  "posts/publish": { perm: "content.publish", fn: async (u, b) => doPublish(u, postOr404(b.id), b.images ?? b.imageDataUrl) },
   "posts/declare-published": { perm: "content.publish", fn: (u, b) => {
     const p = postOr404(b.id);
     if (p.status === "publie") throw new HttpError(409, "Déjà publié via l'API.");
@@ -290,13 +324,12 @@ const H: Record<string, Handler> = {
     for (const step of c.plan) {
       const date = `${addDays(start, step.day)}T${step.hour}`;
       if (existing.some((p) => p.title === step.title && p.date.slice(0, 10) === date.slice(0, 10))) continue;
-      const visual: Post["visual"] = step.format === "video" || step.format === "reel"
-        ? { kind: "design", design: tplVideoCover({ headline: step.title, packshot: undefined }) }
-        : { kind: "design", design: tplProductHero({ format: step.platform === "pinterest" ? "pinterest" : step.platform === "story" ? "story" : step.platform === "facebook" ? "facebook" : "instagram", headline: step.title, eyebrow: c.name, sub: c.message }) };
+      const x = step.content;
       created.push(create("posts", {
-        title: step.title, date, platform: step.platform, format: step.format, objective: c.objective.split(/[—.]/)[0].slice(0, 60), pillar: "Campagne",
-        personaId: c.personaIds[0], campaignId: c.id, caption: `${step.idea}\n\n${c.message}`, hashtags: ["#skinclean"], cta: step.cta ?? c.banner?.cta ?? "Découvrir",
-        productIds: products, status: "brouillon", comments: [], visual,
+        title: step.title, date, platform: step.platform, format: step.format, objective: shortObjective(c.objective), pillar: "Campagne",
+        personaId: c.personaIds[0], campaignId: c.id, caption: x?.caption ?? `${step.idea}\n\n${c.message}`, hashtags: x?.hashtags ?? ["#skinclean"], cta: step.cta ?? c.banner?.cta ?? "Découvrir",
+        productIds: x?.productIds ?? products, status: "brouillon", comments: [], visual: x?.visual ?? campaignVisual(c, step),
+        script: x?.script, slides: x?.slides, articleId: x?.articleId,
         emailId: step.platform === "newsletter" ? c.emailIds[0] : undefined,
       } as NewDoc<Post>));
     }
@@ -598,7 +631,9 @@ const H: Record<string, Handler> = {
     const data = patchOverrides((o) => {
       const added = o.addedProducts?.find((p) => p.id === id);
       if (added) return { ...o, addedProducts: o.addedProducts!.map((p) => (p.id === id ? { ...p, ...clean, media: { ...p.media, ...((clean.media as object) ?? {}) } } as Product : p)) };
-      return { ...o, products: { ...(o.products ?? {}), [id]: { ...(o.products?.[id] ?? {}), ...clean } } };
+      const prev = o.products?.[id] ?? {};
+      // Les médias se fusionnent : changer une image ne doit pas effacer les autres images déjà modifiées
+      return { ...o, products: { ...(o.products ?? {}), [id]: { ...prev, ...clean, ...(clean.media ? { media: { ...(prev.media ?? {}), ...(clean.media as object) } } : {}) } } };
     }, u.name);
     log(u, "site", "product", id, "Fiche produit modifiée", Object.keys(clean).join(", "));
     emitEvent("product.updated", { productId: id, fields: Object.keys(clean) });
@@ -613,8 +648,8 @@ const H: Record<string, Handler> = {
     const p: Product = {
       id, slug, name, kind: String(b.kind ?? "Soin"), tagline: String(b.tagline ?? ""), type: (b.type as Product["type"]) ?? "serum", concerns: (b.concerns as Product["concerns"]) ?? [], skinTypes: (b.skinTypes as Product["skinTypes"]) ?? ["normale", "mixte", "seche", "grasse", "sensible"],
       description: String(b.description ?? ""), benefits: (b.benefits as string[]) ?? [], variants: [{ id: "std", label: "Format classique", size: String(b.size ?? "30 ml"), price, stock: Number(b.stock ?? 0) }],
-      keyIngredients: [], inci: String(b.inci ?? "À compléter (liste INCI validée)."), usage: String(b.usage ?? ""), tips: [], moments: ["matin", "soir"], frequency: String(b.frequency ?? "Matin et soir"), step: (b.step as Product["step"]) ?? "serum",
-      actives: [], intensity: 1, naturalOrigin: null, routineRole: "addon", isNew: true, color: { bg: "#EFEEEA", accent: "#5E7A68", liquid: "#EEF2EC" }, pack: "dropper", texture: "drops", textureLabel: String(b.textureLabel ?? ""),
+      keyIngredients: [], inci: String(b.inci ?? "À compléter (liste INCI validée)."), usage: String(b.usage ?? ""), tips: [], moments: ["matin", "soir"], frequency: String(b.frequency ?? "Matin et soir"), step: STEP_OF[(b.type as Product["type"]) ?? "serum"] ?? "serum",
+      actives: [], intensity: 1, naturalOrigin: null, routineRole: "addon", isNew: true, color: { bg: "#EFEEEA", accent: "#5E7A68", liquid: "#EEF2EC" }, pack: PACK_OF[(b.type as Product["type"]) ?? "serum"] ?? "bottle", texture: "none", textureLabel: String(b.textureLabel ?? ""),
       media: { packshot: typeof b.packshot === "string" ? b.packshot : undefined }, faq: [], reviews: [],
     };
     patchOverrides((o) => ({ ...o, addedProducts: [...(o.addedProducts ?? []), p] }), u.name);
@@ -671,7 +706,8 @@ const H: Record<string, Handler> = {
   } },
   "tickets/reply": { fn: (u, b) => {
     const t = must(get("tickets", String(b.id)), "Demande");
-    const isTeam = can(u.role, "tickets.manage");
+    // Seul un compte « Responsable marketing » répond au nom de l'équipe ; le compte universel écrit en tant que client
+    const isTeam = u.role === "marketing";
     const msg = { id: uid("m"), author: u.name, role: isTeam ? ("equipe" as const) : u.role, text: str(b.text, "message", 8000), at: nowIso(), attachments: (b.attachments as { name: string; url: string }[]) ?? [] };
     const next = update("tickets", t.id, { messages: [...t.messages, msg], attachments: [...t.attachments, ...((b.attachments as Ticket["attachments"]) ?? [])], status: isTeam ? (t.status === "ouvert" ? "en_cours" : t.status) : t.status === "en_attente" || t.status === "resolu" ? "en_cours" : t.status })!;
     const owner = t.createdBy !== "equipe" ? [t.createdBy] : listUsers().filter((x) => x.role === "validateur").map((x) => x.id);
@@ -701,10 +737,22 @@ const H: Record<string, Handler> = {
   "roadmap/update": { perm: "strategy.edit", fn: (u, b) => { const r = update("roadmap", String(b.id), pick("roadmap", b) as Partial<RoadmapMonth>); log(u, "strategie", "roadmap", String(b.id), r?.theme ?? ""); return r; } },
   "settings/update": { perm: "settings.manage", fn: (u, b) => {
     const cur = settings();
-    const next = { ...cur, ...(b.frequencies ? { frequencies: b.frequencies as Settings["frequencies"] } : {}), ...(b.publishingRules ? { publishingRules: b.publishingRules as Settings["publishingRules"] } : {}) };
+    const next = {
+      ...cur,
+      ...(b.frequencies ? { frequencies: b.frequencies as Settings["frequencies"] } : {}),
+      ...(b.publishingRules ? { publishingRules: b.publishingRules as Settings["publishingRules"] } : {}),
+      ...(typeof b.autoSchedule === "boolean" ? { autoSchedule: b.autoSchedule } : {}),
+      ...(b.sandbox && typeof b.sandbox === "object" ? { sandbox: { enabled: !!(b.sandbox as { enabled: boolean }).enabled, handle: String((b.sandbox as { handle?: string }).handle || cur.sandbox?.handle || "skinclean").replace(/[^a-z0-9._]/gi, "").slice(0, 30) || "skinclean" } } : {}),
+    };
     put("settings", { id: "main", ...next });
     log(u, "parametres", "settings", "main", "Paramètres mis à jour");
     return next;
+  } },
+  "sandbox/delete": { perm: "content.publish", fn: (u, b) => {
+    const d = must(get("sandbox", String(b.id)), "Publication de test");
+    remove("sandbox", d.id);
+    log(u, "suppression", "sandbox", d.id, `Publication de test retirée : ${d.title}`);
+    return { ok: true };
   } },
   "notifications/read": { fn: (u, b) => {
     const all = list("notifications").filter((n) => n.userId === u.id && !n.read && (b.all || n.id === b.id));
@@ -736,6 +784,12 @@ function saveEmailImages(m: EmailCampaign, images: unknown): Record<string, stri
   }
   return out;
 }
+
+const STEP_OF: Partial<Record<Product["type"], Product["step"]>> = {
+  nettoyant: "nettoyage", demaquillant: "demaquillage", toner: "tonique", "toner-pads": "tonique", serum: "serum", creme: "hydratation", brume: "brume",
+  "contour-yeux": "contour-yeux", patchs: "soin-cible", masque: "masque", exfoliant: "exfoliation", "soin-cible": "soin-cible", spf: "protection", accessoire: "accessoire",
+};
+const PACK_OF: Partial<Record<Product["type"], Product["pack"]>> = { serum: "dropper", creme: "jar", nettoyant: "tube", spf: "tube", brume: "mist", "toner-pads": "pads", patchs: "patch", toner: "bottle", masque: "jar" };
 
 export const slugify = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
 

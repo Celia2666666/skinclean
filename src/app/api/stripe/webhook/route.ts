@@ -18,8 +18,18 @@ export async function POST(req: Request) {
   switch (event.type) {
     case "checkout.session.completed":
     case "checkout.session.async_payment_succeeded":
-      // TODO(base de données) : persister la commande payée — voir README « Activer les paiements ».
       console.info("[stripe] paiement confirmé", event.data.object.id);
+      // CRM local (jamais sur Vercel) : la commande réelle et la fiche client sont créées, le stock décrémenté
+      if (!process.env.VERCEL && event.data.object.payment_status === "paid") {
+        try {
+          const { ingestStripeSession } = await import("@/lib/crm/repo");
+          const lines = await stripe().checkout.sessions.listLineItems(event.data.object.id, { limit: 100 });
+          await ingestStripeSession(event.data.object, lines.data);
+        } catch (e) {
+          console.error("[stripe → CRM]", e);
+        }
+      }
+      // TODO(base de données) : persister aussi la commande pour l'espace client — voir README « Activer les paiements ».
       break;
     case "checkout.session.async_payment_failed":
       console.warn("[stripe] paiement échoué", event.data.object.id);

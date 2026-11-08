@@ -17,7 +17,11 @@ export interface BotMessage {
   kits?: string[];
   quick?: QuickReply[];
   links?: { label: string; href: string; prefill?: Answers }[];
-  form?: "newsletter";
+  form?: "newsletter" | "stock-alert" | "contact";
+  /** Produit concerné par le formulaire (alerte de retour en stock). */
+  formProductId?: string;
+  /** Afficher la disponibilité en direct du produit (formProductId) avant le formulaire. */
+  checkStock?: boolean;
 }
 export interface FlowState { flow?: string; data: Record<string, string> }
 
@@ -30,6 +34,8 @@ export const welcomeQuick: QuickReply[] = [
   { label: "Trouver ma routine", value: "routine" },
   { label: "Comment avoir des réductions ?", value: "discounts" },
   { label: "Suivre ma commande", value: "order" },
+  { label: "Je ne trouve plus un produit", value: "stock" },
+  { label: "Parler à l'équipe", value: "contact" },
 ];
 
 const diagCta = (prefill?: Answers): BotMessage => ({
@@ -45,6 +51,8 @@ const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,
 export function detectIntent(text: string): string {
   const t = norm(text);
   const rules: [RegExp, string][] = [
+    [/(rupture|plus en stock|plus dispo|indisponible|(re)?trouve plus|de retour en stock|reassort|quand .*(revient|dispo)|epuise)/, "stock"],
+    [/(humain|conseill(er|ere) (client|beaute)|parler a (quelqu|une? )|service client|vous (contacter|ecrire|joindre)|contacter|reclamation|une personne)/, "contact"],
     [/(ordre|order|dans quel ordre|appliquer mes soins|etapes?)/, "faq-order"],
     [/(deux|2) serums?/, "faq-two-serums"],
     [/(hiver|froid|winter)/, "faq-winter"],
@@ -70,7 +78,13 @@ export function detectIntent(text: string): string {
   return rules.find(([r]) => r.test(t))?.[1] ?? "unknown";
 }
 
-export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]; orders: { id: string; status: string; date: number }[]; loggedIn: boolean; productId?: string }): { messages: BotMessage[]; state: FlowState } {
+/** Retrouve un produit du catalogue cité dans un message (« je ne trouve plus le Glow Shot »). */
+export function findProductIn(text: string) {
+  const t = norm(text);
+  return getProducts().slice().sort((a, b) => b.name.length - a.name.length).find((p) => t.includes(norm(p.name)));
+}
+
+export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]; orders: { id: string; status: string; date: number }[]; loggedIn: boolean; productId?: string }): { messages: BotMessage[]; state: FlowState; intent: string } {
   const s: FlowState = { flow: state.flow, data: { ...state.data } };
   const out: BotMessage[] = [];
 
@@ -78,7 +92,7 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
   if (s.flow === "acne" && !s.data.freq && ["reg", "occ", "idk"].includes(input)) {
     s.data.freq = input;
     out.push({ from: "bot", text: "Merci ! Et ta peau a plutôt tendance à briller ou à tirailler ?", quick: [{ label: "Elle brille", value: "shine" }, { label: "Elle tiraille", value: "tight" }, { label: "Un peu des deux", value: "mixed" }] });
-    return { messages: out, state: s };
+    return { messages: out, state: s, intent: "acne" };
   }
   if (s.flow === "acne" && s.data.freq && ["shine", "tight", "mixed"].includes(input)) {
     const shine = input === "shine";
@@ -95,12 +109,25 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
     });
     if (s.data.freq === "reg") out.push({ from: "bot", text: "Petit rappel : si tes boutons sont nombreux, douloureux ou persistent, l'avis d'un·e dermatologue est précieux. Les soins SKINCLEAN accompagnent ta peau mais ne remplacent pas un traitement." });
     out.push(diagCta({ concerns: ["boutons"], skinType: shine ? "grasse" : tight ? "seche" : "mixte", acneFreq: s.data.freq === "reg" ? "hebdo" : "mensuel" }));
-    return { messages: out, state: { data: {} } };
+    return { messages: out, state: { data: {} }, intent: "acne" };
   }
 
-  const intent = welcomeQuick.some((q) => q.value === input) || input.startsWith("faq-") || ["menu", "cart-check", "eyes", "lines", "medical", "product-fit", "serum-help", "diag-help", "club-help"].includes(input) ? input : detectIntent(input);
+  const intent = welcomeQuick.some((q) => q.value === input) || input.startsWith("faq-") || ["menu", "cart-check", "eyes", "lines", "medical", "product-fit", "serum-help", "diag-help", "club-help", "stock", "contact"].includes(input) ? input : detectIntent(input);
 
   switch (intent) {
+    case "stock": {
+      const p = findProductIn(input) ?? (ctx.productId ? getProduct(ctx.productId) : undefined);
+      if (p) {
+        // La disponibilité réelle (stock du CRM en local) est vérifiée en direct par l'interface
+        out.push({ from: "bot", text: `Je regarde où en est ${p.name} :`, form: "stock-alert", formProductId: p.id, checkStock: true });
+      } else {
+        out.push({ from: "bot", text: "Tu ne retrouves plus un produit ? Il est peut-être en rupture momentanée. Choisis-le et laisse ton e-mail : je te préviens automatiquement dès son retour en stock.", form: "stock-alert" });
+      }
+      break;
+    }
+    case "contact":
+      out.push({ from: "bot", text: "Bien sûr ! Écris ton message à l'équipe SKINCLEAN ici, une vraie personne te répond sous 48 h ouvrées.", form: "contact" });
+      break;
     case "menu":
       out.push({ from: "bot", text: "Je t'écoute ! Choisis un sujet ou écris ta question.", quick: welcomeQuick });
       break;
@@ -206,7 +233,7 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
       out.push({ from: "bot", text: "Pas de stress ! Peau grasse = brille partout ; mixte = brille sur la zone T ; sèche = tiraille ; sensible = réagit vite. Si tu hésites, choisis « Je ne sais pas » : la question suivante sur la réaction après nettoyage nous aidera à trancher." });
       break;
     case "club-help":
-      return respond("faq-leaves", s, ctx);
+      return { ...respond("faq-leaves", s, ctx), intent: "club-help" };
     case "medical":
       out.push({ from: "bot", text: "Ce que tu décris mérite l'avis d'un·e médecin ou dermatologue. Je suis un conseiller cosmétique et je ne peux pas poser de diagnostic. En attendant, privilégie des soins très doux et sans parfum.", quick: [{ label: "Autre question", value: "menu" }] });
       break;
@@ -214,7 +241,7 @@ export function respond(input: string, state: FlowState, ctx: { cart: CartLine[]
       out.push({ from: "bot", text: "Je ne suis pas sûr d'avoir compris  Je suis un assistant guidé : choisis un sujet ci-dessous, ou essaie avec des mots comme « sérum peau grasse », « ordre des soins », « budget 40 € ».", quick: welcomeQuick });
   }
   if (intent !== "acne") s.flow = undefined;
-  return { messages: out, state: s };
+  return { messages: out, state: s, intent };
 }
 
 function budgetRoutine(budget: number) {

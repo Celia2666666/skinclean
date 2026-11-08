@@ -138,7 +138,7 @@ export function PageHeader({ title, intro, actions, eyebrow }: { title: string; 
 
 const STATUS_STYLE: Record<string, string> = {
   brouillon: "bg-[#F1F0EC] text-[#5C6862]", a_valider: "bg-[#FFF3D6] text-[#7A5B00]", modifications: "bg-[#FBE7DF] text-[#8A3D1E]", valide: "bg-[#E3EFE6] text-[#2E5E3E]",
-  programme: "bg-[#E2ECF8] text-[#1F4E86]", publie: "bg-forest text-white", publie_manuel: "bg-[#DDE6DF] text-forest", echec: "bg-[#F8E1E1] text-[#8A2B2B]",
+  programme: "bg-[#E2ECF8] text-[#1F4E86]", publie: "bg-forest text-white", publie_manuel: "bg-[#DDE6DF] text-forest", publie_test: "bg-[#E8E2F6] text-[#4A3A86]", echec: "bg-[#F8E1E1] text-[#8A2B2B]",
   active: "bg-forest text-white", planifiee: "bg-[#E2ECF8] text-[#1F4E86]", bibliotheque: "bg-[#F1F0EC] text-[#5C6862]", terminee: "bg-[#EDEDED] text-[#666]", en_pause: "bg-[#FBE7DF] text-[#8A3D1E]",
   prete: "bg-[#E3EFE6] text-[#2E5E3E]", programmee: "bg-[#E2ECF8] text-[#1F4E86]", envoye: "bg-forest text-white", ouvert: "bg-[#FFF3D6] text-[#7A5B00]", en_cours: "bg-[#E2ECF8] text-[#1F4E86]",
   en_attente: "bg-[#F1F0EC] text-[#5C6862]", resolu: "bg-[#E3EFE6] text-[#2E5E3E]", ferme: "bg-[#EDEDED] text-[#666]",
@@ -188,16 +188,27 @@ export function Tabs<T extends string>({ tabs, value, onChange, className }: { t
   );
 }
 
+/** Vrai uniquement après le montage côté navigateur (les portails ne sont pas rendus côté serveur). */
+function useMounted() {
+  const [m, setM] = useState(false);
+  useEffect(() => setM(true), []);
+  return m;
+}
+
 export function Modal({ open, onClose, title, children, footer, size = "md" }: { open: boolean; onClose: () => void; title: React.ReactNode; children: React.ReactNode; footer?: React.ReactNode; size?: "sm" | "md" | "lg" | "xl" }) {
   const ref = useRef<HTMLDivElement>(null);
+  const mounted = useMounted();
+  const closeRef = useRef(onClose);
+  useEffect(() => { closeRef.current = onClose; });
+  // Le focus n'est placé sur la fenêtre qu'à son ouverture : jamais pendant la saisie dans un champ
   useEffect(() => {
-    if (!open) return;
-    const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    if (!open || !mounted) return;
+    const k = (e: KeyboardEvent) => e.key === "Escape" && closeRef.current();
     window.addEventListener("keydown", k);
-    ref.current?.focus();
+    if (!ref.current?.contains(document.activeElement)) ref.current?.focus();
     return () => window.removeEventListener("keydown", k);
-  }, [open, onClose]);
-  if (!open || typeof document === "undefined") return null;
+  }, [open, mounted]);
+  if (!open || !mounted) return null;
   const w = { sm: "max-w-md", md: "max-w-2xl", lg: "max-w-4xl", xl: "max-w-6xl" }[size];
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-start justify-center overflow-y-auto bg-[rgb(20_30_25/0.45)] p-4 md:p-10" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
@@ -215,6 +226,7 @@ export function Modal({ open, onClose, title, children, footer, size = "md" }: {
 }
 
 export function Drawer({ open, onClose, title, children, footer, width = "max-w-3xl" }: { open: boolean; onClose: () => void; title: React.ReactNode; children: React.ReactNode; footer?: React.ReactNode; width?: string }) {
+  const mounted = useMounted();
   useEffect(() => {
     if (!open) return;
     const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -222,7 +234,7 @@ export function Drawer({ open, onClose, title, children, footer, width = "max-w-
     document.body.style.overflow = "hidden";
     return () => { window.removeEventListener("keydown", k); document.body.style.overflow = ""; };
   }, [open, onClose]);
-  if (!open || typeof document === "undefined") return null;
+  if (!open || !mounted) return null;
   return createPortal(
     <div className="fixed inset-0 z-[150] flex justify-end bg-[rgb(20_30_25/0.35)]" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <aside role="dialog" aria-modal="true" className={clsx("flex h-full w-full flex-col bg-cream shadow-2xl", width)}>

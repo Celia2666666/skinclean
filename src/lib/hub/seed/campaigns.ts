@@ -1,4 +1,6 @@
 import type { Campaign } from "../types";
+import { niacinamidePlan } from "./example-campaign";
+import { lancementPlan, skinDiagPlan } from "./campaign-content";
 import { addDays, blackFriday, nextOccurrence, todayYmd } from "../dates";
 
 /**
@@ -36,17 +38,7 @@ export function campaigns(): Campaign[] {
       startDate: addDays(t, -3), budget: [{ label: "Meta Ads (notoriété)", amount: 1200 }, { label: "Google Ads (marque)", amount: 300 }, { label: "Influence (envois produits)", amount: 600 }, { label: "Production vidéo", amount: 400 }],
       kpis: [{ label: "Portée", target: "150 000 comptes" }, { label: "Abonnés Instagram", target: "+1 500" }, { label: "Vues vidéo", target: "250 000" }, { label: "Trafic campagne", target: "5 000 visites" }],
       productIds: ["sc-sr-01", "sc-sr-02", "sc-sr-03", "sc-cr-01"],
-      plan: [
-        { day: 0, platform: "instagram", format: "reel", hour: "18:00", title: "Manifeste « Ta peau a son histoire »", idea: "Vidéo manifeste : vraies peaux, textures, logo final.", cta: "Découvre SKINCLEAN" },
-        { day: 1, platform: "tiktok", format: "video", hour: "19:00", title: "Qui est SKINCLEAN ? en 20 secondes", idea: "Face cam fondatrice + 3 promesses." },
-        { day: 2, platform: "instagram", format: "carrousel", hour: "12:30", title: "Nos 5 engagements", idea: "Formules lisibles, pas de faux avis, conseils honnêtes, routines courtes, Club." },
-        { day: 3, platform: "facebook", format: "post", hour: "13:00", title: "Bienvenue dans la famille SKINCLEAN", idea: "Présentation des gammes et du Skin Diag." },
-        { day: 4, platform: "pinterest", format: "epingle", hour: "20:30", title: "Les essentiels SKINCLEAN", idea: "Épingle gamme complète." },
-        { day: 6, platform: "newsletter", format: "newsletter", hour: "09:00", title: "Newsletter de lancement", idea: "E-mail de bienvenue — présentation de la marque." },
-        { day: 8, platform: "story", format: "story", hour: "12:00", title: "Quiz : quel est ton type de peau ?", idea: "Story quiz renvoyant vers le Skin Diag." },
-        { day: 10, platform: "tiktok", format: "video", hour: "19:00", title: "Unboxing du kit de lancement", idea: "Déballage ASMR, textures." },
-        { day: 14, platform: "instagram", format: "post", hour: "18:00", title: "Merci pour ces 2 premières semaines", idea: "Post communauté, chiffres réels uniquement." },
-      ],
+      plan: lancementPlan,
       emailIds: ["mail-bienvenue"], adIds: ["ad-meta-lancement", "ad-google-marque"],
       banner: { title: "SKINCLEAN est là", text: "Des soins efficaces et une routine faite pour toi.", cta: "Découvrir" },
       scripts: [{ title: "Manifeste 30 s", hook: "Ta peau a une histoire. On est là pour la suite.", scenes: ["Gros plans de vraies peaux, lumière naturelle", "Mains qui appliquent un sérum", "Texte : des formules lisibles", "Texte : une routine faite pour toi", "Logo + Your skin. Your glow."] }],
@@ -61,16 +53,7 @@ export function campaigns(): Campaign[] {
       startDate: addDays(t, 12), budget: [{ label: "Meta Ads (conversions Skin Diag)", amount: 900 }, { label: "TikTok Ads", amount: 700 }, { label: "Créations UGC", amount: 300 }],
       kpis: [{ label: "Skin Diag complétés", target: "2 000" }, { label: "Inscriptions", target: "800" }, { label: "CTR publicités", target: "≥ 1,2 %" }],
       productIds: ["sc-tn-01", "sc-sr-01", "sc-sr-04"],
-      plan: [
-        { day: 0, platform: "tiktok", format: "video", hour: "19:00", title: "Je fais le Skin Diag en direct", idea: "Écran partagé : réponses + résultat." },
-        { day: 1, platform: "story", format: "story", hour: "12:00", title: "Story : ton résultat Skin Diag ?", idea: "Sondage + lien vers le diag." },
-        { day: 2, platform: "instagram", format: "carrousel", hour: "12:30", title: "Comment fonctionne le Skin Diag", idea: "5 slides : questions, moteur, routine, e-mail, suivi." },
-        { day: 4, platform: "tiktok", format: "video", hour: "19:00", title: "3 profils, 3 routines", idea: "Même question, 3 résultats différents." },
-        { day: 5, platform: "pinterest", format: "epingle", hour: "20:30", title: "Trouve ta routine en 2 minutes", idea: "Épingle infographie du parcours." },
-        { day: 7, platform: "newsletter", format: "newsletter", hour: "09:00", title: "As-tu fait ton Skin Diag ?", idea: "Relance pédagogique." },
-        { day: 9, platform: "instagram", format: "reel", hour: "18:00", title: "Ce que ton Skin Diag sait de ta peau", idea: "Reel explicatif." },
-        { day: 12, platform: "facebook", format: "post", hour: "13:00", title: "Le Skin Diag expliqué aux parents (et aux autres)", idea: "Post pédagogique." },
-      ],
+      plan: skinDiagPlan,
       emailIds: ["mail-bienvenue"], adIds: ["ad-meta-diag", "ad-tiktok-diag"],
       banner: { title: "Ta routine en 2 minutes", text: "Fais ton Skin Diag gratuit.", cta: "Faire le test" },
       scripts: [{ title: "Hook diag", hook: "J'ai répondu à 8 questions et j'ai enfin compris pourquoi ma peau brille.", scenes: ["Face cam surprise", "Capture du Skin Diag", "Résultat : routine 4 gestes", "Application des produits", "CTA : lien en bio"] }],
@@ -125,13 +108,8 @@ export function campaigns(): Campaign[] {
       budget: [{ label: "Google Ads (requêtes niacinamide)", amount: 500 }, { label: "TikTok Ads", amount: 500 }],
       kpis: [{ label: "Clics Google Ads", target: "1 500" }, { label: "Position « sérum niacinamide »", target: "Top 20" }, { label: "Vues vidéo", target: "100 000" }],
       productIds: ["sc-sr-01"],
-      plan: [
-        { day: 0, platform: "tiktok", format: "video", hour: "18:00", title: "Sérum niacinamide : mon avis après 4 semaines", idea: "Créatrice, résultat réel." },
-        { day: 1, platform: "instagram", format: "carrousel", hour: "12:30", title: "Niacinamide : 5 questions, 5 réponses", idea: "FAQ actif." },
-        { day: 3, platform: "pinterest", format: "epingle", hour: "20:30", title: "Avec quoi associer la niacinamide ?", idea: "Tableau des associations." },
-        { day: 4, platform: "blog", format: "article", hour: "08:00", title: "Article : niacinamide, le guide complet", idea: "Article pilier SEO." },
-        { day: 7, platform: "instagram", format: "post", hour: "18:00", title: "Clear Skin en majesté", idea: "Visuel produit." },
-      ],
+      example: true,
+      plan: niacinamidePlan, // campagne exemple : chaque action contient son contenu finalisé
       emailIds: ["mail-ingredients"], adIds: ["ad-google-niacinamide", "ad-tiktok-niacinamide"],
       banner: { title: "Clear Skin", text: "Niacinamide 10 % + zinc.", cta: "Découvrir" },
       scripts: [{ title: "Niacinamide sans blabla", hook: "La niacinamide ne fait pas de miracle. Mais elle fait ça.", scenes: ["Texte : pores visibles ?", "Gouttes Clear Skin", "3 bénéfices réalistes", "À associer / à éviter", "CTA"] }],

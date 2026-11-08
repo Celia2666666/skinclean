@@ -9,7 +9,7 @@ const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 const nl = (s: string) => esc(s).replace(/\n/g, "<br>");
 
 export function renderEmailHtml(m: Pick<EmailCampaign, "subject" | "preheader" | "blocks">, opts: { baseUrl: string; images?: Record<string, string> }) {
-  const u = (href: string) => (href.startsWith("http") ? href : `${opts.baseUrl}${href}`);
+  const u = (href: string) => (/^(https?:|data:|mailto:)/.test(href) ? href : `${opts.baseUrl}${href}`);
   const F = "font-family:Inter,Helvetica,Arial,sans-serif;";
   const rows = m.blocks.map((b) => {
     switch (b.type) {

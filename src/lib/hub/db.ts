@@ -1,6 +1,6 @@
 import "server-only";
 import { DatabaseSync } from "node:sqlite";
-import { mkdirSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 
@@ -16,13 +16,31 @@ import { randomUUID } from "node:crypto";
 export const DATA_DIR = path.join(process.cwd(), "data", "hub");
 const DB_FILE = process.env.HUB_DB_FILE || path.join(DATA_DIR, "marketing-hub.sqlite");
 
-type G = typeof globalThis & { __hubDb?: DatabaseSync; __hubSeeding?: boolean };
+type G = typeof globalThis & { __hubDb?: DatabaseSync; __hubSeeding?: boolean; __hubSchema?: number };
+/** À incrémenter à chaque ajout de table : le schéma est alors complété même sur une connexion déjà ouverte. */
+const SCHEMA_VERSION = 2;
 const g = globalThis as G;
 
 export function db(): DatabaseSync {
-  if (g.__hubDb) return g.__hubDb;
+  if (g.__hubDb) {
+    // Fichier supprimé (remise à zéro) : on ferme l'ancienne connexion et on recrée la base
+    if (existsSync(DB_FILE)) {
+      if (g.__hubSchema !== SCHEMA_VERSION) { migrate(g.__hubDb); g.__hubSchema = SCHEMA_VERSION; }
+      return g.__hubDb;
+    }
+    try { g.__hubDb.close(); } catch { /* déjà fermée */ }
+    g.__hubDb = undefined;
+  }
   mkdirSync(path.dirname(DB_FILE), { recursive: true });
   const d = new DatabaseSync(DB_FILE);
+  migrate(d);
+  g.__hubDb = d;
+  g.__hubSchema = SCHEMA_VERSION;
+  return d;
+}
+
+/** Création / mise à jour idempotente du schéma. */
+function migrate(d: DatabaseSync) {
   d.exec(`
     PRAGMA journal_mode = WAL;
     PRAGMA foreign_keys = ON;
@@ -48,9 +66,11 @@ export function db(): DatabaseSync {
       id TEXT PRIMARY KEY, at TEXT NOT NULL, type TEXT NOT NULL, payload TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS password_resets (
+      token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      created_at TEXT NOT NULL, expires_at TEXT NOT NULL, used_at TEXT
+    );
   `);
-  g.__hubDb = d;
-  return d;
 }
 
 export const nowIso = () => new Date().toISOString();

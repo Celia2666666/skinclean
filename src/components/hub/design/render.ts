@@ -69,17 +69,42 @@ export function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: 
   return out;
 }
 
-export function textFont(l: TextLayer) {
+export function textFont(l: TextLayer, size = l.size) {
   const f = fontFamilies();
-  return `${l.weight} ${l.size}px ${l.font === "display" ? f.display : f.body}`;
+  return `${l.weight} ${size}px ${l.font === "display" ? f.display : f.body}`;
+}
+
+/**
+ * Mise en page d'un calque texte : retour à la ligne, réduction automatique de la taille si le texte
+ * dépasse sa boîte (maxH) et position verticale (valign). Garantit qu'aucun texte ne déborde sur un autre élément.
+ */
+export function layoutText(ctx: CanvasRenderingContext2D, l: TextLayer) {
+  const pad = l.pad ?? 0;
+  const text = l.upper ? l.text.toUpperCase() : l.text;
+  const lh = l.lineHeight ?? 1.15;
+  let size = l.size;
+  let lines: string[] = [];
+  let height = 0;
+  for (let i = 0; i < 40; i++) {
+    ctx.font = textFont(l, size);
+    if ("letterSpacing" in ctx) (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = `${(l.letterSpacing ?? 0) * (size / l.size)}px`;
+    lines = wrapText(ctx, text, l.w - pad * 2);
+    // un mot plus large que la boîte force aussi la réduction
+    const tooWide = lines.some((ln) => ctx.measureText(ln).width > l.w - pad * 2 + 1);
+    height = lines.length * size * lh + pad * 2;
+    if ((!l.maxH || height <= l.maxH) && !tooWide) break;
+    if (size <= l.size * 0.45) break;
+    size *= 0.94;
+  }
+  const box = l.maxH ?? height;
+  const offset = l.valign === "middle" ? Math.max(0, (box - height) / 2) : l.valign === "bottom" ? Math.max(0, box - height) : 0;
+  return { lines, height, size, lh, y: l.y + offset, boxHeight: Math.max(box, height) };
 }
 
 /** Hauteur occupée par un calque texte (pour la sélection dans le Studio). */
 export function measureTextLayer(ctx: CanvasRenderingContext2D, l: TextLayer) {
-  ctx.font = textFont(l);
-  if ("letterSpacing" in ctx) (ctx as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = `${l.letterSpacing ?? 0}px`;
-  const lines = wrapText(ctx, l.upper ? l.text.toUpperCase() : l.text, l.w - (l.pad ?? 0) * 2);
-  return { lines, height: lines.length * l.size * (l.lineHeight ?? 1.15) + (l.pad ?? 0) * 2 };
+  const r = layoutText(ctx, l);
+  return { lines: r.lines, height: r.boxHeight };
 }
 
 async function drawImageFit(ctx: CanvasRenderingContext2D, src: string, x: number, y: number, w: number, h: number, fit: "contain" | "cover", filter?: ImageLayer["filter"]) {
@@ -143,19 +168,21 @@ async function drawLayer(ctx: CanvasRenderingContext2D, l: Layer) {
   // texte
   ctx.save();
   ctx.globalAlpha = l.opacity ?? 1;
-  const { lines, height } = measureTextLayer(ctx, l);
+  const t = layoutText(ctx, l);
   if (l.bg) {
     ctx.fillStyle = l.bg;
-    roundRect(ctx, l.x, l.y, l.w, height, 8);
+    roundRect(ctx, l.x, t.y, l.w, t.height, 8);
     ctx.fill();
   }
+  ctx.font = textFont(l, t.size);
   ctx.fillStyle = l.color;
-  ctx.textBaseline = "top";
+  ctx.textBaseline = "middle";
   ctx.textAlign = l.align;
   const pad = l.pad ?? 0;
   const ax = l.align === "left" ? l.x + pad : l.align === "right" ? l.x + l.w - pad : l.x + l.w / 2;
-  const lh = l.size * (l.lineHeight ?? 1.15);
-  lines.forEach((line, i) => ctx.fillText(line, ax, l.y + pad + i * lh + (lh - l.size) / 2));
+  const lineH = t.size * t.lh;
+  // Chaque ligne est centrée verticalement dans sa hauteur de ligne (rendu identique quelle que soit la police)
+  t.lines.forEach((line, i) => ctx.fillText(line, ax, t.y + pad + i * lineH + lineH / 2));
   ctx.restore();
 }
 

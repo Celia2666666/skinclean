@@ -15,16 +15,22 @@ const eslintConfig = defineConfig([
   },
   {
     // Marketing Hub : textes français riches en apostrophes, variables « _x » volontairement ignorées (déstructuration).
-    files: ["src/components/hub/**", "src/app/hub/**", "src/lib/hub/**"],
+    files: ["src/components/hub/**", "src/app/hub/**", "src/lib/hub/**", "src/components/crm/**", "src/app/crm/**", "src/lib/crm/**"],
     rules: {
       "react/no-unescaped-entities": "off",
       "@typescript-eslint/no-unused-vars": ["warn", { varsIgnorePattern: "^_", argsIgnorePattern: "^_", destructuredArrayIgnorePattern: "^_" }],
     },
   },
+  {
+    // CRM : les boutons « Export CSV » sont des téléchargements vers /api/crm/export/*, pas des pages.
+    files: ["src/components/crm/**"],
+    rules: { "@next/next/no-html-link-for-pages": "off" },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    ".next-*/**", // serveurs de dev secondaires (NEXT_DIST_DIR)
     "out/**",
     "build/**",
     "next-env.d.ts",

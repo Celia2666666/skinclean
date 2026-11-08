@@ -2,7 +2,8 @@ import { products } from "@/data/products";
 import type { Product } from "@/lib/types";
 import type { Design, Platform, Post, PostFormat, PostStatus, VideoScript, Visual } from "../types";
 import { addDays, blackFriday, diffDays, parseLocal, todayYmd } from "../dates";
-import { BRAND, tplCarousel, tplIngredient, tplProductHero, tplPromo, tplQuote, tplRoutine, tplStoryPoll, tplVideoCover } from "../templates";
+import { videoPicker, DEMO_VIDEO_NOTE } from "../video-library";
+import { BRAND, carouselJars, tplCarousel, tplIngredient, tplProductHero, tplPromo, tplQuote, tplRoutine, tplStoryPoll, tplVideoCover } from "../templates";
 
 /**
  * Générateur du calendrier éditorial initial (≈ 15 semaines à partir d'aujourd'hui) et de la bibliothèque réseaux sociaux.
@@ -16,7 +17,6 @@ const P = (id: string): Product => {
   return p;
 };
 const shot = (p: Product) => p.media.packshot;
-const video = (p: Product) => p.media.hoverVideo;
 
 interface Theme {
   key: string; title: string; pillar: string; personaId: string; objective: string;
@@ -213,8 +213,12 @@ const make = (m: MakeInput): Post => ({
   createdAt: now, updatedAt: now,
 });
 const design = (d: Design): Visual => ({ kind: "design", design: d });
-const videoVisual = (p: Product, cover: Design): Visual =>
-  video(p) ? { kind: "video", src: video(p), poster: cover, note: "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN." } : design(cover);
+const pickVideo = videoPicker();
+/** Vidéo de démonstration choisie selon le sujet (hook de la couverture + produit), variée d'un contenu à l'autre. */
+const videoVisual = (p: Product, cover: Design): Visual => {
+  const topic = [...cover.pages[0].layers.flatMap((l) => (l.type === "text" ? [l.text] : [])), p.name, p.kind, p.type].join(" ");
+  return { kind: "video", src: pickVideo(topic), poster: cover, note: DEMO_VIDEO_NOTE };
+};
 
 /** Statut initial selon l'éloignement : contenus proches à valider, contenus lointains en brouillon préparé. */
 const statusFor = (date: string, t0: string): PostStatus => (diffDays(date, t0) <= 10 ? "a_valider" : "brouillon");
@@ -239,7 +243,7 @@ function weekPosts(t: Theme, monday: string, t0: string): Post[] {
   const ig = SLOTS[0].days;
   const igList: (() => Post)[] = [
     () => make({ date: at(ig[0], "12:30"), platform: "instagram", format: "carrousel", title: `${t.title} — le guide`, theme: t, caption: igCarouselCaption(t, main), hashtags: tag(t), cta: "Enregistre le post", productIds: [main.id, ...t.others], slides: t.tips,
-      visual: design(tplCarousel({ headline: t.title, items: t.tips, packshot: shot(main), eyebrow: t.pillar, cta: "Trouve ta routine avec le Skin Diag" })), status: statusFor(at(ig[0], "12:30"), t0) }),
+      visual: design(tplCarousel({ headline: t.title, items: t.tips, packshot: shot(main), packshots: carouselJars(t.tips.length, [shot(main)]), eyebrow: t.pillar, cta: "Trouve ta routine avec le Skin Diag" })), status: statusFor(at(ig[0], "12:30"), t0) }),
     () => make({ date: at(ig[1], "18:00"), platform: "instagram", format: "reel", title: `Reel — ${t.hook.slice(0, 60)}`, theme: t, caption: reelCaption(t, main), hashtags: tag(t), cta: SKIN_DIAG_CTA, productIds: [main.id],
       visual: videoVisual(main, tplVideoCover({ headline: t.hook, packshot: shot(main) })), script: tiktokScript(t, main, "hook"), status: statusFor(at(ig[1], "18:00"), t0) }),
     () => make({ date: at(ig[2], "18:00"), platform: "instagram", format: "post", title: `${main.name} en majesté`, theme: t, caption: productCaption(main), hashtags: tag(t), cta: "Découvre-le sur skinclean.fr", productIds: [main.id],
@@ -299,7 +303,7 @@ function weekPosts(t: Theme, monday: string, t0: string): Post[] {
       visual: design(tplIngredient({ format: "pinterest", headline: t.ingredient, sub: t.ingredientRole, packshot: shot(main) })), status: statusFor(at(pi[1], "20:30"), t0) }),
     () => make({ date: at(pi[2], "20:30"), platform: "pinterest", format: "epingle", title: `${t.tips.length} conseils — ${t.title}`, theme: t, caption: `${t.title} : ${t.tips.join(". ")}.`, hashtags: [], cta: "Enregistrer", productIds: [main.id],
       visual: design(tplRoutine({ headline: t.title, eyebrow: "Conseils", items: t.tips.slice(0, 5), bg: BRAND.cream })), status: statusFor(at(pi[2], "20:30"), t0) }),
-    () => make({ date: at(pi[3], "20:30"), platform: "pinterest", format: "epingle", title: `${main.name} — ${main.kind}`, theme: t, caption: `${main.name}, ${main.kind.toLowerCase()} : ${main.tagline}. ${main.benefits.join(", ")}.`, hashtags: [], cta: "Découvrir", productIds: [main.id],
+    () => make({ date: at(pi[3], "20:30"), platform: "pinterest", format: "epingle", title: `${main.name} — ${main.kind}`, theme: t, caption: `${main.name}, ${main.kind.toLowerCase()} : ${main.tagline}. ${main.benefits.map((b, i) => (i && !/^[A-ZÀ-Ý]{2,}/.test(b) ? b.charAt(0).toLowerCase() + b.slice(1) : b)).join(", ")}.`, hashtags: [], cta: "Découvrir", productIds: [main.id],
       visual: design(tplProductHero({ format: "pinterest", headline: main.tagline, eyebrow: main.name, sub: main.kind, packshot: shot(main), bg: main.color.bg })), status: statusFor(at(pi[3], "20:30"), t0) }),
     () => make({ date: at(pi[4], "20:30"), platform: "pinterest", format: "epingle", title: `Inspiration — ${t.quote}`, theme: t, caption: `${t.quote} — Inspiration skincare et self-care par SKINCLEAN.`, hashtags: [], cta: "Enregistrer", productIds: [],
       visual: design(tplQuote({ format: "pinterest", headline: t.quote, bg: BRAND.forest })), status: statusFor(at(pi[4], "20:30"), t0) }),
@@ -343,7 +347,7 @@ export function buildCalendar(weeks = 15): CalendarSeed {
   const s = tiktokScript(nia, cs, "hook");
   today.push(
     make({ date: `${t0}T10:00`, platform: "instagram", format: "carrousel", title: "Routine Glow — 4 gestes pour un teint lumineux", theme: glow, caption: igCarouselCaption(glow, gs), hashtags: tag(glow), cta: "Enregistre le post", productIds: ["sc-tn-01", "sc-sr-02", "sc-cr-01", "sc-sp-01"], slides: glow.routine.steps,
-      visual: design(tplCarousel({ headline: "Routine Glow", eyebrow: "Routine du matin", items: glow.routine.steps, packshot: shot(gs) })), status: "valide" }),
+      visual: design(tplCarousel({ headline: "Routine Glow", eyebrow: "Routine du matin", items: glow.routine.steps, packshot: shot(gs), packshots: carouselJars(glow.routine.steps.length, ["sc-tn-01", "sc-sr-02", "sc-cr-01", "sc-sp-01"].map((id) => shot(P(id)))) })), status: "valide" }),
     make({ date: `${t0}T12:00`, platform: "story", format: "story", title: "Story — Découverte du Skin Diag", theme: glow, caption: "Story en 3 écrans : 1. « Tu sais vraiment quel est ton type de peau ? » 2. Capture du Skin Diag. 3. Sticker lien vers skinclean.fr/skin-diag.", hashtags: [], cta: "Fais ton Skin Diag", productIds: [],
       visual: design(tplStoryPoll({ eyebrow: "Skin Diag", headline: "Ta routine idéale en 2 minutes ?", items: ["Je teste", "Plus tard"] })), objective: "Skin Diag", status: "a_valider" }),
     make({ date: `${t0}T18:00`, platform: "tiktok", format: "video", title: "Sérum niacinamide : ce qu'il fait vraiment", theme: nia, caption: tiktokCaption(nia, cs, s), hashtags: ["#niacinamide", "#peaugrasse", "#skincaretok", "#skinclean"], cta: SKIN_DIAG_CTA, productIds: ["sc-sr-01"], script: s,

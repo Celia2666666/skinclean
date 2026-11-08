@@ -1,6 +1,6 @@
 import "server-only";
 import { getMeta, nowIso, setMeta, tx } from "../db";
-import { create, put } from "../repo";
+import { create, list, put, update } from "../repo";
 import { createUser, listUsers } from "../auth";
 import type { Metric, Post, Settings } from "../types";
 import { addDays, diffDays, parseLocal, todayYmd, ymd } from "../dates";
@@ -10,15 +10,17 @@ import { campaigns } from "./campaigns";
 import { buildCalendar, buildLibrary } from "./social";
 import { emails } from "./emails";
 import { ads } from "./ads";
-import { articleBriefs, articles, keywords } from "./seo";
+import { articleBriefs, articles as baseArticles, keywords } from "./seo";
+import { briefArticles } from "./seo-articles";
+import { niacinamidePlan, routineVideoLibraryPost } from "./example-campaign";
+import { upgradeMedia, upgradeVisualsV5 } from "./media-upgrade";
+
+const articles = [...baseArticles, ...briefArticles];
 import { roadmap } from "./roadmap";
 
-/** Comptes de démonstration (mot de passe commun défini par HUB_SEED_PASSWORD, voir .env.example et README). */
+/** Compte universel unique : une seule personne gère tout le marketing (tous les droits). */
 export const SEED_USERS = [
-  { email: "admin@skinclean.local", name: "Alex Martin", role: "admin" as const, title: "Administrateur de la plateforme" },
-  { email: "marketing@skinclean.local", name: "Jade Lefèvre", role: "marketing" as const, title: "Responsable marketing (agence)" },
-  { email: "creation@skinclean.local", name: "Noah Petit", role: "createur" as const, title: "Créateur de contenu" },
-  { email: "client@skinclean.local", name: "Équipe SKINCLEAN", role: "validateur" as const, title: "Client validateur" },
+  { email: "skinclean@skinclean.local", name: "SKINCLEAN", role: "admin" as const, title: "Compte universel — accès complet" },
 ];
 export const seedPassword = () => process.env.HUB_SEED_PASSWORD || "SkinClean-Hub-2026";
 
@@ -103,6 +105,7 @@ export async function seedAll() {
     const { posts } = buildCalendar(15);
     posts.forEach((p) => put("posts", p));
     buildLibrary().forEach((p, i) => put("posts", { ...p, id: `lib_${String(i + 1).padStart(3, "0")}` }));
+    create("posts", routineVideoLibraryPost());
 
     // Newsletters : 2 par mois (1er et 3e jeudi), reliées aux modèles d'e-mails
     const mailOrder = ["mail-glow", "mail-20", "mail-ingredients", "mail-nouveautes", "mail-collection", "mail-saison", "mail-anti-imperfections", "mail-fidelite"];
@@ -125,7 +128,7 @@ export async function seedAll() {
     demoMetrics().forEach((m) => create("metrics", m as Metric));
 
     // Ticket d'accueil de l'équipe marketing
-    const team = SEED_USERS[1];
+    const team = { name: "Équipe marketing" };
     put("tickets", {
       id: "tkt_welcome", number: 1001, type: "Question", subject: "Bienvenue sur ton Marketing Hub", priority: "normale", status: "en_attente",
       description: "Ta stratégie, ton calendrier des 3 prochains mois et tes 12 campagnes sont prêts. Les contenus des 10 prochains jours t'attendent dans « Mes contenus à valider ».",
@@ -133,6 +136,8 @@ export async function seedAll() {
       messages: [{ id: "m1", author: team.name, role: "equipe", at: nowIso(), text: "Bonjour ! Nous avons préparé l'ensemble de ta stratégie marketing. Commence par l'accueil : tes actions du jour y sont listées. Une question ? Réponds simplement à ce message." }],
     });
     setMeta("seeded", nowIso());
+    setMeta("seed-articles-v2", nowIso());
+    setMeta("seed-example-v3", nowIso());
   });
 }
 
@@ -144,11 +149,45 @@ function calendarItem(date: string, platform: "newsletter" | "blog", title: stri
   };
 }
 
+const articleSlot = (full: (typeof articles)[number]): Partial<Post> => ({
+  caption: `Mot-clé principal : ${full.keyword}\n${full.excerpt}`, articleId: full.id, productIds: full.productIds,
+  visual: { kind: "design", design: tplBanner({ format: "newsletter", headline: full.title.split(":")[0], eyebrow: "Blog SKINCLEAN", packshot: full.cover }) },
+});
+
 function blogSlot(d: string, k: number, t0: string): Post {
   const full = articles[k];
-  if (full) return calendarItem(d + "T08:00", "blog", full.title, `Mot-clé principal : ${full.keyword}\n${full.excerpt}`, { articleId: full.id, productIds: full.productIds, visual: { kind: "design", design: tplBanner({ format: "newsletter", headline: full.title.split(":")[0], eyebrow: "Blog SKINCLEAN", packshot: full.cover }) } }, t0);
+  if (full) return calendarItem(d + "T08:00", "blog", full.title, "", articleSlot(full), t0);
   const b = articleBriefs[(k - articles.length) % articleBriefs.length];
   return calendarItem(d + "T08:00", "blog", b.title, `Brief SEO — mot-clé principal : ${b.keyword}\nURL prévue : /conseils/${b.slug}\nPlan : introduction, 3 à 5 parties pratiques, routine SKINCLEAN, appel au Skin Diag.`, { productIds: b.productIds, status: "brouillon" }, t0);
+}
+
+/**
+ * Mise à niveau d'une base déjà remplie : ajoute les articles rédigés à partir des briefs
+ * (sans toucher à ceux qui existent) et relie les créneaux « Brief SEO » du calendrier à leur article.
+ */
+export function upgradeSeed() {
+  if (!getMeta("seed-media-v4")) tx(() => { upgradeMedia(addDays(todayYmd(), 6)); setMeta("seed-media-v4", nowIso()); });
+  if (!getMeta("seed-visuals-v5")) tx(() => { upgradeVisualsV5(); setMeta("seed-visuals-v5", nowIso()); });
+  if (!getMeta("seed-example-v3")) tx(() => {
+    // Campagne exemple « Sérum niacinamide » finalisée + vidéo routine dans la bibliothèque TikTok
+    const c = list("campaigns").find((x) => x.id === "camp-niacinamide");
+    if (c && !c.activatedAt) update("campaigns", c.id, { plan: niacinamidePlan });
+    const lib = routineVideoLibraryPost();
+    if (!list("posts").some((p) => p.library && p.title === lib.title)) create("posts", lib);
+    setMeta("seed-example-v3", nowIso());
+  });
+  if (getMeta("seed-articles-v2")) return;
+  tx(() => {
+    const existing = list("articles");
+    for (const a of briefArticles) if (!existing.some((x) => x.id === a.id || x.slug === a.slug)) put("articles", a);
+    const all = list("articles");
+    for (const p of list("posts")) {
+      if (p.platform !== "blog" || p.articleId || !p.caption.startsWith("Brief SEO")) continue;
+      const a = all.find((x) => p.caption.includes(`/conseils/${x.slug}`));
+      if (a) update("posts", p.id, { ...articleSlot(a), title: a.title });
+    }
+    setMeta("seed-articles-v2", nowIso());
+  });
 }
 
 export const _test = { ymd };

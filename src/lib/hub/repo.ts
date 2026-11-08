@@ -2,7 +2,7 @@ import "server-only";
 import { db, getMeta, nowIso, uid } from "./db";
 import type {
   NewDoc, ActivityEntry, AdCampaign, Article, Asset, Campaign, EmailCampaign, Keyword, Metric, Notification, Objective,
-  Persona, Post, RoadmapMonth, Settings, StrategySection, Ticket,
+  Persona, Post, RoadmapMonth, SandboxPost, Settings, StrategySection, Ticket,
 } from "./types";
 
 /** Collections documentaires du Hub et leur type. */
@@ -22,10 +22,11 @@ export interface Collections {
   metrics: Metric;
   notifications: Notification;
   settings: Settings & { id: string };
+  sandbox: SandboxPost;
 }
 export type CollectionName = keyof Collections;
 export const COLLECTIONS: CollectionName[] = [
-  "posts", "campaigns", "personas", "objectives", "strategy", "ads", "emails", "articles", "keywords", "tickets", "assets", "roadmap", "metrics", "notifications", "settings",
+  "posts", "campaigns", "personas", "objectives", "strategy", "ads", "emails", "articles", "keywords", "tickets", "assets", "roadmap", "metrics", "notifications", "settings", "sandbox",
 ];
 
 type WithId = { id: string };
@@ -34,8 +35,11 @@ let seedPromise: Promise<void> | null = null;
 /** Remplit la base avec la stratégie et les contenus initiaux au premier lancement. */
 export async function ensureSeeded() {
   db();
-  if (getMeta("seeded")) return;
-  seedPromise ??= import("./seed").then((m) => m.seedAll());
+  if (getMeta("seeded")) {
+    if (!getMeta("seed-articles-v2") || !getMeta("seed-example-v3") || !getMeta("seed-media-v4") || !getMeta("seed-visuals-v5")) await import("./seed").then((m) => m.upgradeSeed());
+    return;
+  }
+  seedPromise ??= import("./seed").then((m) => m.seedAll()).finally(() => { seedPromise = null; });
   await seedPromise;
 }
 
@@ -79,6 +83,17 @@ export function update<C extends CollectionName>(c: C, id: string, patch: Partia
   return put(c, next);
 }
 
+/**
+ * Réserve atomiquement un document (passe `field` à true s'il ne l'était pas).
+ * Renvoie true si la réservation a réussi : évite qu'un contenu soit publié deux fois si plusieurs serveurs tournent.
+ */
+export function claim(c: CollectionName, id: string, field: string): boolean {
+  const r = db()
+    .prepare(`UPDATE docs SET data = json_set(data, '$.${field}', json('true')), updated_at = ? WHERE collection = ? AND id = ? AND coalesce(json_extract(data, '$.${field}'), 0) = 0`)
+    .run(nowIso(), c, id);
+  return Number(r.changes) === 1;
+}
+
 export function remove(c: CollectionName, id: string) {
   db().prepare("DELETE FROM docs WHERE collection = ? AND id = ?").run(c, id);
 }
@@ -88,7 +103,9 @@ export function count(c: CollectionName): number {
 }
 
 export function settings(): Settings {
-  return get("settings", "main") as Settings;
+  const s = get("settings", "main") as Settings;
+  // Valeurs par défaut des options ajoutées après la création de la base
+  return { ...s, autoSchedule: s?.autoSchedule ?? true, sandbox: { enabled: true, handle: "skinclean", ...(s?.sandbox ?? {}) } };
 }
 
 /* ───────── Journal d'activité (historique des validations, publications…) ───────── */
@@ -122,7 +139,13 @@ export function events(since?: string, limit = 200) {
 
 /* ───────── Notifications ───────── */
 export function notify(userIds: string[], n: Omit<Notification, "id" | "userId" | "read" | "at">) {
-  for (const userId of userIds) create("notifications", { ...n, userId, read: false, at: nowIso() } as NewDoc<Notification>);
+  for (const userId of userIds) {
+    // Respecte les préférences de notification de chaque utilisateur (Mon compte → Notifications)
+    const row = db().prepare("SELECT data FROM users WHERE id = ?").get(userId) as { data: string } | undefined;
+    const prefs = row ? (JSON.parse(row.data).notifications as Record<string, boolean> | undefined) : undefined;
+    if (prefs && prefs[n.kind] === false) continue;
+    create("notifications", { ...n, userId, read: false, at: nowIso() } as NewDoc<Notification>);
+  }
 }
 
 export function nextTicketNumber(): number {

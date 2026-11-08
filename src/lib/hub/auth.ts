@@ -1,6 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { db, nowIso, uid } from "./db";
 import { ensureSeeded } from "./repo";
@@ -71,6 +71,39 @@ export function checkPassword(id: string, pw: string) {
   return !!r && verifyPassword(pw, r.password_hash);
 }
 
+/* ───────── Mot de passe oublié ───────── */
+const RESET_MINUTES = 30;
+
+/** Crée un lien de réinitialisation à usage unique (30 min). Renvoie null si l'e-mail est inconnu. */
+export function createResetToken(email: string): { token: string; user: HubUser; expiresAt: string } | null {
+  const r = db().prepare("SELECT * FROM users WHERE email = ?").get(email.toLowerCase().trim()) as UserRow | undefined;
+  if (!r) return null;
+  const token = randomBytes(32).toString("base64url");
+  const expiresAt = new Date(Date.now() + RESET_MINUTES * 60_000).toISOString();
+  db().prepare("DELETE FROM password_resets WHERE user_id = ?").run(r.id); // un seul lien valide à la fois
+  db().prepare("INSERT INTO password_resets (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)").run(sha(token), r.id, nowIso(), expiresAt);
+  return { token, user: rowToUser(r), expiresAt };
+}
+
+/** Vérifie un lien de réinitialisation (sans le consommer). */
+export function checkResetToken(token: string): HubUser | null {
+  const r = db().prepare("SELECT user_id, expires_at, used_at FROM password_resets WHERE token_hash = ?").get(sha(token)) as { user_id: string; expires_at: string; used_at: string | null } | undefined;
+  if (!r || r.used_at || r.expires_at < nowIso()) return null;
+  return getUser(r.user_id) ?? null;
+}
+
+/** Applique le nouveau mot de passe et invalide le lien et toutes les sessions ouvertes. */
+export function resetPasswordWithToken(token: string, pw: string): HubUser | null {
+  const u = checkResetToken(token);
+  if (!u) return null;
+  setPassword(u.id, pw);
+  db().prepare("UPDATE password_resets SET used_at = ? WHERE token_hash = ?").run(nowIso(), sha(token));
+  return u;
+}
+
+export const passwordProblem = (pw: string) =>
+  pw.length < 10 || !/[A-Za-z]/.test(pw) || !/\d/.test(pw) ? "Le mot de passe doit contenir au moins 10 caractères, dont des lettres et des chiffres." : null;
+
 export function login(email: string, pw: string): { token: string; user: HubUser } | null {
   const r = db().prepare("SELECT * FROM users WHERE email = ?").get(email.toLowerCase().trim()) as UserRow | undefined;
   if (!r || !verifyPassword(pw, r.password_hash)) return null;
@@ -91,6 +124,12 @@ export function userFromToken(token: string | undefined): HubUser | null {
   return getUser(r.user_id) ?? null;
 }
 
+/**
+ * Le Hub est un outil strictement local : jamais disponible sur Vercel ni sur un autre hébergement.
+ * (Le contrôle de l'adresse « localhost » est fait par src/proxy.ts.) Le site public n'est jamais affecté.
+ */
+export const hubAvailable = () => !process.env.VERCEL;
+
 /** Utilisateur connecté (pages serveur et routes API). */
 export async function currentUser(): Promise<HubUser | null> {
   await ensureSeeded();
@@ -100,6 +139,7 @@ export async function currentUser(): Promise<HubUser | null> {
 
 /** Pages du Hub : redirige vers la connexion si nécessaire. Rend la page dynamique (lecture en base à chaque requête). */
 export async function requirePageUser(): Promise<HubUser> {
+  if (!hubAvailable()) notFound();
   const u = await currentUser();
   if (!u) redirect("/hub/connexion");
   return u;

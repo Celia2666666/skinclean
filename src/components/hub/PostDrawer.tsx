@@ -8,6 +8,7 @@ import { PLATFORM_LABEL, ROLE_LABEL } from "@/lib/hub/types";
 import { addDays, frDay } from "@/lib/hub/dates";
 import { Button, Drawer, Field, Modal, Notice, PlatformBadge, StatusBadge, Tabs, copyText, hubApi, useAction, useCan, useConfirm, useToast } from "./ui";
 import { PostPreview } from "./PostPreview";
+import { VisualTextEditor } from "./design/VisualTextEditor";
 import { designToDataUrl, downloadDesign, slug } from "./design/render";
 import { CheckI, ClockI, CopyI, DownloadI, EditI, PaletteI, SendI, TrashI, UndoI, XI, CommentI, LinkI } from "./icons";
 
@@ -18,9 +19,26 @@ const FORMATS: { id: PostFormat; label: string }[] = [
   { id: "post", label: "Post" }, { id: "carrousel", label: "Carrousel" }, { id: "reel", label: "Reel" }, { id: "story", label: "Story" }, { id: "video", label: "Vidéo" }, { id: "epingle", label: "Épingle" }, { id: "article", label: "Article" }, { id: "newsletter", label: "Newsletter" },
 ];
 
-async function renderVisual(post: Post): Promise<string | undefined> {
+/** Rend toutes les pages du visuel (carrousel) en images, pour la publication et la programmation automatique. */
+export async function renderPostPages(post: Post): Promise<string[]> {
   const d = post.visual?.kind === "design" ? post.visual.design : post.visual?.poster;
-  return d ? designToDataUrl(d, 0) : undefined;
+  if (!d) return [];
+  const pages = post.visual?.kind === "design" ? d.pages.length : 1;
+  const out: string[] = [];
+  for (let i = 0; i < Math.min(pages, 10); i++) out.push(await designToDataUrl(d, i, 1, "image/jpeg"));
+  return out;
+}
+
+/** Valide un ou plusieurs contenus en préparant leurs visuels : ils se publieront seuls à l'heure du calendrier. */
+export async function validatePosts(posts: Post[], run: <T>(name: string, body?: unknown, ok?: string | ((r: T) => string | undefined)) => Promise<T | undefined>) {
+  const media: Record<string, string[]> = {};
+  for (const p of posts) if (!["newsletter", "blog"].includes(p.platform)) media[p.id] = await renderPostPages(p);
+  return run<{ message: string; scheduled: number }>("posts/validate", posts.length > 1 ? { ids: posts.map((p) => p.id), media } : { id: posts[0].id, media }, (r) => r.message);
+}
+
+/** Publie immédiatement (vrai compte connecté ou compte de test local). */
+export async function publishNow(post: Post) {
+  return hubApi<{ published: boolean; reason?: string; needsConnection?: boolean; mode?: "api" | "sandbox"; label?: string; url?: string }>("posts/publish", { id: post.id, images: await renderPostPages(post) });
 }
 
 export async function downloadPostVisual(post: Post) {
@@ -48,6 +66,7 @@ export function PostDrawer({ post, refs, onClose, initialTab }: { post: Post | n
   const [scheduleDate, setScheduleDate] = useState("");
   const [manualUrl, setManualUrl] = useState("");
   const [postponeOpen, setPostponeOpen] = useState(false);
+  const [planDate, setPlanDate] = useState<string | null>(null);
   const { run, busy, refresh } = useAction();
   const toast = useToast();
   const allowed = useCan();
@@ -72,15 +91,13 @@ export function PostDrawer({ post, refs, onClose, initialTab }: { post: Post | n
   const publish = async () => {
     if (dirty) return toast("err", "Enregistre d'abord tes modifications.");
     try {
-      const imageDataUrl = await renderVisual(post);
-      const r = await hubApi<{ published: boolean; reason?: string; needsConnection?: boolean }>("posts/publish", { id: post.id, imageDataUrl });
-      if (r.published) { toast("ok", `Publié sur ${PLATFORM_LABEL[post.platform]} (confirmé par la plateforme).`); refresh(); }
+      const r = await publishNow(post);
+      if (r.published) { toast("ok", r.mode === "sandbox" ? `Publié sur ${r.label} (simulé en local).` : `Publié sur ${PLATFORM_LABEL[post.platform]} (confirmé par la plateforme).`); refresh(); }
       else setManualOpen(r.reason ?? "Publication automatique impossible.");
     } catch (e) { toast("err", (e as Error).message); }
   };
   const schedule = async () => {
-    const imageDataUrl = await renderVisual(post);
-    const r = await run<{ message: string }>("posts/schedule", { id: post.id, date: scheduleDate || post.date, imageDataUrl }, (x) => x.message);
+    const r = await run<{ message: string }>("posts/schedule", { id: post.id, date: scheduleDate || post.date, images: await renderPostPages(post) }, (x) => x.message);
     if (r) setScheduleOpen(false);
   };
   const remove = async () => {
@@ -99,14 +116,15 @@ export function PostDrawer({ post, refs, onClose, initialTab }: { post: Post | n
         <Button size="sm" variant="ghost" icon={<CopyI size={15} />} onClick={() => copyText(post.hashtags.join(" "), toast, "Hashtags copiés")} disabled={!post.hashtags.length}>Hashtags</Button>
       </div>
       {dirty && <Button variant="primary" onClick={save} disabled={busy}>Enregistrer</Button>}
-      {!dirty && editable && ["brouillon", "modifications"].includes(status) && <Button variant="soft" icon={<SendI size={15} />} disabled={busy} onClick={() => run("posts/submit", { id: post.id }, "Envoyé en validation")}>Soumettre à validation</Button>}
-      {!dirty && allowed("content.validate") && ["a_valider", "brouillon", "modifications"].includes(status) && (
+      {post.library && allowed("content.edit") && <Button variant="primary" icon={<ClockI size={15} />} onClick={() => setPlanDate(`${addDays(new Date().toISOString().slice(0, 10), 1)}T18:00`)}>Planifier dans le calendrier</Button>}
+      {!post.library && !dirty && editable && ["brouillon", "modifications"].includes(status) && <Button variant="soft" icon={<SendI size={15} />} disabled={busy} onClick={() => run("posts/submit", { id: post.id }, "Envoyé en validation")}>Soumettre à validation</Button>}
+      {!post.library && !dirty && allowed("content.validate") && ["a_valider", "brouillon", "modifications"].includes(status) && (
         <>
           <Button icon={<XI size={15} />} disabled={busy} onClick={() => setRefuseOpen(true)}>Demander des modifications</Button>
-          <Button variant="primary" icon={<CheckI size={15} />} disabled={busy} onClick={() => run("posts/validate", { id: post.id }, "Contenu validé ✔︎")}>Valider</Button>
+          <Button variant="primary" icon={<CheckI size={15} />} disabled={busy} onClick={() => validatePosts([post], run)}>Valider</Button>
         </>
       )}
-      {!dirty && allowed("content.publish") && ["valide", "programme"].includes(status) && !["newsletter", "blog"].includes(post.platform) && (
+      {!post.library && !dirty && allowed("content.publish") && ["valide", "programme"].includes(status) && !["newsletter", "blog"].includes(post.platform) && (
         <>
           {status === "valide" ? <Button icon={<ClockI size={15} />} onClick={() => { setScheduleDate(post.date); setScheduleOpen(true); }}>Programmer</Button> : <Button icon={<UndoI size={15} />} onClick={() => run("posts/unschedule", { id: post.id }, "Programmation annulée")}>Déprogrammer</Button>}
           <Button variant="primary" icon={<SendI size={15} />} disabled={busy} onClick={publish}>Publier</Button>
@@ -153,7 +171,7 @@ export function PostDrawer({ post, refs, onClose, initialTab }: { post: Post | n
           {post.publish.url && <> <a href={post.publish.url} target="_blank" rel="noreferrer" className="underline">Voir la publication</a></>}
         </Notice>
       )}
-      {post.visual?.note && <div className="mt-2"><Notice tone="warn">{post.visual.note}</Notice></div>}
+      {post.visual?.note && <p className="mt-2 text-xs text-forest-soft">{post.visual.note}</p>}
 
       <Tabs className="mt-4" value={tab} onChange={setTab} tabs={[
         { id: "apercu", label: "Aperçu" },
@@ -186,6 +204,7 @@ export function PostDrawer({ post, refs, onClose, initialTab }: { post: Post | n
 
         {tab === "contenu" && (
           <fieldset disabled={!editable} className="grid gap-4 md:grid-cols-2">
+            {draft.visual && (draft.visual.design || draft.visual.poster) && <VisualTextEditor visual={draft.visual} disabled={!editable} onChange={(v) => set("visual", v)} />}
             <Field label="Titre" className="md:col-span-2"><input className="hub-input" value={draft.title} onChange={(e) => set("title", e.target.value)} /></Field>
             <Field label="Date et heure"><input type="datetime-local" className="hub-input" value={draft.date} onChange={(e) => set("date", e.target.value)} /></Field>
             <div className="grid grid-cols-2 gap-3">
@@ -235,7 +254,7 @@ export function PostDrawer({ post, refs, onClose, initialTab }: { post: Post | n
                 })}
               </div>
             </Field>
-            {draft.slides && (
+            {draft.slides && !draft.visual?.design && (
               <Field label="Textes du carrousel (un par ligne)" className="md:col-span-2" hint="Pour modifier les slides du visuel lui-même, ouvre le Studio créatif.">
                 <textarea className="hub-input min-h-28" value={draft.slides.join("\n")} onChange={(e) => set("slides", e.target.value.split("\n"))} />
               </Field>
@@ -278,6 +297,12 @@ export function PostDrawer({ post, refs, onClose, initialTab }: { post: Post | n
           </div>
         )}
       </div>
+
+      <Modal open={!!planDate} onClose={() => setPlanDate(null)} title="Planifier ce contenu" size="sm"
+        footer={<><Button onClick={() => setPlanDate(null)}>Annuler</Button><Button variant="primary" disabled={busy} onClick={async () => { const r = await run<Post>("posts/from-library", { id: post.id, date: planDate }, "Ajouté au calendrier (brouillon à faire valider)"); if (r) { setPlanDate(null); onClose(); } }}>Ajouter au calendrier</Button></>}>
+        <Field label="Date et heure"><input type="datetime-local" className="hub-input" value={planDate ?? ""} onChange={(e) => setPlanDate(e.target.value)} /></Field>
+        <p className="mt-3 text-sm text-forest-soft">Une copie du modèle est créée dans le calendrier en brouillon ; le modèle reste disponible dans la bibliothèque.</p>
+      </Modal>
 
       <Modal open={refuseOpen} onClose={() => setRefuseOpen(false)} title="Demander des modifications" size="sm"
         footer={<><Button onClick={() => setRefuseOpen(false)}>Annuler</Button><Button variant="primary" disabled={!refuseText.trim()} onClick={async () => { await run("posts/request-changes", { id: post.id, comment: refuseText }, "Demande envoyée à l'équipe"); setRefuseOpen(false); setRefuseText(""); }}>Envoyer</Button></>}>

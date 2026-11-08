@@ -5,49 +5,55 @@ import clsx from "clsx";
 import type { Post } from "@/lib/hub/types";
 import { PLATFORM_LABEL } from "@/lib/hub/types";
 import { frDay, todayYmd } from "@/lib/hub/dates";
-import { Button, Card, Empty, Modal, Field, PLATFORM_ICON, PlatformBadge, StatusBadge, useAction, useCan, hubApi, useToast } from "../ui";
+import { Button, Card, Empty, Modal, Field, PLATFORM_ICON, PlatformBadge, StatusBadge, useAction, useCan, useToast } from "../ui";
 import { VisualThumb } from "../design/DesignPreview";
-import { PostDrawer, type HubRefs } from "../PostDrawer";
+import { PostDrawer, publishNow, validatePosts, type HubRefs } from "../PostDrawer";
 import { CopilotChat } from "../Copilot";
-import { designToDataUrl } from "../design/render";
+import { BrandVideo } from "../BrandVideo";
 import { AdsI, ArrowRightI, CheckI, ClockI, EditI, EyeI, MailI, SendI, SparkI } from "../icons";
 
 export type DayAction =
   | { kind: "post"; time: string; id: string; post: Post }
   | { kind: "ad"; time: string; id: string; title: string; sub: string; href: string; amount: number }
   | { kind: "email"; time: string; id: string; title: string; sub: string; href: string };
+export interface Priority { post: Post; level: 1 | 2 | 3; reason: string }
 export interface Reco { title: string; text: string; cta: string; href: string }
 interface Running { id: string; name: string; color: string; status: string; startDate: string; endDate: string; channels: string[]; total: number; validated: number; published: number }
 
 export function HomeDashboard(props: {
   userName: string; actions: DayAction[]; upcoming: Post[]; toValidate: Post[]; others: { id: string; type: string; title: string; href: string }[];
-  running: Running[]; recos: Reco[]; stats: { toValidate: number; week: number; active: number; connected: number }; refs: HubRefs;
+  running: Running[]; recos: Reco[]; stats: { toValidate: number; week: number; active: number; connected: number }; refs: HubRefs; priorities: Priority[];
 }) {
-  const { actions, upcoming, toValidate, others, running, recos, stats, refs } = props;
+  const { actions, upcoming, toValidate, others, running, recos, stats, refs, priorities } = props;
   const [open, setOpen] = useState<{ id: string; tab: "apercu" | "contenu" } | null>(null);
   const [budget, setBudget] = useState<{ id: string; amount: number; title: string } | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
   const { run, busy, refresh } = useAction();
   const allowed = useCan();
   const toast = useToast();
-  const all = [...actions.flatMap((a) => (a.kind === "post" ? [a.post] : [])), ...upcoming, ...toValidate];
+  const all = [...priorities.map((x) => x.post), ...actions.flatMap((a) => (a.kind === "post" ? [a.post] : [])), ...upcoming, ...toValidate];
   const current = open ? all.find((p) => p.id === open.id) ?? null : null;
 
   const publish = async (p: Post) => {
     try {
-      const d = p.visual?.kind === "design" ? p.visual.design : p.visual?.poster;
-      const r = await hubApi<{ published: boolean; reason?: string }>("posts/publish", { id: p.id, imageDataUrl: d ? await designToDataUrl(d) : undefined });
-      if (r.published) { toast("ok", "Publié (confirmé par la plateforme)."); refresh(); }
+      const r = await publishNow(p);
+      if (r.published) { toast("ok", r.mode === "sandbox" ? `Publié sur ${r.label} (simulé en local).` : "Publié (confirmé par la plateforme)."); refresh(); }
       else { toast("info", `${r.reason}\nOuvre le contenu pour le publier manuellement.`); setOpen({ id: p.id, tab: "apercu" }); }
     } catch (e) { toast("err", (e as Error).message); }
   };
 
   return (
     <div>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="eyebrow text-forest-soft">{frDay(todayYmd())}</p>
-          <h1 className="mt-1 font-display text-3xl font-semibold md:text-4xl">Hello SKINCLEAN ! Voici ton programme marketing du jour 🌿</h1>
+      <div className="relative mb-6 overflow-hidden rounded-xl bg-[#F1ECE7]">
+        <div className="grid md:grid-cols-[1fr_minmax(0,38%)]">
+          <div className="flex flex-col justify-center p-6 md:p-10">
+            <p className="eyebrow text-forest-soft">{frDay(todayYmd())}</p>
+            <h1 className="mt-2 font-display text-3xl font-semibold leading-tight md:text-4xl">Hello SKINCLEAN ! Voici ton programme marketing du jour 🌿</h1>
+            <p className="mt-3 max-w-xl text-sm text-forest-soft">Tes actions du jour, les contenus à valider et tes campagnes en cours. Your skin. Your glow.</p>
+          </div>
+          <div className="relative h-56 md:h-auto md:min-h-[260px]">
+            <BrandVideo className="absolute inset-0 h-full w-full object-cover object-[50%_30%]" />
+          </div>
         </div>
       </div>
 
@@ -55,8 +61,33 @@ export function HomeDashboard(props: {
         <Stat label="Contenus à valider" value={stats.toValidate} href="/hub/calendrier?status=a_valider" tone={stats.toValidate ? "warn" : undefined} />
         <Stat label="Publications sur 7 jours" value={stats.week} href="/hub/calendrier?view=semaine" />
         <Stat label="Campagnes actives" value={stats.active} href="/hub/campagnes" />
-        <Stat label="Plateformes connectées" value={`${stats.connected}`} href="/hub/compte?tab=integrations" sub={stats.connected ? undefined : "Mode démonstration"} />
+        <Stat label="Plateformes connectées" value={`${stats.connected}`} href="/hub/compte?tab=integrations" />
       </div>
+
+      <Card className="mb-6" title="À traiter en priorité" subtitle="Les publications des prochains jours classées par urgence : commence par le n° 1." pad={false}
+        action={<div className="hidden items-center gap-3 text-xs text-forest-soft sm:flex"><Level level={1} /> <Level level={2} /> <Level level={3} /></div>}>
+        {!priorities.length ? <div className="p-5"><Empty title="Rien d'urgent dans les jours à venir 🎉" /></div> : (
+          <ol className="divide-y divide-line">
+            {priorities.map((x, i) => (
+              <li key={x.post.id} className="flex flex-wrap items-center gap-4 px-5 py-3">
+                <span className={clsx("grid h-8 w-8 shrink-0 place-items-center rounded-full font-display text-sm font-semibold", x.level === 1 ? "bg-[#B3402F] text-white" : x.level === 2 ? "bg-[#E0A800] text-forest" : "bg-sage text-forest")}>{i + 1}</span>
+                <button onClick={() => setOpen({ id: x.post.id, tab: "apercu" })} className="w-11 shrink-0 overflow-hidden rounded"><VisualThumb visual={x.post.visual} width={56} /></button>
+                <button onClick={() => setOpen({ id: x.post.id, tab: "apercu" })} className="min-w-0 flex-1 text-left">
+                  <span className="flex flex-wrap items-center gap-2 text-xs text-forest-soft"><Level level={x.level} /><PlatformIcon p={x.post.platform} />{PLATFORM_LABEL[x.post.platform]} · {frDay(x.post.date)} · {x.post.date.slice(11, 16)}</span>
+                  <span className="block truncate text-sm font-medium">{x.post.title}</span>
+                  <span className="block text-xs text-forest-soft">{x.reason}</span>
+                </button>
+                <StatusBadge status={x.post.status} />
+                <div className="flex gap-1.5">
+                  <Button size="sm" icon={<EyeI size={14} />} onClick={() => setOpen({ id: x.post.id, tab: "apercu" })}>Voir</Button>
+                  {allowed("content.validate") && ["a_valider", "brouillon", "modifications"].includes(x.post.status) && <Button size="sm" variant="primary" icon={<CheckI size={14} />} disabled={busy} onClick={() => validatePosts([x.post], run)}>Valider</Button>}
+                  {allowed("content.publish") && ["valide", "programme"].includes(x.post.status) && <Button size="sm" variant="primary" icon={<SendI size={14} />} onClick={() => publish(x.post)}>Publier</Button>}
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </Card>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         <div className="space-y-6">
@@ -77,9 +108,9 @@ export function HomeDashboard(props: {
                         <div className="flex flex-wrap gap-1.5">
                           <Button size="sm" icon={<EyeI size={14} />} onClick={() => setOpen({ id: a.id, tab: "apercu" })}>Voir le contenu</Button>
                           {allowed("content.edit") && <Button size="sm" icon={<EditI size={14} />} onClick={() => setOpen({ id: a.id, tab: "contenu" })}>Modifier</Button>}
-                          {allowed("content.validate") && ["a_valider", "brouillon", "modifications"].includes(a.post.status) && <Button size="sm" variant="primary" icon={<CheckI size={14} />} disabled={busy} onClick={() => run("posts/validate", { id: a.id }, "Contenu validé")}>Valider</Button>}
+                          {allowed("content.validate") && ["a_valider", "brouillon", "modifications"].includes(a.post.status) && <Button size="sm" variant="primary" icon={<CheckI size={14} />} disabled={busy} onClick={() => validatePosts([a.post], run)}>Valider</Button>}
                           {allowed("content.publish") && ["valide", "programme"].includes(a.post.status) && <Button size="sm" variant="primary" icon={<SendI size={14} />} onClick={() => publish(a.post)}>Publier</Button>}
-                          {allowed("content.edit") && !["publie", "publie_manuel"].includes(a.post.status) && <Button size="sm" icon={<ClockI size={14} />} disabled={busy} onClick={() => run("posts/postpone", { id: a.id, days: 1 }, "Reporté à demain")}>Reporter</Button>}
+                          {allowed("content.edit") && !["publie", "publie_manuel", "publie_test"].includes(a.post.status) && <Button size="sm" icon={<ClockI size={14} />} disabled={busy} onClick={() => run("posts/postpone", { id: a.id, days: 1 }, "Reporté à demain")}>Reporter</Button>}
                         </div>
                       </>
                     ) : (
@@ -101,7 +132,7 @@ export function HomeDashboard(props: {
           </Card>
 
           <Card title="Mes contenus à valider" subtitle={`${toValidate.length + others.length} élément(s) en attente`} pad={false}
-            action={allowed("content.validate") && selected.length > 0 ? <Button size="sm" variant="primary" icon={<CheckI size={14} />} disabled={busy} onClick={async () => { await run("posts/validate", { ids: selected }, `${selected.length} contenus validés`); setSelected([]); }}>Valider la sélection ({selected.length})</Button> : <Link href="/hub/calendrier?status=a_valider" className="text-xs font-medium underline">Tout voir</Link>}>
+            action={allowed("content.validate") && selected.length > 0 ? <Button size="sm" variant="primary" icon={<CheckI size={14} />} disabled={busy} onClick={async () => { await validatePosts(toValidate.filter((p) => selected.includes(p.id)), run); setSelected([]); }}>Valider la sélection ({selected.length})</Button> : <Link href="/hub/calendrier?status=a_valider" className="text-xs font-medium underline">Tout voir</Link>}>
             {!toValidate.length && !others.length ? <div className="p-5"><Empty title="Tout est validé 🎉" /></div> : (
               <ul className="divide-y divide-line">
                 {toValidate.map((p) => (
@@ -202,6 +233,11 @@ export function HomeDashboard(props: {
       </Modal>
     </div>
   );
+}
+
+function Level({ level }: { level: 1 | 2 | 3 }) {
+  const cfg = { 1: ["Urgent", "bg-[#F8E1DD] text-[#8A2B1E]"], 2: ["Haute", "bg-[#FFF3D6] text-[#7A5B00]"], 3: ["Normale", "bg-sage-soft text-forest"] }[level];
+  return <span className={clsx("hub-badge", cfg[1])}>{cfg[0]}</span>;
 }
 
 function PlatformIcon({ p }: { p: Post["platform"] }) {

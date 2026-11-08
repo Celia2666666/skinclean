@@ -18,13 +18,21 @@ export async function POST(req: Request) {
   if (!lines.length) return Response.json({ error: "Panier vide" }, { status: 400 });
   const email = isEmail(body?.email) ? body.email : undefined;
 
+  // En local, le stock de référence est celui du CRM (sinon : stock du catalogue)
+  const crmStock = await import("@/lib/crm/inbound").then(async (m) => {
+    if (!m.crmInboundAvailable()) return null;
+    const { ensureCrmSeeded } = await import("@/lib/crm/repo");
+    const { all } = await import("@/lib/crm/db");
+    await ensureCrmSeeded();
+    return new Map(all("stock").map((s) => [s.id, s.qty]));
+  }).catch(() => null);
   const items: { name: string; unit: number; qty: number; discountPct: number; isKit: boolean }[] = [];
   for (const l of lines) {
     const p = getProduct(String(l.productId));
     if (!p) continue;
     const v = resolveVariant(p, String(l.variantId));
     const qty = Math.max(1, Math.min(10, Number(l.qty) || 1));
-    if (v.stock < qty) return Response.json({ error: `Stock insuffisant pour ${p.name}` }, { status: 409 });
+    if ((crmStock?.get(`${p.id}:${v.id}`) ?? v.stock) < qty) return Response.json({ error: `Stock insuffisant pour ${p.name}` }, { status: 409 });
     const kit = l.bundleId ? getKit(String(l.bundleId)) : undefined;
     let discountPct = kit ? kit.discountPercent : 0;
     if (!kit && String(l.bundleId ?? "").startsWith("set-") && setDiscount.enabled) {

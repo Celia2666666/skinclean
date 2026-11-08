@@ -1,6 +1,6 @@
 /** Démarrage du serveur : lance le planificateur du Marketing Hub (publications programmées, rappels). */
 export async function register() {
-  if (process.env.NEXT_RUNTIME === "nodejs" && process.env.HUB_SCHEDULER !== "off") {
+  if (process.env.NEXT_RUNTIME === "nodejs" && process.env.HUB_SCHEDULER !== "off" && !process.env.VERCEL) {
     const { startScheduler } = await import("./lib/hub/scheduler");
     startScheduler();
   }

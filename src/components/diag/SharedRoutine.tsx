@@ -22,7 +22,7 @@ export function SharedRoutine({ payload }: { payload: RoutinePayload }) {
   const [saved, setSaved] = useState(false);
   const items = payload.i.map(([pid, vid, step, m]) => ({ p: getProduct(pid), vid, step, m })).filter((x) => x.p) as { p: NonNullable<ReturnType<typeof getProduct>>; vid: string; step: string; m: string }[];
   const total = items.reduce((s, x) => s + resolveVariant(x.p, x.vid, h ? overrides : undefined).price, 0);
-  const addAll = () => addMany(items.filter((x) => resolveVariant(x.p, x.vid).stock > 0).map((x) => ({ productId: x.p.id, variantId: x.vid })), { id: "routine-link", name: "Ma routine" });
+  const addAll = () => addMany(items.filter((x) => resolveVariant(x.p, x.vid, overrides).stock > 0).map((x) => ({ productId: x.p.id, variantId: x.vid })), { id: "routine-link", name: "Ma routine" });
 
   // ?panier=1 → panier prérempli automatiquement (une seule fois)
   useEffect(() => {

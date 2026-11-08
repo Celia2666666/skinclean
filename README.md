@@ -8,7 +8,7 @@ Site e-commerce skincare (projet académique, marque fictive) : catalogue, Skin 
 npm install
 cp .env.example .env.local   # facultatif : sans clés, tout tourne en mode démo
 npm run dev                  # http://localhost:3000
-npm test                     # 22 tests (catalogue, diag, panier, fidélité, liens signés)
+npm test                     # tests (catalogue, diag, panier, fidélité, liens signés, Marketing Hub)
 npm run build && npm start   # production
 ```
 
@@ -109,6 +109,106 @@ Les prix sont toujours recalculés côté serveur à partir du catalogue (le nav
 ## Déployer
 
 Vercel (recommandé) : importer le dépôt, ajouter les variables d'environnement, déployer. Mettre `NEXT_PUBLIC_SITE_URL` sur le domaine final et déclarer le webhook Stripe.
+
+## Marketing Hub (`/hub`)
+
+Plateforme de **stratégie, création et pilotage marketing** reliée au site (ce n'est pas un CRM : clients, commandes, chiffre d'affaires et stock sont dans le [CRM](#crm-crm), outil distinct).
+
+```bash
+npm run dev            # puis http://localhost:3000/hub
+```
+
+**Compte universel** (créé au premier lancement, tous les droits) — change le mot de passe dans « Mon compte » :
+
+- E-mail : `skinclean@skinclean.local`
+- Mot de passe : `SkinClean-Hub-2026` (ou la valeur de `HUB_SEED_PASSWORD`)
+
+**Mot de passe oublié** : lien « Mot de passe oublié ? » sur l'écran de connexion. Le lien de réinitialisation (30 min, usage unique) est envoyé par e-mail si Resend est configuré, sinon déposé dans `data/hub/lien-reinitialisation.txt` (et affiché dans le terminal du serveur). Secours en ligne de commande : `npm run hub:mot-de-passe -- <e-mail> <nouveau-mot-de-passe>`.
+
+D'autres comptes peuvent être ajoutés dans « Mon compte → Autorisations & utilisateurs » (accès complet par défaut).
+
+### Modules
+1. **Accueil** — programme du jour (voir, modifier, valider, publier, reporter), publications à venir, contenus à valider, campagnes en cours, 3 recommandations, Copilot.
+2. **Ma stratégie** — analyse de marché, tendances, benchmark, SWOT, positionnement, proposition de valeur, parcours, objectifs, canaux, ligne éditoriale, messages, stratégies (contenu, acquisition, influence, notoriété). Chaque bloc est qualifié : *fait vérifié*, *hypothèse* ou *proposition*. Objectifs SMART modifiables, 4 personas.
+3. **Calendrier éditorial** — vues jour, semaine, mois (navigation sur 12 mois), par réseau, par campagne ; glisser-déposer ; ~15 semaines préremplies aux fréquences demandées (ajustables) ; fiche complète de chaque publication.
+4. **Réseaux sociaux** — bibliothèques prêtes à l'emploi (Instagram, TikTok avec hook/script/scènes, Facebook, Pinterest), simulations fidèles des plateformes, téléchargement, copie légende/hashtags, programmation, publication.
+5. **Studio créatif** — éditeur de visuels multipages (carrousels) : modèles à la charte, textes, logo, couleurs, arrière-plans, import de photos, retouches, export PNG, bibliothèque avec recherche/dossiers/filtres.
+6. **Campagnes 360°** — 12 campagnes complètes ; l'activation ajoute les actions au calendrier (en brouillon).
+7. **SEO** — audit réel des pages, mots-clés, titres/metas publiés sur les fiches produits, maillage interne, optimisation WebP des images, calendrier SEO, articles publiés sur **`/conseils`**.
+8. **SEA & Social Ads** — Google/Meta/TikTok : audience, annonces, budget, dates, URL, mots-clés, UTM, aperçus, export (CSV Google Ads Editor), validation de budget obligatoire, KPI de diffusion.
+9. **E-mailing** — 9 modèles, éditeur par blocs, aperçus mobile/ordinateur, test, programmation et envoi via Resend.
+10. **Gestion du site** — fiches et médias produits, ajout de produit, hero, slider, bannière promo, collection mise en avant, best-sellers, bandeau d'annonces, kits saisonniers, médiathèque.
+11. **Plan annuel** — roadmap 12 mois éditable, vue chronologique avec les campagnes.
+12. **Performances** — réseaux, publicité, SEO, e-mailing, gestion éditoriale ; graphiques ; rapports CSV et PDF (impression).
+13. **Messages & demandes** — tickets numérotés (pièces jointes, priorité, statut, historique).
+14. **Assistant IA** — SKINCLEAN Marketing Copilot (Claude si `ANTHROPIC_API_KEY`, sinon mode guidé) ; propose des brouillons, applique après confirmation.
+15. **Mon compte** — informations, mot de passe, notifications, autorisations et utilisateurs, historique des validations, intégrations.
+
+### Architecture
+- `src/app/hub/**` pages · `src/app/api/hub/[...slug]` API unique (session + permission vérifiées à chaque action) · `src/lib/hub/**` logique (base, auth, handlers, connecteurs, Copilot, planificateur) · `src/components/hub/**` interface.
+- **Base locale SQLite** (`node:sqlite`, aucun service à installer) : `data/hub/marketing-hub.sqlite`. Supprimer le fichier puis relancer le serveur recrée les contenus initiaux.
+- **Lien avec le site** : le Hub écrit `src/data/site-overrides.json`, appliqué par `products.ts`, `kits.ts`, `home.ts` et `config.ts` (une seule source produit). En développement, le site se met à jour immédiatement ; en production, relancer le build pour les pages statiques.
+- **Médias** : `public/media/uploads/` (servis directement par le site).
+- **Futur CRM** : `GET /api/hub/events` (journal d'événements marketing) et `GET /api/hub/export?collection=…` ; UTM générés sur chaque publicité.
+- **Uniquement en localhost** : `src/proxy.ts` renvoie une 404 pour `/hub` et `/api/hub` sur tout autre hôte (Vercel, domaine public, adresse réseau). Le site public n'est pas affecté.
+
+### Publication automatique et comptes de test
+- **Valider = programmer** : valider un contenu prépare ses visuels et le programme à sa date et son heure du calendrier. Le planificateur du serveur local (chaque minute) le publie automatiquement, sans connexion de l'utilisateur. Serveur éteint à l'heure prévue → publication au redémarrage, signalée « avec retard ».
+- **Comptes de test locaux** (`/hub/comptes-test`) : profils fictifs Instagram, TikTok, Facebook et Pinterest. Quand un réseau n'est pas connecté, les contenus y sont publiés (statut « Publié (compte de test) ») ; aucune diffusion réelle. Réglages dans « Mon compte → Intégrations ».
+
+### Honnêteté des données
+- Rien n'est marqué « publié » sans identifiant renvoyé par l'API de la plateforme ; sinon statut **« Publié manuellement »** (déclaration).
+- Aucune dépense publicitaire sans budget validé ; l'activation passe par la plateforme (export) puis une déclaration.
+- Les données de **démonstration** (statistiques) sont étiquetées et ne sont jamais additionnées aux données réelles ; volumes et positions SEO ne s'affichent que mesurés.
+
+## CRM (`/crm`)
+
+Outil de **gestion commerciale** inspiré des grands CRM (HubSpot, Shopify Analytics, Klaviyo) : ventes, clients, stock, paniers abandonnés, rentabilité. Même compte et même session que le Marketing Hub, **localhost uniquement** (même garde-fou `src/proxy.ts`, jamais sur Vercel).
+
+```bash
+npm run dev            # puis http://localhost:3000/crm
+```
+
+### Modules
+
+| Module | Contenu |
+| --- | --- |
+| **Tableau de bord** | 12 indicateurs comparés à la période précédente (CA TTC/HT, commandes, panier moyen, marge brute, marge de contribution, nouveaux clients, conversion, abandon de panier, réachat, LTV, ruptures, valeur du stock), courbe du CA vs période précédente, objectif du mois et prévision, alertes actionnables, meilleure vente, catégories, canaux, carte de chaleur jour × heure, appareils, paiements, régions, campagnes du Marketing Hub sur la période |
+| **Rentabilité & prévisions** | Compte de résultat mensuel (CA → TVA → coût des marchandises → marge brute → logistique → paiement → marketing → contribution → charges fixes → EBITDA), cascade, économie d'une commande moyenne, seuil de rentabilité, ROAS / CAC par canal, marge par catégorie, prévision de CA à 4 mois (saisonnalité × croissance) |
+| **Commandes** | Recherche, filtres (statut, canal, période), tri, pagination ; fiche commande avec marge ligne à ligne et cycle de vie (préparation → expédition + suivi → livraison → remboursement avec remise en stock) |
+| **Produits & best-sellers** | Classement (CA, unités, marge, évolution), matrice volume × marge (Star / Locomotive / Pépite / À revoir), ventes croisées (support, confiance, lift), codes promo, coffrets |
+| **Paniers abandonnés** | Taux d'abandon, valeur perdue / récupérée, tunnel de conversion, étape d'abandon, produits abandonnés, relance e-mail / SMS |
+| **Contacts** | Cycle de vie (abonné → lead → client → fidèle → VIP), segments RFM, fiche 360° : chronologie (commandes, paniers, SAV, notes, appels), score RFM et action recommandée, prochain achat estimé, consentements RGPD tracés, tags, tâches, recommandations produit |
+| **Segments, cohortes & LTV** | Matrice RFM cliquable, rétention par cohorte mensuelle, nouveaux vs récurrents, fréquence d'achat, LTV / CAC par canal, niveaux du Club, CA par type de peau |
+| **Messages & contact** | Boîte de réception des messages du formulaire « Nous contacter » (`/contact`) et du Glow Assistant (« Parler à l'équipe »), réponses types, réponse par e-mail, nouveau message à n'importe quel contact |
+| **Automatisations** | Scénarios activables et modifiables (délai, objet, message) : alerte retour en stock, relance panier 1 h puis 24 h, bienvenue après la 1ʳᵉ commande, demande d'avis 7 j après livraison, rappel de réapprovisionnement, réactivation des clients à risque. Exécution automatique (toutes les 10 min à l'ouverture du CRM et à chaque réception de stock), dédoublonnage, journal des envois, conversions et CA attribué |
+| **Chatbot (Glow Assistant)** | Questions posées (journal anonyme : e-mails et numéros masqués), réponses qui reviennent le plus, taux de compréhension, questions sans réponse (→ tâche), produits introuvables demandés, alertes créées, transferts à l'équipe |
+| **Service client** | Demandes liées aux commandes, 1ʳᵉ réponse, délai de résolution, CSAT, motifs de contact, réponse et clôture |
+| **Stock & réassort** | Inventaire par format (couverture en jours, date de rupture estimée, point de commande, stock de sécurité), réassort suggéré, bons de commande fournisseurs (envoi, réception → stock), mouvements, analyse ABC (Pareto) |
+| **Pipeline B2B** | Kanban glisser-déposer (instituts, spas, concept stores, pharmacies), prévision pondérée, taux de transformation, cycle de vente |
+| **Tâches** | Relances, appels, réassorts liés aux clients, commandes, produits et opportunités |
+| **Paramètres & exports** | Hypothèses (TVA, frais Stripe, coût d'expédition, emballage, charges fixes, objectif), état de la connexion Stripe, exports CSV (Excel), régénération de la démo |
+
+Recherche globale **⌘ K** (clients, commandes, produits, entreprises).
+
+Côté site : le Glow Assistant reconnaît « je ne trouve plus… » (vérifie la disponibilité en direct dans le stock du CRM et propose « Me prévenir du retour en stock ») et « parler à quelqu'un » (message à l'équipe) ; la fiche d'un produit en rupture propose aussi l'alerte. Routes : `POST /api/alerte-stock`, `POST /api/assistant/log`, `GET /api/disponibilite`, `POST /api/contact` (→ CRM). En ligne (Vercel), le CRM n'existe pas : rien n'est stocké et l'interface l'indique.
+
+**Stock du site = stock du CRM (en local)** : `<LiveStockSync />` charge `/api/stock` (au chargement, au retour sur l'onglet, toutes les 60 s) ; ruptures, « plus que X en stock », boutons d'achat et alerte de retour en stock suivent le CRM, et le paiement (`/api/checkout`) vérifie ce même stock. Priorité : surcharge `/admin` > CRM > catalogue. En ligne (pas de CRM), le site garde le stock du catalogue.
+
+**Envois d'e-mails** : uniquement via Resend (`RESEND_API_KEY`). Sans clé, ou pour une adresse `@example.com`, l'envoi est marqué « Simulé » — jamais « Envoyé ». Chaque e-mail produit par le CRM est visible tel quel dans la **Boîte mail de démo** (`/crm/boite-demo`, adresse par défaut `demo@skinclean.example`). Dans Paramètres, on peut remplacer cette adresse par la sienne et, avec Resend, y recevoir réellement une copie des e-mails de démo (objet préfixé « [Démo → destinataire] »).
+
+### Données : démonstration vs réel
+
+- **Démonstration** (par défaut) : ~14 mois générés de façon déterministe à partir du **vrai catalogue** (produits, formats, prix, coffrets) — croissance, saisonnalité (Black Friday, Noël, soldes, SPF l'été), codes promo, retours, paniers relancés, réassorts. Clients fictifs en `@example.com` (domaine réservé : aucun envoi possible), entreprises B2B et fournisseurs fictifs, dépenses marketing et trafic simulés. Bandeau « Mode démonstration » sur chaque page.
+- **Données réelles** : chaque paiement confirmé par le webhook Stripe (`checkout.session.completed`) crée la commande et la fiche client dans le CRM et décrémente le stock. Bascule en haut de l'écran ; les deux jeux ne sont **jamais additionnés**.
+- Coûts de revient : estimations de démonstration par type de produit, modifiables par référence (Stock → fiche produit).
+
+### Architecture
+
+- `src/lib/crm/` : `db.ts` (SQLite `data/crm/crm.sqlite`, collections documentaires indexées + cache mémoire), `seed.ts` (générateur), `analytics.ts` (moteur d'indicateurs pur et testé : RFM, cohortes, LTV/CAC, ABC, ventes croisées, P&L, prévisions), `pages.ts` (données de chaque écran), `actions.ts` (écritures validées côté serveur), `exports.ts`, `search.ts`.
+- `src/app/crm/(app)/*` : pages serveur ; `src/components/crm/*` : interface et graphiques SVG sans dépendance.
+- API : `POST /api/crm/<action>`, `GET /api/crm/export/<jeu>`, `GET /api/crm/search?q=`.
+- Supprimer `data/crm/crm.sqlite` (ou « Régénérer la démonstration ») recrée le jeu de démonstration. Tests : `tests/crm/`.
 
 ## Garde-fous respectés
 
