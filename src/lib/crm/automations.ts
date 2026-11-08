@@ -30,6 +30,8 @@ export const DEFAULT_AUTOMATIONS: Omit<Automation, "updatedAt">[] = [
     subject: "Alors, {prenom}, tu en penses quoi ?", body: "Tu utilises {produit} depuis une semaine : ton avis aide toute la communauté (et te rapporte 20 feuilles)." },
   { id: "replenish", name: "Rappel de réapprovisionnement", description: "Prévient quand un client arrive au bout de son produit, d'après son rythme d'achat habituel.", trigger: "Date de réachat estimée dans 3 jours", enabled: true, delayHours: 0,
     subject: "Bientôt à court de {produit} ?", body: "{prenom}, d'après tes habitudes, ton {produit} touche bientôt à sa fin. Recommande-le en 1 clic pour ne pas interrompre ta routine." },
+  { id: "sav_auto", name: "Réponse automatique du SAV", description: "Chaque nouvelle demande (e-mail, chat, formulaire, Glow Assistant) est triée : les questions standard reçoivent une réponse immédiate, à vérifier ensuite ; les cas spécifiques sont signalés « À toi de répondre » avec un brouillon prêt.", trigger: "Nouvelle demande client", enabled: true, delayHours: 0,
+    subject: "Re : {sujet}", body: "Réponse rédigée pour chaque demande (IA Claude si la clé est configurée, sinon réponse type complétée avec la commande)." },
   { id: "winback", name: "Réactivation des clients à risque", description: "Relance personnalisée des bons clients sans commande depuis plus de 4 mois.", trigger: "Segment RFM « À risque » ou « À ne pas perdre »", enabled: false, delayHours: 0,
     subject: "{prenom}, ta peau nous manque", body: "Ça fait un moment ! Découvre nos nouveautés et retrouve tes soins préférés." },
 ];
@@ -149,6 +151,11 @@ export async function runAutomations(only?: AutomationKind, force = false) {
   for (const a of automations()) {
     if ((only && a.id !== only) || (!a.enabled && !(force && only))) continue;
     const r = (result[a.id] = { total: 0, sent: 0, simulated: 0, failed: 0 });
+    if (a.id === "sav_auto") {
+      await runSupport(now, r);
+      save("automations", { ...a, lastRunAt: ymdhm(now) });
+      continue;
+    }
     for (const c of candidates(a, now)) {
       const vars = { prenom: first(c.name), ...c.vars };
       const d = await deliver(c.email, fill(a.subject, vars), fill(a.body, vars), c.cta, a.name);
@@ -163,10 +170,43 @@ export async function runAutomations(only?: AutomationKind, force = false) {
   return result;
 }
 
+/** Un exemple de chaque e-mail automatique, livré dans la boîte de démo. */
+export async function sampleMails() {
+  const vars = { prenom: "Camille", produit: "Glow Shot", sujet: "Ma commande" };
+  const fillV = (t: string) => t.replace(/\{(\w+)\}/g, (_, k: string) => (vars as Record<string, string>)[k] ?? "");
+  const list = automations().filter((a) => a.id !== "sav_auto");
+  for (const a of list) await deliver("camille.demo@example.com", fillV(a.subject), fillV(a.body), { href: siteUrl(), label: "Voir sur le site" }, `Exemple — ${a.name}`);
+  return list.length;
+}
+
 /** Exécution automatique « façon tâche planifiée » : au plus une fois toutes les 10 minutes. */
 export async function maybeRunAutomations() {
   const last = crmMeta("automations-last-run");
   if (last && Date.now() - new Date(last).getTime() < 10 * 60_000) return;
   setCrmMeta("automations-last-run", new Date().toISOString());
   try { await runAutomations(); } catch (e) { console.error("[crm automatisations]", e); }
+}
+
+/**
+ * SAV : trie chaque nouvelle demande ouverte, envoie la réponse des demandes standard (à vérifier ensuite)
+ * et prépare un brouillon « À toi de répondre » pour les cas spécifiques.
+ */
+async function runSupport(now: Date, r: { total: number; sent: number; simulated: number; failed: number }) {
+  const { analyzeTicket } = await import("./support-ai");
+  const at = ymdhm(now);
+  const todo = all("tickets").filter((t) => t.status === "ouvert" && !t.ai).slice(0, 60);
+  for (const t of todo) {
+    const ai = await analyzeTicket(t);
+    const to = t.email ?? (t.customerId ? one("customers", t.customerId)?.email : undefined);
+    if (ai.triage === "auto" && to) {
+      const d = await deliver(to, `Re : ${t.subject}`, ai.draft, undefined, `Réponse automatique SAV ${t.number}`);
+      const firstResponseMin = Math.max(1, Math.round((now.getTime() - parseLocal(t.createdAt).getTime()) / 6e4));
+      save("tickets", { ...t, status: "resolu", resolvedAt: at, firstResponseMin: t.firstResponseMin ?? firstResponseMin, messages: [...t.messages, { at, from: "skinclean", body: ai.draft, auto: true }], ai: { ...ai, autoSent: true, checked: false } });
+      save("runs", { id: crmUid("run_"), source: t.source, at, automationId: "sav_auto", key: `sav:${t.id}`, email: to, name: t.customerName, label: t.subject, delivery: d.delivery, detail: d.detail });
+      r.total++;
+      if (d.delivery === "envoye") r.sent++; else if (d.delivery === "simule") r.simulated++; else r.failed++;
+    } else {
+      save("tickets", { ...t, ai });
+    }
+  }
 }

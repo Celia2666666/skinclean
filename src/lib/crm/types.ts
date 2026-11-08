@@ -198,7 +198,9 @@ export interface Ticket {
   firstResponseMin?: number;
   resolvedAt?: string;
   csat?: number;
-  messages: { at: string; from: "client" | "skinclean"; body: string }[];
+  messages: { at: string; from: "client" | "skinclean"; body: string; auto?: boolean }[];
+  /** Assistant SAV : tri (réponse automatique possible ou non), brouillon de réponse, suivi de la vérification. */
+  ai?: SupportAi;
 }
 
 /** Dépenses marketing mensuelles par canal payant (démonstration). */
@@ -238,7 +240,19 @@ export interface StockAlert {
 }
 
 export type Delivery = "envoye" | "simule" | "echec";
-export type AutomationKind = "back_in_stock" | "cart_1" | "cart_2" | "welcome" | "review" | "replenish" | "winback";
+export type AutomationKind = "back_in_stock" | "cart_1" | "cart_2" | "welcome" | "review" | "replenish" | "winback" | "sav_auto";
+
+export interface SupportAi {
+  /** auto = réponse standard envoyable sans relecture ; humain = cas spécifique, c'est à l'équipe de répondre. */
+  triage: "auto" | "humain";
+  reason: string;
+  draft: string;
+  /** ia = rédigé par Claude (clé ANTHROPIC_API_KEY) ; modele = réponse type complétée avec les données de la commande. */
+  engine: "ia" | "modele";
+  at: string;
+  autoSent?: boolean;
+  checked?: boolean;
+}
 export interface Automation {
   id: AutomationKind; name: string; description: string; trigger: string; enabled: boolean;
   delayHours: number; subject: string; body: string; updatedAt: string; lastRunAt?: string;

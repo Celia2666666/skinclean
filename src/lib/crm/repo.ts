@@ -9,9 +9,19 @@ export const SOURCE_COOKIE = "crm_source";
 let seeding: Promise<void> | null = null;
 export async function ensureCrmSeeded() {
   crmDb();
-  if (crmMeta("seeded") && crmMeta("seed-extras-v1")) return;
+  if (crmMeta("seeded") && crmMeta("seed-extras-v1") && crmMeta("seed-sav-v1")) return;
   // Un seul remplissage même si la mise en page et la page le demandent en parallèle ; mise à niveau des bases existantes
-  seeding ??= import("./seed").then((m) => { if (!crmMeta("seeded")) m.seedCrm(); else if (!crmMeta("seed-extras-v1")) m.seedCrmExtras(); }).finally(() => { seeding = null; });
+  seeding ??= import("./seed").then(async (m) => {
+    if (!crmMeta("seeded")) m.seedCrm();
+    else if (!crmMeta("seed-extras-v1")) m.seedCrmExtras();
+    if (!crmMeta("seed-sav-v1")) {
+      m.seedSupportInbox();
+      // Premier passage du SAV automatique + exemples dans la boîte mail de démo
+      const a = await import("./automations");
+      await a.runAutomations("sav_auto");
+      await a.sampleMails();
+    }
+  }).finally(() => { seeding = null; });
   await seeding;
 }
 

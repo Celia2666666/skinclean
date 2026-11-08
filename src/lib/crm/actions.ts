@@ -7,7 +7,7 @@ import { all, crmDb, crmTx, crmUid, one, remove, save } from "./db";
 import { settings } from "./repo";
 import type { Activity, Automation, AutomationKind, CrmSettings, Deal, DealStage, MoveReason, Order, OrderStatus, PurchaseOrder, Task, Ticket } from "./types";
 import { DEAL_STAGES, DELIVERY_LABEL } from "./types";
-import { automations, deliver, runAutomations } from "./automations";
+import { automations, deliver, runAutomations, sampleMails } from "./automations";
 
 /**
  * Actions du CRM (POST /api/crm/<action>). Toutes les écritures sont validées côté serveur.
@@ -191,8 +191,22 @@ const handlers: Record<string, (u: HubUser, b: Body) => unknown> = {
     const d = to ? await deliver(to, `Re : ${t.subject}`, body, undefined, `Réponse ${t.number}`) : { delivery: "simule" as const, detail: "Aucune adresse e-mail" };
     const firstResponseMin = t.firstResponseMin ?? Math.max(1, Math.round((Date.now() - new Date(t.createdAt).getTime()) / 6e4));
     const status = (b.resolve ? "resolu" : "en_cours") as Ticket["status"];
-    save("tickets", { ...t, firstResponseMin, status, resolvedAt: status === "resolu" ? now() : t.resolvedAt, messages: [...t.messages, { at: now(), from: "skinclean", body }] });
+    save("tickets", { ...t, firstResponseMin, status, resolvedAt: status === "resolu" ? now() : t.resolvedAt, messages: [...t.messages, { at: now(), from: "skinclean", body }], ai: t.ai ? { ...t.ai, checked: true } : t.ai });
     return { ok: true, delivery: d.delivery, message: `Réponse enregistrée — e-mail : ${DELIVERY_LABEL[d.delivery].toLowerCase()}${d.detail && d.delivery !== "envoye" ? ` (${d.detail})` : ""}.` };
+  },
+  /** Relance l'analyse (tri + brouillon) d'une demande. */
+  "ticket/ai": async (_u, b) => {
+    const t = need(one("tickets", str(b.id)), "Ticket");
+    const { analyzeTicket } = await import("./support-ai");
+    const ai = await analyzeTicket(t);
+    save("tickets", { ...t, ai: { ...ai, autoSent: t.ai?.autoSent, checked: t.ai?.checked } });
+    return { ai, message: ai.engine === "ia" ? "Brouillon rédigé par l'IA (Claude)." : "Brouillon préparé (réponse type complétée avec la commande)." };
+  },
+  /** La réponse automatique a été relue : rien à corriger. */
+  "ticket/check": (_u, b) => {
+    const t = need(one("tickets", str(b.id)), "Ticket");
+    if (!t.ai) throw new HttpError(400, "Aucune réponse automatique sur cette demande.");
+    return save("tickets", { ...t, ai: { ...t.ai, checked: true } });
   },
   "ticket/status": (_u, b) => {
     const t = need(one("tickets", str(b.id)), "Ticket");
@@ -238,12 +252,8 @@ const handlers: Record<string, (u: HubUser, b: Body) => unknown> = {
     return { delivery: d.delivery, message: `Message ${d.delivery === "envoye" ? "envoyé" : `enregistré — ${DELIVERY_LABEL[d.delivery].toLowerCase()}${d.detail ? ` : ${d.detail}` : ""}`}.` };
   },
   "mail/test": async () => {
-    const st = settings();
-    const list = automations();
-    const vars = { prenom: "Camille", produit: "Glow Shot" };
-    const fill = (t: string) => t.replace(/\{(\w+)\}/g, (_, k: string) => (vars as Record<string, string>)[k] ?? "");
-    for (const a of list) await deliver("camille.demo@example.com", fill(a.subject), fill(a.body), { href: siteUrl(), label: "Voir sur le site" }, `Test — ${a.name}`);
-    return { message: `${list.length} e-mails de test générés vers la boîte de démo (${st.demoInbox || "demo@skinclean.example"}).` };
+    const n = await sampleMails();
+    return { message: `${n} e-mails de test générés vers la boîte de démo (${settings().demoInbox || "demo@skinclean.example"}).` };
   },
   "mail/clear": () => { crmDb().exec("DELETE FROM docs WHERE collection = 'mails'"); remove("mails", "_"); return { ok: true }; },
   "chat/task": (_u, b) => {
@@ -269,7 +279,7 @@ const handlers: Record<string, (u: HubUser, b: Body) => unknown> = {
   /** Régénère le jeu de démonstration (les commandes réelles Stripe sont conservées). */
   "demo/reset": async () => {
     crmTx(() => {
-      crmDb().exec(`DELETE FROM docs WHERE json_extract(data, '$.source') IS NOT 'reel'; DELETE FROM meta WHERE key IN ('seeded', 'seed-extras-v1', 'automations-last-run');`);
+      crmDb().exec(`DELETE FROM docs WHERE json_extract(data, '$.source') IS NOT 'reel'; DELETE FROM meta WHERE key IN ('seeded', 'seed-extras-v1', 'seed-sav-v1', 'automations-last-run');`);
     });
     const { seedCrm } = await import("./seed");
     seedCrm();

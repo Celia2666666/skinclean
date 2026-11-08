@@ -51,5 +51,7 @@ export async function addContactMessage(b: Record<string, unknown>) {
     subject: clip(b.subject, 120) || "Message", category: CATEGORY[String(b.subject)] ?? "conseil", channel: b.origin === "chatbot" ? "chatbot" : "formulaire", priority: "normale", status: "ouvert",
     createdAt: at, messages: [{ at, from: "client", body: clip(b.message, 5000) }],
   });
+  // Tri et réponse automatique immédiats (sans faire attendre le visiteur)
+  void import("./automations").then((m) => m.runAutomations("sav_auto")).catch((e) => console.error("[SAV auto]", e));
   return true;
 }

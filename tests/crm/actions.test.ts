@@ -3,6 +3,7 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
+delete process.env.ANTHROPIC_API_KEY; // tests sans appel réseau
 process.env.CRM_DB_FILE = path.join(mkdtempSync(path.join(tmpdir(), "crm-")), "test.sqlite");
 
 describe("CRM — actions serveur", () => {
@@ -63,5 +64,20 @@ describe("CRM — actions serveur", () => {
     expect(c.text).not.toContain("gmail");
     expect(c.text).not.toContain("56 78");
     expect(c.source).toBe("reel");
+  });
+
+  it("SAV : répond seul aux questions standard et signale les cas spécifiques", async () => {
+    const tickets = db.all("tickets").filter((t) => t.id.startsWith("sav_"));
+    expect(tickets.length).toBe(12);
+    const auto = tickets.filter((t) => t.ai?.autoSent);
+    const human = tickets.filter((t) => t.ai?.triage === "humain");
+    expect(auto.length).toBe(6);
+    expect(human.map((t) => t.subject).sort()).toEqual(["Collaboration Instagram", "Colis arrivé abîmé", "Enceinte : produits compatibles ?", "Je veux être remboursée", "Rougeurs après le sérum", "Supprimer mon compte"].sort());
+    expect(auto.every((t) => t.status === "resolu" && t.messages.at(-1)!.auto && t.ai!.checked === false)).toBe(true);
+    expect(human.every((t) => t.status === "ouvert" && t.ai!.draft.length > 20)).toBe(true);
+    const order = auto.find((t) => t.subject === "Où en est ma commande ?")!;
+    expect(order.messages.at(-1)!.body).toContain(db.one("orders", order.orderId!)!.number);
+    await act.crmHandler("ticket/check")(u, { id: auto[0].id });
+    expect(db.one("tickets", auto[0].id)!.ai!.checked).toBe(true);
   });
 });

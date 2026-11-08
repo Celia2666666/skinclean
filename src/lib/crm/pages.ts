@@ -39,8 +39,8 @@ export async function shellData() {
     source, hasReal: hasRealData(),
     badges: {
       "/crm/stock": rows.filter((r) => r.status === "rupture" || r.status === "critique").length,
-      "/crm/sav": ticketsOf(source).filter((t) => t.status !== "resolu" && t.channel !== "formulaire" && t.channel !== "chatbot").length,
-      "/crm/messages": ticketsOf(source).filter((t) => t.status === "ouvert" && (t.channel === "formulaire" || t.channel === "chatbot")).length,
+      "/crm/sav": ticketsOf(source).filter((t) => t.channel !== "formulaire" && t.channel !== "chatbot" && ((t.ai?.triage === "humain" && t.status !== "resolu") || (t.ai?.autoSent && !t.ai.checked))).length,
+      "/crm/messages": ticketsOf(source).filter((t) => (t.channel === "formulaire" || t.channel === "chatbot") && ((t.ai?.triage === "humain" && t.status !== "resolu") || (t.ai?.autoSent && !t.ai.checked) || (t.status === "ouvert" && !t.ai))).length,
       "/crm/taches": all("tasks").filter((t) => !t.done && t.due <= today).length,
     },
   };
@@ -325,7 +325,12 @@ export async function supportData(sp: Record<string, string | string[] | undefin
   const contactChannels = ["formulaire", "chatbot"];
   const tickets = ticketsOf(source).filter((t) => (sp.inbox === "contact" ? contactChannels.includes(t.channel) : !contactChannels.includes(t.channel))).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const status = String(sp.status ?? "");
-  const list = status ? tickets.filter((t) => t.status === status) : tickets;
+  const aiFilter = String(sp.ai ?? "");
+  const toAnswer = (t: (typeof tickets)[number]) => t.ai?.triage === "humain" && t.status !== "resolu";
+  const toCheck = (t: (typeof tickets)[number]) => !!t.ai?.autoSent && !t.ai.checked;
+  let list = status ? tickets.filter((t) => t.status === status) : tickets;
+  if (aiFilter === "humain") list = list.filter(toAnswer);
+  if (aiFilter === "verifier") list = list.filter(toCheck);
   const responded = tickets.filter((t) => t.firstResponseMin !== undefined).map((t) => t.firstResponseMin!).sort((a, b) => a - b);
   const resolved = tickets.filter((t) => t.resolvedAt);
   const csat = tickets.filter((t) => t.csat);
@@ -333,6 +338,7 @@ export async function supportData(sp: Record<string, string | string[] | undefin
   const order = sel?.orderId ? ordersOf(source).find((o) => o.id === sel.orderId) : undefined;
   return {
     source, rows: list, counts: Object.fromEntries(groupBy(tickets, (t) => t.status, () => 1)),
+    ai: { humain: tickets.filter(toAnswer).length, verifier: tickets.filter(toCheck).length, auto: tickets.filter((t) => t.ai?.autoSent).length, ia: !!process.env.ANTHROPIC_API_KEY },
     kpis: {
       open: tickets.filter((t) => t.status !== "resolu").length, medianFirst: responded.length ? responded[Math.floor(responded.length / 2)] : null,
       resolution: resolved.length ? resolved.reduce((a, t) => a + (new Date(t.resolvedAt!).getTime() - new Date(t.createdAt).getTime()) / 36e5, 0) / resolved.length : null,

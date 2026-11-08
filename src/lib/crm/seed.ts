@@ -676,3 +676,40 @@ export function seedCrmExtras(today = ymd(new Date()), nowHm = ymdhm(new Date())
     setCrmMeta("seed-extras-v1", new Date().toISOString());
   });
 }
+
+/* ───────── Boîte SAV de démonstration : demandes récentes non traitées (tri et réponses automatiques) ───────── */
+const SAV_INBOX: [string, string, Ticket["category"], Ticket["channel"], boolean][] = [
+  ["Où en est ma commande ?", "Bonjour, j'ai commandé il y a quelques jours, est-ce que ma commande est bien partie ? Merci !", "livraison", "email", true],
+  ["Code BIENVENUE refusé", "Bonjour, mon code de bienvenue ne fonctionne pas sur mon panier, pourquoi ?", "paiement", "chat", true],
+  ["Mes feuilles du Club", "Hello, je ne vois pas encore mes feuilles pour ma dernière commande, c'est normal ?", "compte", "formulaire", true],
+  ["Quelle routine pour peau mixte ?", "Coucou, j'ai la peau mixte avec des imperfections sur le menton, vous me conseillez quoi le soir ?", "conseil", "chatbot", true],
+  ["Le Cloud Gel revient quand ?", "Bonjour, le Cloud Gel est en rupture, il revient bientôt ? C'est mon nettoyant préféré.", "produit", "instagram", true],
+  ["Ordre des soins", "Dans quel ordre je mets le sérum et la crème le soir ?", "conseil", "chat", true],
+  ["Rougeurs après le sérum", "Bonjour, depuis deux jours j'ai des rougeurs et ça brûle un peu après le sérum Glow Shot. Que dois-je faire ?", "produit", "email", false],
+  ["Colis arrivé abîmé", "Le carton est arrivé écrasé et le flacon de toner a coulé partout. Je fais comment ?", "livraison", "formulaire", false],
+  ["Enceinte : produits compatibles ?", "Je suis enceinte de 4 mois, est-ce que je peux continuer le Night Renew ?", "conseil", "chatbot", false],
+  ["Je veux être remboursée", "Bonjour, la crème ne me convient pas du tout, je souhaite être remboursée.", "retour", "email", false],
+  ["Collaboration Instagram", "Hello ! Je suis créatrice de contenu skincare (25k abonnés), seriez-vous partants pour une collaboration ?", "conseil", "instagram", false],
+  ["Supprimer mon compte", "Bonjour, je souhaite que vous supprimiez mon compte et toutes mes données personnelles.", "compte", "formulaire", false],
+];
+
+export function seedSupportInbox(nowHm = ymdhm(new Date())) {
+  R = rng(777);
+  const now = parseLocal(nowHm).getTime();
+  const customers = all("customers").filter((c) => c.source === "demo" && c.optinEmail);
+  const orders = all("orders").filter((o) => o.source === "demo" && o.status !== "annulee");
+  const tickets: Ticket[] = SAV_INBOX.map(([subject, body, category, channel], i) => {
+    const o = orders[orders.length - 1 - int(0, 60)];
+    const c = customers.find((x) => x.id === o.customerId) ?? pick(customers);
+    const at = ymdhm(new Date(now - int(10, 30 * 60) * 6e4));
+    return {
+      id: `sav_${i + 1}`, number: `SAV-${3300 + i}`, source: "demo", customerId: c.id, customerName: `${c.firstName} ${c.lastName}`, email: c.email,
+      orderId: category === "livraison" || category === "retour" || i === 0 ? o.id : undefined, subject, category, channel,
+      priority: category === "retour" ? "haute" : "normale", status: "ouvert", createdAt: at, messages: [{ at, from: "client", body }],
+    } as Ticket;
+  });
+  crmTx(() => {
+    bulk("tickets", tickets);
+    setCrmMeta("seed-sav-v1", new Date().toISOString());
+  });
+}
