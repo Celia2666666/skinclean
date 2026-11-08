@@ -1,5 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { notFound, redirect } from "next/navigation";
 import { createHash } from "node:crypto";
 import { HttpError, currentUser, hubAvailable } from "@/lib/hub/auth";
@@ -22,6 +23,7 @@ async function onlineAllowed() {
 }
 
 export async function requireCrmPage() {
+  await connection(); // toujours rendu à la demande (données vivantes, jamais pré-généré au build)
   if (crmOnline()) {
     if (!(await onlineAllowed())) redirect("/crm/acces");
     await ensureCrmSeeded();

@@ -44,7 +44,7 @@ const cache = () => (g.__crmCache ??= new Map());
 
 export function crmDb(): DatabaseSync {
   if (g.__crmDb) {
-    if (existsSync(DB_FILE)) return g.__crmDb;
+    if (existsSync(/*turbopackIgnore: true*/ DB_FILE)) return g.__crmDb;
     // Fichier supprimé : on repart d'une base neuve
     try { g.__crmDb.close(); } catch { /* déjà fermée */ }
     g.__crmDb = undefined;

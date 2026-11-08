@@ -24,7 +24,7 @@ const g = globalThis as G;
 export function db(): DatabaseSync {
   if (g.__hubDb) {
     // Fichier supprimé (remise à zéro) : on ferme l'ancienne connexion et on recrée la base
-    if (existsSync(DB_FILE)) {
+    if (existsSync(/*turbopackIgnore: true*/ DB_FILE)) {
       if (g.__hubSchema !== SCHEMA_VERSION) { migrate(g.__hubDb); g.__hubSchema = SCHEMA_VERSION; }
       return g.__hubDb;
     }
