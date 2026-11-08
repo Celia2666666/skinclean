@@ -20,15 +20,15 @@ export function ChatbotView({ data: d, periods }: { data: Data; periods: { id: s
       <PageHeader eyebrow="Automatisation" title="Chatbot — Glow Assistant" intro="Ce que les visiteurs demandent à l'assistant du site, les réponses qui reviennent le plus, les questions auxquelles il ne sait pas encore répondre et les actions déclenchées (alertes de retour en stock, messages à l'équipe)."
         actions={<PeriodTabs periods={periods} value={d.period.key} />} />
       <SourceNote source={d.source} what="Ces conversations" />
-      {d.source === "reel" && !k.questions && <div className="mb-5"><Empty>Aucune question réelle sur la période. Chaque question posée au Glow Assistant du site (en local) apparaît ici, de façon anonyme.</Empty></div>}
+      {d.source === "reel" && !k.questions && <div className="mb-5"><Empty>Aucune question réelle sur la période. Chaque question posée au Glow Assistant du site apparaît ici, de façon anonyme : ouvre le site, pose une question à l'assistant, puis reviens sur cette page.</Empty></div>}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">
         <Kpi label="Questions posées" value={fmtN(k.questions)} delta={delta(k.questions, k.prevQuestions)} />
         <Kpi label="Conversations" value={fmtN(k.conversations)} delta={delta(k.conversations, k.prevConversations)} hint={`${k.perConv.toFixed(1).replace(".", ",")} question(s) / conversation`} />
-        <Kpi label="Taux de compréhension" value={pctf(k.understood, 0)} delta={k.prevQuestions ? k.understood - k.prevUnderstood : undefined} points hint="questions reconnues" />
+        <Kpi label="Taux de compréhension" value={k.questions ? pctf(k.understood, 0) : "—"} delta={k.prevQuestions ? k.understood - k.prevUnderstood : undefined} points hint="questions reconnues" />
         <Kpi label="Produits introuvables" value={k.stock} hint="« je ne trouve plus… »" href="/crm/automatisations" />
         <Kpi label="Alertes stock créées" value={k.alerts} hint="via le chatbot" href="/crm/automatisations" />
         <Kpi label="Transferts à l'équipe" value={k.handoffs} hint="messages envoyés" href="/crm/messages" />
-        <Kpi label="Sans réponse" value={pctf(100 - k.understood, 0)} tone={100 - k.understood > 15 ? "warn" : undefined} hint="à enrichir" />
+        <Kpi label="Sans réponse" value={k.questions ? pctf(100 - k.understood, 0) : "—"} tone={k.questions && 100 - k.understood > 15 ? "warn" : undefined} hint="à enrichir" />
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-3">
