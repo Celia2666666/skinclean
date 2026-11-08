@@ -7,7 +7,7 @@ import clsx from "clsx";
 import { Avatar, ToastProvider, UserProvider, Modal, type ClientUser } from "@/components/hub/ui";
 import { ArrowRightI, ChartI, ChatI, HomeI, LogoutI, MailI, MenuI, SearchI } from "@/components/hub/icons";
 import { BoltI, BoxI, CartI, EuroI, GearI, PipelineI, SegmentI, TaskI, TicketI, UsersI, TrendUpI } from "./icons";
-import { crmApi } from "./ui";
+import { OnlineCtx, crmApi } from "./ui";
 
 type Icon = (p: { size?: number }) => React.ReactElement;
 export const CRM_NAV: { group: string; items: { href: string; label: string; icon: Icon }[] }[] = [
@@ -75,6 +75,7 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
 
   return (
     <UserProvider user={user}>
+      <OnlineCtx.Provider value={online}>
       <ToastProvider>
         <div className="min-h-screen bg-[#F6F5F1] text-forest lg:pl-[256px] print:bg-white print:pl-0">
           <aside className="fixed inset-y-0 left-0 z-40 hidden w-[256px] bg-[#16263A] lg:block print:hidden">{sidebar}</aside>
@@ -109,6 +110,7 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
           <GlobalSearch open={search} onClose={() => setSearch(false)} />
         </div>
       </ToastProvider>
+      </OnlineCtx.Provider>
     </UserProvider>
   );
 }

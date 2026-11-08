@@ -1,11 +1,14 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, useTransition } from "react";
 import clsx from "clsx";
 import { useToast } from "@/components/hub/ui";
 import { ChevronLeftI, ChevronRightI, InfoI, SearchI } from "@/components/hub/icons";
 import { Sparkline, pctf } from "./charts";
+
+/** Vrai sur la démo en ligne (Vercel) : pas de données réelles ni de bascule. */
+export const OnlineCtx = createContext(false);
 
 /* ───────── Appels API ───────── */
 export async function crmApi<T = unknown>(name: string, body?: unknown): Promise<T> {
@@ -157,11 +160,12 @@ export const thead = "border-b border-line bg-[#FAF9F6] text-left text-[0.7rem] 
 export const trow = "border-b border-line last:border-0 hover:bg-[#FAF9F6]";
 
 export function SourceNote({ source, what = "Ces indicateurs" }: { source: "demo" | "reel"; what?: string }) {
+  const online = useContext(OnlineCtx);
   if (source === "reel") return null;
   return (
     <div className="mb-5 flex items-start gap-2 rounded-lg border border-[#F0DDA6] bg-[#FFF8E6] px-4 py-2.5 text-xs leading-relaxed text-[#6B5000]">
       <InfoI size={15} className="mt-0.5 shrink-0" />
-      <p>{what} portent sur le <b>jeu de démonstration</b> : clients et commandes fictifs (adresses @example.com) générés à partir du vrai catalogue SKINCLEAN, prix et formats compris. Les commandes réelles payées via Stripe s'affichent dans le jeu « Données réelles », jamais mélangées.</p>
+      <p>{what} portent sur le <b>jeu de démonstration</b> : clients et commandes fictifs (adresses @example.com) générés à partir du vrai catalogue SKINCLEAN, prix et formats compris. {online ? "Version de démonstration en ligne : en local, les commandes réelles payées via Stripe s'affichent dans un jeu « Données réelles » séparé." : "Les commandes réelles payées via Stripe s'affichent dans le jeu « Données réelles », jamais mélangées."}</p>
     </div>
   );
 }
