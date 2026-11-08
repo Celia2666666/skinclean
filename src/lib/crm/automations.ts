@@ -6,7 +6,7 @@ import { siteUrl } from "@/lib/sign";
 import { all, crmMeta, crmUid, one, save, setCrmMeta } from "./db";
 import { customerStats } from "./analytics";
 import { baseProducts } from "@/data/products";
-import type { Automation, AutomationKind, AutomationRun, Delivery } from "./types";
+import type { Automation, AutomationKind, AutomationRun, Delivery, MailKind } from "./types";
 
 /**
  * MOTEUR D'AUTOMATISATIONS DU CRM (scénarios marketing déclenchés sans intervention).
@@ -32,11 +32,15 @@ export const DEFAULT_AUTOMATIONS: Omit<Automation, "updatedAt">[] = [
     subject: "Bientôt à court de {produit} ?", body: "{prenom}, d'après tes habitudes, ton {produit} touche bientôt à sa fin. Recommande-le en 1 clic pour ne pas interrompre ta routine." },
   { id: "sav_auto", name: "Réponse automatique du SAV", description: "Chaque nouvelle demande (e-mail, chat, formulaire, Glow Assistant) est triée : les questions standard reçoivent une réponse immédiate, à vérifier ensuite ; les cas spécifiques sont signalés « À toi de répondre » avec un brouillon prêt.", trigger: "Nouvelle demande client", enabled: true, delayHours: 0,
     subject: "Re : {sujet}", body: "Réponse rédigée pour chaque demande (IA Claude si la clé est configurée, sinon réponse type complétée avec la commande)." },
+  { id: "new_product", name: "Nouveauté produit", description: "Présente chaque nouveau soin aux clients fidèles dont les préoccupations de peau correspondent (une seule fois par produit).", trigger: "Produit marqué « Nouveau » au catalogue", enabled: true, delayHours: 0,
+    subject: "Nouveau : {nouveaute}, pensé pour ta peau", body: "{prenom}, notre nouveau soin {nouveaute} vient d'arriver. Il cible exactement ce que tu nous as confié sur ta peau : découvre-le en avant-première." },
   { id: "winback", name: "Réactivation des clients à risque", description: "Relance personnalisée des bons clients sans commande depuis plus de 4 mois.", trigger: "Segment RFM « À risque » ou « À ne pas perdre »", enabled: false, delayHours: 0,
     subject: "{prenom}, ta peau nous manque", body: "Ça fait un moment ! Découvre nos nouveautés et retrouve tes soins préférés." },
 ];
 
 const CAP = 40; // envois maximum par scénario et par exécution
+/** Catégorie des e-mails de chaque scénario (classement de la boîte de démo). */
+const KIND: Record<AutomationKind, MailKind> = { back_in_stock: "back_in_stock", cart_1: "cart", cart_2: "cart", welcome: "welcome", review: "review", replenish: "replenish", winback: "winback", sav_auto: "sav", new_product: "new_product" };
 const first = (name: string) => name.split(" ")[0] || "toi";
 /** « lina.legrand@… » → « Lina » (prénom deviné à partir de l'adresse quand le contact n'a pas de fiche). */
 const nameFromEmail = (e: string) => { const n = e.split("@")[0].split(/[._\-\d]/)[0]; return n ? n[0].toUpperCase() + n.slice(1) : "toi"; };
@@ -52,7 +56,7 @@ const isReal = (a?: string) => !!a && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(a) &&
  * - Contact fictif (@example.com) : livré dans la boîte de démo ; réellement envoyé à l'adresse de démo
  *   seulement si elle est réelle, que la redirection est activée et que Resend est configuré.
  */
-export async function deliver(to: string, subject: string, text: string, cta?: { href: string; label: string }, origin = "CRM"): Promise<{ delivery: Delivery; detail?: string }> {
+export async function deliver(to: string, subject: string, text: string, cta?: { href: string; label: string }, origin = "CRM", kind: MailKind = "message"): Promise<{ delivery: Delivery; detail?: string }> {
   const esc = (x: string) => x.replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c]!);
   const html = emailLayout({ preheader: subject, body: `<p style="font-size:15px;line-height:24px">${esc(text).replace(/\n/g, "<br>")}</p>${cta ? `<p style="text-align:center">${button(cta.href, cta.label)}</p>` : ""}` });
   const st = one("settings", "settings");
@@ -70,7 +74,7 @@ export async function deliver(to: string, subject: string, text: string, cta?: {
     r = s.mode === "demo" ? { delivery: "simule", detail: "Resend non configuré : e-mail non envoyé", deliveredTo: demoInbox }
       : s.error ? { delivery: "echec", detail: s.error } : { delivery: "envoye", detail: fake ? `Redirigé vers ${target}` : s.id, deliveredTo: target };
   }
-  save("mails", { id: crmUid("mail_"), at: ymdhm(new Date()), to, deliveredTo: r.deliveredTo, subject, html, text, delivery: r.delivery, detail: r.detail, origin });
+  save("mails", { id: crmUid("mail_"), at: ymdhm(new Date()), to, deliveredTo: r.deliveredTo, subject, html, text, delivery: r.delivery, detail: r.detail, origin, kind });
   return { delivery: r.delivery, detail: r.detail };
 }
 
@@ -126,6 +130,16 @@ function candidates(a: Automation, now: Date): Candidate[] {
       push({ key: `review:${o.id}`, email: o.email, name: o.customerName, label: `Commande ${o.number}`, source: o.source, vars: { produit: o.items[0]?.name ?? "tes soins" }, cta: { href: `${url}/produits/${slugOf(o.items[0]?.productId ?? "")}#avis`, label: "Donner mon avis" } });
     }
   }
+  if (a.id === "new_product") {
+    const news = baseProducts.filter((p) => p.isNew);
+    const counts = new Map<string, number>();
+    for (const o of all("orders")) if (o.status !== "annulee") counts.set(o.customerId, (counts.get(o.customerId) ?? 0) + 1);
+    for (const c of all("customers")) {
+      if (!c.optinEmail || (counts.get(c.id) ?? 0) < 3) continue; // clients fidèles uniquement
+      for (const p of news) if (p.concerns.some((x) => c.concerns.includes(x)))
+        push({ key: `new:${p.id}:${c.id}`, email: c.email, name: `${c.firstName} ${c.lastName}`, label: p.name, source: c.source, vars: { nouveaute: p.name, produit: p.name }, cta: { href: `${url}/produits/${p.slug}`, label: "Découvrir la nouveauté" } });
+    }
+  }
   if (a.id === "replenish" || a.id === "winback") {
     const customers = all("customers");
     const byId = new Map(customers.map((c) => [c.id, c]));
@@ -158,7 +172,7 @@ export async function runAutomations(only?: AutomationKind, force = false) {
     }
     for (const c of candidates(a, now)) {
       const vars = { prenom: first(c.name), ...c.vars };
-      const d = await deliver(c.email, fill(a.subject, vars), fill(a.body, vars), c.cta, a.name);
+      const d = await deliver(c.email, fill(a.subject, vars), fill(a.body, vars), c.cta, a.name, KIND[a.id]);
       save("runs", { id: crmUid("run_"), source: c.source, at: ymdhm(now), automationId: a.id, key: c.key, email: c.email, name: c.name, label: c.label, delivery: d.delivery, detail: d.detail });
       c.after?.();
       r.total++;
@@ -172,10 +186,10 @@ export async function runAutomations(only?: AutomationKind, force = false) {
 
 /** Un exemple de chaque e-mail automatique, livré dans la boîte de démo. */
 export async function sampleMails() {
-  const vars = { prenom: "Camille", produit: "Glow Shot", sujet: "Ma commande" };
+  const vars = { prenom: "Camille", produit: "Glow Shot", sujet: "Ma commande", nouveaute: "First Lines" };
   const fillV = (t: string) => t.replace(/\{(\w+)\}/g, (_, k: string) => (vars as Record<string, string>)[k] ?? "");
   const list = automations().filter((a) => a.id !== "sav_auto");
-  for (const a of list) await deliver("camille.demo@example.com", fillV(a.subject), fillV(a.body), { href: siteUrl(), label: "Voir sur le site" }, `Exemple — ${a.name}`);
+  for (const a of list) await deliver("camille.demo@example.com", fillV(a.subject), fillV(a.body), { href: siteUrl(), label: "Voir sur le site" }, `Exemple — ${a.name}`, KIND[a.id]);
   return list.length;
 }
 
@@ -199,7 +213,7 @@ async function runSupport(now: Date, r: { total: number; sent: number; simulated
     const ai = await analyzeTicket(t);
     const to = t.email ?? (t.customerId ? one("customers", t.customerId)?.email : undefined);
     if (ai.triage === "auto" && to) {
-      const d = await deliver(to, `Re : ${t.subject}`, ai.draft, undefined, `Réponse automatique SAV ${t.number}`);
+      const d = await deliver(to, `Re : ${t.subject}`, ai.draft, undefined, `Réponse automatique SAV ${t.number}`, "sav");
       const firstResponseMin = Math.max(1, Math.round((now.getTime() - parseLocal(t.createdAt).getTime()) / 6e4));
       save("tickets", { ...t, status: "resolu", resolvedAt: at, firstResponseMin: t.firstResponseMin ?? firstResponseMin, messages: [...t.messages, { at, from: "skinclean", body: ai.draft, auto: true }], ai: { ...ai, autoSent: true, checked: false } });
       save("runs", { id: crmUid("run_"), source: t.source, at, automationId: "sav_auto", key: `sav:${t.id}`, email: to, name: t.customerName, label: t.subject, delivery: d.delivery, detail: d.detail });

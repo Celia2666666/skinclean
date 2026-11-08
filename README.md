@@ -192,11 +192,11 @@ npm run dev            # puis http://localhost:3000/crm
 
 Recherche globale **⌘ K** (clients, commandes, produits, entreprises).
 
-Côté site : le Glow Assistant reconnaît « je ne trouve plus… » (vérifie la disponibilité en direct dans le stock du CRM et propose « Me prévenir du retour en stock ») et « parler à quelqu'un » (message à l'équipe) ; la fiche d'un produit en rupture propose aussi l'alerte. Routes : `POST /api/alerte-stock`, `POST /api/assistant/log`, `GET /api/disponibilite`, `POST /api/contact` (→ CRM). En ligne (Vercel), le CRM n'existe pas : rien n'est stocké et l'interface l'indique.
+Côté site : le Glow Assistant reconnaît « je ne trouve plus… » (vérifie la disponibilité en direct dans le stock du CRM et propose « Me prévenir du retour en stock ») et « parler à quelqu'un » (message à l'équipe) ; la fiche d'un produit en rupture propose aussi l'alerte. Routes : `POST /api/alerte-stock`, `POST /api/assistant/log`, `GET /api/disponibilite`, `POST /api/contact` (→ CRM). En ligne (Vercel), ces données sont enregistrées dans la base temporaire de la démo (jeu « Données réelles ») ; le stock du site reste celui du catalogue.
 
 **Stock du site = stock du CRM (en local)** : `<LiveStockSync />` charge `/api/stock` (au chargement, au retour sur l'onglet, toutes les 60 s) ; ruptures, « plus que X en stock », boutons d'achat et alerte de retour en stock suivent le CRM, et le paiement (`/api/checkout`) vérifie ce même stock. Priorité : surcharge `/admin` > CRM > catalogue. En ligne (pas de CRM), le site garde le stock du catalogue.
 
-**Envois d'e-mails** : uniquement via Resend (`RESEND_API_KEY`). Sans clé, ou pour une adresse `@example.com`, l'envoi est marqué « Simulé » — jamais « Envoyé ». Chaque e-mail produit par le CRM est visible tel quel dans la **Boîte mail de démo** (`/crm/boite-demo`, adresse par défaut `demo@skinclean.example`). Dans Paramètres, on peut remplacer cette adresse par la sienne et, avec Resend, y recevoir réellement une copie des e-mails de démo (objet préfixé « [Démo → destinataire] »).
+**Envois d'e-mails** : uniquement via Resend (`RESEND_API_KEY`). Sans clé, ou pour une adresse `@example.com`, l'envoi est marqué « Simulé » — jamais « Envoyé ». Chaque e-mail produit par le CRM est visible tel quel dans la **Boîte mail de démo**, classée par catégorie (réponses SAV, relances panier, retour en stock, nouveautés produit, bienvenue, avis, réapprovisionnement, réactivation, messages manuels) (`/crm/boite-demo`, adresse par défaut `demo@skinclean.example`). Dans Paramètres, on peut remplacer cette adresse par la sienne et, avec Resend, y recevoir réellement une copie des e-mails de démo (objet préfixé « [Démo → destinataire] »).
 
 ### Données : démonstration vs réel
 

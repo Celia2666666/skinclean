@@ -86,7 +86,7 @@ const handlers: Record<string, (u: HubUser, b: Body) => unknown> = {
     if (c.status === "recupere") throw new HttpError(400, "Ce panier a déjà été transformé en commande.");
     const channel = b.channel === "sms" ? "sms" : "email";
     // Pas de passerelle SMS branchée : le SMS est seulement enregistré
-    const d = channel === "email" ? await deliver(c.email, "Ton panier t'attend", `${c.name.split(" ")[0]}, tu as laissé ${c.items.map((i) => i.name).join(", ")} dans ton panier. On l'a gardé pour toi.`, undefined, "Relance manuelle de panier") : { delivery: "simule" as const, detail: "Aucune passerelle SMS configurée" };
+    const d = channel === "email" ? await deliver(c.email, "Ton panier t'attend", `${c.name.split(" ")[0]}, tu as laissé ${c.items.map((i) => i.name).join(", ")} dans ton panier. On l'a gardé pour toi.`, undefined, "Relance manuelle de panier", "cart") : { delivery: "simule" as const, detail: "Aucune passerelle SMS configurée" };
     save("carts", { ...c, status: "relance", relaunches: [...c.relaunches, { at: now(), channel, auto: false }] });
     if (c.customerId) activity({ customerId: c.customerId, kind: "relance", body: `Relance manuelle du panier de ${c.value.toFixed(2).replace(".", ",")} € par ${channel === "sms" ? "SMS" : "e-mail"} (${DELIVERY_LABEL[d.delivery].toLowerCase()})` }, u);
     return { ok: true, sent: d.delivery === "envoye", message: d.delivery === "envoye" ? "Relance envoyée." : `Relance enregistrée — ${d.detail ?? "aucun envoi"}.` };
@@ -188,7 +188,7 @@ const handlers: Record<string, (u: HubUser, b: Body) => unknown> = {
     const body = str(b.body, 4000);
     if (!body) throw new HttpError(400, "La réponse est vide.");
     const to = t.email ?? (t.customerId ? one("customers", t.customerId)?.email : undefined);
-    const d = to ? await deliver(to, `Re : ${t.subject}`, body, undefined, `Réponse ${t.number}`) : { delivery: "simule" as const, detail: "Aucune adresse e-mail" };
+    const d = to ? await deliver(to, `Re : ${t.subject}`, body, undefined, `Réponse ${t.number}`, "sav") : { delivery: "simule" as const, detail: "Aucune adresse e-mail" };
     const firstResponseMin = t.firstResponseMin ?? Math.max(1, Math.round((Date.now() - new Date(t.createdAt).getTime()) / 6e4));
     const status = (b.resolve ? "resolu" : "en_cours") as Ticket["status"];
     save("tickets", { ...t, firstResponseMin, status, resolvedAt: status === "resolu" ? now() : t.resolvedAt, messages: [...t.messages, { at: now(), from: "skinclean", body }], ai: t.ai ? { ...t.ai, checked: true } : t.ai });
@@ -244,7 +244,7 @@ const handlers: Record<string, (u: HubUser, b: Body) => unknown> = {
     const subject = str(b.subject, 150), body = str(b.body, 5000);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to)) throw new HttpError(400, "Adresse e-mail invalide.");
     if (!subject || !body) throw new HttpError(400, "Objet et message sont obligatoires.");
-    const d = await deliver(to, subject, body, undefined, "Nouveau message");
+    const d = await deliver(to, subject, body, undefined, "Nouveau message", "message");
     const c = all("customers").find((x) => x.email === to);
     const at = now();
     save("tickets", { id: crmUid("tk_"), number: `MSG-${5000 + all("tickets").length}`, source: c?.source ?? "reel", customerId: c?.id ?? "", customerName: c ? `${c.firstName} ${c.lastName}` : to, email: to, subject, category: "conseil", channel: "formulaire", priority: "normale", status: "en_cours", createdAt: at, firstResponseMin: 0, messages: [{ at, from: "skinclean", body }] });

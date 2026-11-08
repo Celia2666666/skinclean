@@ -227,6 +227,35 @@ export interface CrmSettings {
 export interface MailDoc {
   id: string; at: string; to: string; deliveredTo?: string; subject: string; html: string; text: string;
   delivery: Delivery; detail?: string; origin: string;
+  /** Catégorie de l'envoi (classement de la boîte de démo). */
+  kind?: MailKind;
+}
+
+export type MailKind = "sav" | "cart" | "back_in_stock" | "new_product" | "welcome" | "review" | "replenish" | "winback" | "message";
+export const MAIL_KIND: { id: MailKind; label: string }[] = [
+  { id: "sav", label: "Réponses SAV" },
+  { id: "cart", label: "Relances panier abandonné" },
+  { id: "back_in_stock", label: "Retour en stock" },
+  { id: "new_product", label: "Nouveautés produit" },
+  { id: "welcome", label: "Bienvenue" },
+  { id: "review", label: "Demandes d'avis" },
+  { id: "replenish", label: "Réapprovisionnement" },
+  { id: "winback", label: "Réactivation" },
+  { id: "message", label: "Messages manuels" },
+];
+/** Catégorie d'un e-mail (y compris les anciens e-mails enregistrés sans catégorie). */
+export function mailKindOf(m: { kind?: MailKind; origin: string; subject: string }): MailKind {
+  if (m.kind) return m.kind;
+  const o = `${m.origin} ${m.subject}`.toLowerCase();
+  if (o.includes("sav") || o.startsWith("réponse") || o.includes("re :")) return "sav";
+  if (o.includes("panier")) return "cart";
+  if (o.includes("retour en stock") || o.includes("est de retour")) return "back_in_stock";
+  if (o.includes("nouveau")) return "new_product";
+  if (o.includes("bienvenue")) return "welcome";
+  if (o.includes("avis")) return "review";
+  if (o.includes("réapprovisionnement") || o.includes("court de")) return "replenish";
+  if (o.includes("réactivation") || o.includes("manque")) return "winback";
+  return "message";
 }
 
 /** Question posée au Glow Assistant (anonyme : aucune donnée personnelle). */
@@ -240,7 +269,7 @@ export interface StockAlert {
 }
 
 export type Delivery = "envoye" | "simule" | "echec";
-export type AutomationKind = "back_in_stock" | "cart_1" | "cart_2" | "welcome" | "review" | "replenish" | "winback" | "sav_auto";
+export type AutomationKind = "back_in_stock" | "cart_1" | "cart_2" | "welcome" | "review" | "replenish" | "winback" | "sav_auto" | "new_product";
 
 export interface SupportAi {
   /** auto = réponse standard envoyable sans relecture ; humain = cas spécifique, c'est à l'équipe de répondre. */

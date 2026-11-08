@@ -28,7 +28,6 @@ export async function ensureCrmSeeded() {
 /** Jeu de données affiché : démonstration ou réel (jamais mélangés). Par défaut : réel s'il existe, sinon démo. */
 export async function currentSource(): Promise<DataSource> {
   await ensureCrmSeeded();
-  if (process.env.VERCEL) return "demo"; // en ligne : démonstration uniquement
   const c = (await cookies()).get(SOURCE_COOKIE)?.value;
   if (c === "demo" || c === "reel") return c;
   return all("orders").some((o) => o.source === "reel") ? "reel" : "demo";

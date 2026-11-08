@@ -91,13 +91,13 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
               <SearchI size={15} /><span className="truncate">Rechercher un client, une commande, un produit…</span><kbd className="ml-auto hidden rounded border border-line bg-white px-1.5 text-[0.65rem] sm:inline">⌘ K</kbd>
             </button>
             <div className="ml-auto flex items-center gap-2">
-              {!online && <div className="hidden items-center rounded-lg border border-line bg-white p-0.5 sm:flex" role="group" aria-label="Jeu de données">
+              <div className="hidden items-center rounded-lg border border-line bg-white p-0.5 sm:flex" role="group" aria-label="Jeu de données">
                 {(["demo", "reel"] as const).map((s) => (
                   <button key={s} onClick={() => setSource(s)} aria-pressed={source === s} className={clsx("rounded-md px-2.5 py-1 text-xs font-medium", source === s ? (s === "demo" ? "bg-[#FFF3D6] text-[#6B5000]" : "bg-forest text-white") : "text-forest-soft hover:text-forest")}>
                     {s === "demo" ? "Démonstration" : `Données réelles${hasReal ? "" : " (0)"}`}
                   </button>
                 ))}
-              </div>}
+              </div>
               <span className="flex items-center gap-2 px-1">
                 <Avatar name={user.name} color={user.avatarColor} size={30} />
                 <span className="hidden text-sm font-medium md:block">{user.name}</span>
@@ -105,7 +105,8 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
               {!online && <button onClick={logout} className="hub-btn hub-btn-ghost" title="Déconnexion" aria-label="Déconnexion"><LogoutI /></button>}
             </div>
           </header>
-          {source === "demo" && <div className="border-b border-[#F0DDA6] bg-[#FFF8E6] px-4 py-1.5 text-center text-[0.72rem] text-[#6B5000] md:px-6 print:hidden">{online ? "Démo en ligne : données fictives générées à partir du vrai catalogue. Tu peux tout tester ; les modifications ne sont pas conservées et aucun e-mail n'est envoyé." : "Mode démonstration : données fictives générées à partir du vrai catalogue. Bascule sur « Données réelles » pour voir les commandes Stripe."}</div>}
+          {source === "reel" && online && <div className="border-b border-line bg-white px-4 py-1.5 text-center text-[0.72rem] text-forest-soft md:px-6 print:hidden">Données réelles de la version en ligne : questions posées au Glow Assistant, alertes « retour en stock » et messages envoyés depuis le site. Base temporaire : elles peuvent être effacées au redémarrage du serveur.</div>}
+          {source === "demo" && <div className="border-b border-[#F0DDA6] bg-[#FFF8E6] px-4 py-1.5 text-center text-[0.72rem] text-[#6B5000] md:px-6 print:hidden">{online ? "Démo en ligne : données fictives générées à partir du vrai catalogue. Tu peux tout tester ; les modifications ne sont pas conservées et aucun e-mail n'est envoyé. Bascule sur « Données réelles » pour voir ce que les visiteurs du site ont envoyé." : "Mode démonstration : données fictives générées à partir du vrai catalogue. Bascule sur « Données réelles » pour voir les commandes Stripe."}</div>}
           <main className="mx-auto max-w-[1500px] px-4 py-6 md:px-8 md:py-8">{children}</main>
           <GlobalSearch open={search} onClose={() => setSearch(false)} />
         </div>

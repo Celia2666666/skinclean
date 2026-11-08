@@ -7,9 +7,12 @@ import type { Ticket } from "./types";
 
 /**
  * Données entrantes depuis le site public vers le CRM local : questions du Glow Assistant (anonymes),
- * alertes de retour en stock, messages de contact. Le CRM n'existe qu'en local : sur Vercel, rien n'est stocké.
+ * alertes de retour en stock, messages de contact. En ligne (Vercel), la base est temporaire : ces données peuvent disparaître.
  */
-export const crmInboundAvailable = () => !process.env.VERCEL;
+/** Questions du chatbot, alertes et messages : enregistrés aussi en ligne (base temporaire de la démo). */
+export const crmInboundAvailable = () => true;
+/** Le stock du site ne suit celui du CRM qu'en local (en ligne, chaque instance a sa propre base temporaire). */
+export const crmStockLive = () => !process.env.VERCEL;
 const clip = (v: unknown, n: number) => String(v ?? "").replace(/[\u0000-\u001f]/g, " ").trim().slice(0, n);
 
 export async function logChat(b: Record<string, unknown>) {

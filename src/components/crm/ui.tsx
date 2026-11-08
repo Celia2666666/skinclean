@@ -165,7 +165,7 @@ export function SourceNote({ source, what = "Ces indicateurs" }: { source: "demo
   return (
     <div className="mb-5 flex items-start gap-2 rounded-lg border border-[#F0DDA6] bg-[#FFF8E6] px-4 py-2.5 text-xs leading-relaxed text-[#6B5000]">
       <InfoI size={15} className="mt-0.5 shrink-0" />
-      <p>{what} portent sur le <b>jeu de démonstration</b> : clients et commandes fictifs (adresses @example.com) générés à partir du vrai catalogue SKINCLEAN, prix et formats compris. {online ? "Version de démonstration en ligne : en local, les commandes réelles payées via Stripe s'affichent dans un jeu « Données réelles » séparé." : "Les commandes réelles payées via Stripe s'affichent dans le jeu « Données réelles », jamais mélangées."}</p>
+      <p>{what} portent sur le <b>jeu de démonstration</b> : clients et commandes fictifs (adresses @example.com) générés à partir du vrai catalogue SKINCLEAN, prix et formats compris. {online ? "Les données réelles (questions au chatbot, alertes de stock, messages envoyés depuis le site) sont dans le jeu « Données réelles », jamais mélangées." : "Les commandes réelles payées via Stripe s'affichent dans le jeu « Données réelles », jamais mélangées."}</p>
     </div>
   );
 }

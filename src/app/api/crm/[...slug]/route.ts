@@ -29,7 +29,7 @@ export async function POST(req: Request, ctx: RouteContext<"/api/crm/[...slug]">
     }
     const u = await requireCrmApi();
     const body = await req.json().catch(() => ({}));
-    if (name === "source" && !crmOnline()) {
+    if (name === "source") {
       const v = body.source === "reel" ? "reel" : "demo";
       (await cookies()).set(SOURCE_COOKIE, v, { httpOnly: true, sameSite: "lax", path: "/", maxAge: 365 * 86400 });
       return json({ source: v });

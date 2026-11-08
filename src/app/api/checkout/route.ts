@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
   // En local, le stock de référence est celui du CRM (sinon : stock du catalogue)
   const crmStock = await import("@/lib/crm/inbound").then(async (m) => {
-    if (!m.crmInboundAvailable()) return null;
+    if (!m.crmStockLive()) return null;
     const { ensureCrmSeeded } = await import("@/lib/crm/repo");
     const { all } = await import("@/lib/crm/db");
     await ensureCrmSeeded();
