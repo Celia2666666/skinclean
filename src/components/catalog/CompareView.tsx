@@ -63,7 +63,9 @@ export function CompareView() {
       </div>
       <p className="mt-3 max-w-2xl text-forest-soft">Jusqu&apos;à {COMPARE_MAX} soins côte à côte : actifs, types de peau, prix et utilisation. Ajoute un soin avec le bouton <b className="font-medium text-forest">Comparer</b> sur les fiches et les cartes produits.</p>
 
-      {h && list.length === 0 ? (
+      {!h ? (
+        <div className="mt-10 min-h-[420px]" aria-busy="true" />
+      ) : list.length === 0 ? (
         <div className="mt-10 bg-ivory p-8 text-center">
           <p className="font-display text-2xl">Ton comparateur est vide</p>
           <p className="mt-2 text-sm text-forest-soft">Choisis un premier soin ci-dessous pour commencer.</p>
