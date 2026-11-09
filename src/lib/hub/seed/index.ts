@@ -13,7 +13,7 @@ import { ads } from "./ads";
 import { articleBriefs, articles as baseArticles, keywords } from "./seo";
 import { briefArticles } from "./seo-articles";
 import { niacinamidePlan, routineVideoLibraryPost } from "./example-campaign";
-import { upgradeMedia, upgradeVisualsV5 } from "./media-upgrade";
+import { upgradeMedia, upgradeVideosV6, upgradeVisualsV5 } from "./media-upgrade";
 
 const articles = [...baseArticles, ...briefArticles];
 import { roadmap } from "./roadmap";
@@ -168,6 +168,7 @@ function blogSlot(d: string, k: number, t0: string): Post {
 export function upgradeSeed() {
   if (!getMeta("seed-media-v4")) tx(() => { upgradeMedia(addDays(todayYmd(), 6)); setMeta("seed-media-v4", nowIso()); });
   if (!getMeta("seed-visuals-v5")) tx(() => { upgradeVisualsV5(); setMeta("seed-visuals-v5", nowIso()); });
+  if (!getMeta("seed-videos-v6")) tx(() => { upgradeVideosV6(); setMeta("seed-videos-v6", nowIso()); });
   if (!getMeta("seed-example-v3")) tx(() => {
     // Campagne exemple « Sérum niacinamide » finalisée + vidéo routine dans la bibliothèque TikTok
     const c = list("campaigns").find((x) => x.id === "camp-niacinamide");

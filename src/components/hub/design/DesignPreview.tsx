@@ -50,29 +50,60 @@ function PreviewVideo({ src, poster, className }: { src: string; poster?: string
  * `fill` : remplit entièrement le conteneur (aperçus plein cadre type Story / TikTok).
  */
 const frameCache = new Map<string, Promise<string>>();
-/** Image extraite d'une vidéo (vers 1 s), mise en cache : vignette fiable même quand la vidéo est en pause. */
+const queue: (() => void)[] = [];
+let running = 0;
+/** File d'attente : 3 vidéos décodées à la fois, sinon le navigateur abandonne certaines vignettes (restées noires). */
+function enqueue<T>(job: () => Promise<T>): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const start = () => { running++; job().then(resolve, reject).finally(() => { running--; queue.shift()?.(); }); };
+    if (running < 3) start(); else queue.push(start);
+  });
+}
+/** Image extraite d'une vidéo (vers 1 s), mise en cache. Échec ou délai dépassé → la couverture est affichée à la place. */
 function grabFrame(src: string): Promise<string> {
-  if (!frameCache.has(src)) frameCache.set(src, new Promise((resolve, reject) => {
-    const v = document.createElement("video");
-    v.muted = true; v.playsInline = true; v.preload = "auto"; v.src = src;
-    v.onloadedmetadata = () => { v.currentTime = Math.min(1, v.duration / 3); };
-    v.onseeked = () => {
-      const c = document.createElement("canvas");
-      c.width = 360; c.height = Math.round((360 * v.videoHeight) / v.videoWidth);
-      c.getContext("2d")!.drawImage(v, 0, 0, c.width, c.height);
-      resolve(c.toDataURL("image/jpeg", 0.72));
-      v.removeAttribute("src"); v.load();
-    };
-    v.onerror = () => reject(new Error("Vidéo illisible"));
-  }));
+  if (!frameCache.has(src)) {
+    const p = enqueue(() => new Promise<string>((resolve, reject) => {
+      const v = document.createElement("video");
+      const done = (fn: () => void) => { clearTimeout(timer); fn(); v.removeAttribute("src"); v.load(); };
+      const timer = setTimeout(() => done(() => reject(new Error("Délai dépassé"))), 12000);
+      v.muted = true; v.playsInline = true; v.preload = "auto"; v.src = src;
+      v.onloadedmetadata = () => { v.currentTime = Math.min(1, v.duration / 3); };
+      v.onseeked = () => done(() => {
+        const c = document.createElement("canvas");
+        c.width = 360; c.height = Math.round((360 * v.videoHeight) / v.videoWidth);
+        c.getContext("2d")!.drawImage(v, 0, 0, c.width, c.height);
+        resolve(c.toDataURL("image/jpeg", 0.72));
+      });
+      v.onerror = () => done(() => reject(new Error("Vidéo illisible")));
+    }));
+    p.catch(() => frameCache.delete(src)); // nouvel essai au prochain affichage
+    frameCache.set(src, p);
+  }
   return frameCache.get(src)!;
 }
 
-function VideoFrame({ src, className }: { src: string; className?: string }) {
+function VideoFrame({ src, className, fallback }: { src: string; className?: string; fallback?: React.ReactNode }) {
   const [frame, setFrame] = useState<string | null>(null);
-  useEffect(() => { let live = true; grabFrame(src).then((f) => live && setFrame(f)).catch(() => {}); return () => { live = false; }; }, [src]);
-  // eslint-disable-next-line @next/next/no-img-element
-  return frame ? <img src={frame} alt="" className={className} /> : <span className={clsx(className, "animate-pulse bg-neutral-800")} />;
+  const [failed, setFailed] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    let live = true;
+    const el = ref.current;
+    // On ne charge la vidéo que lorsque la vignette approche de l'écran
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      grabFrame(src).then((f) => live && setFrame(f)).catch(() => live && setFailed(true));
+    }, { rootMargin: "300px" });
+    if (el) io.observe(el);
+    return () => { live = false; io.disconnect(); };
+  }, [src]);
+  if (frame) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={frame} alt="" className={className} />;
+  }
+  if (failed && fallback) return <>{fallback}</>;
+  return <span ref={ref} className={clsx(className, "animate-pulse bg-sage-soft")} />;
 }
 
 export function VisualThumb({ visual, width = 160, className, page = 0, playable, fill }: { visual?: Visual; width?: number; className?: string; page?: number; playable?: boolean; fill?: boolean }) {
@@ -84,7 +115,7 @@ export function VisualThumb({ visual, width = 160, className, page = 0, playable
     const hook = visual.poster?.pages[0]?.layers.filter((l) => l.type === "text").sort((a, b) => (b.type === "text" ? b.size : 0) - (a.type === "text" ? a.size : 0))[0];
     return (
       <div className={clsx("relative overflow-hidden bg-black", fill ? box : "aspect-[9/16] w-full", className)}>
-        <VideoFrame src={visual.src} className="absolute inset-0 block h-full w-full object-cover" />
+        <VideoFrame src={visual.src} className="absolute inset-0 block h-full w-full object-cover" fallback={visual.poster ? <DesignPreview design={visual.poster} width={width} className="absolute inset-0 h-full w-full object-cover" /> : undefined} />
         {hook?.type === "text" && <span className="absolute inset-x-[8%] top-[28%] line-clamp-4 rounded-md bg-white/90 px-2 py-1.5 text-center text-[0.72rem] font-semibold leading-snug text-forest shadow">{hook.text}</span>}
         <span className="absolute right-1.5 top-1.5 grid h-6 w-6 place-items-center rounded-full bg-black/60 text-white"><PlayI size={12} /></span>
       </div>

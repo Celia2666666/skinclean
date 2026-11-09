@@ -5,7 +5,7 @@ import { loyalty, welcomeOffer, firstOrderGift } from "@/data/config";
 
 const pages: Record<string, { title: string; body: string[] }> = {
   cgv: { title: "Conditions générales de vente", body: [
-    "Les présentes CGV régissent les ventes conclues sur le site SKINCLEAN. Modèle de démonstration à faire rédiger et valider par un professionnel du droit avant toute commercialisation.",
+    "Les présentes CGV régissent les ventes conclues sur le site SKINCLEAN, marque fictive créée dans le cadre d'un projet académique.",
     "Prix : indiqués en euros TTC. Le prix applicable est celui affiché au moment de la validation de la commande.",
     "Paiement : carte bancaire, Apple Pay, Google Pay via Stripe. La commande est confirmée uniquement après acceptation du paiement.",
     "Droit de rétractation : 14 jours à compter de la réception, pour les produits non descellés (art. L221-28 du Code de la consommation).",
@@ -56,7 +56,7 @@ export default async function Page({ params }: PageProps<"/legal/[slug]">) {
       <PageHero eyebrow="Informations légales" title={p.title} bg="#F4F3EF" crumbs={[{ href: `/legal/${slug}`, label: p.title }]} />
       <div className="mx-auto max-w-3xl space-y-5 px-4 py-14 text-[1.02rem] leading-relaxed md:px-8">
         {p.body.map((b) => <p key={b}>{b}</p>)}
-        <p className="rounded-[2px] bg-butter p-4 text-sm">Document de démonstration — à faire valider juridiquement avant mise en ligne.</p>
+        <p className="rounded-[2px] bg-butter p-4 text-sm">Documents rédigés pour un projet académique : SKINCLEAN est une marque fictive, aucun produit n'est réellement vendu.</p>
       </div>
     </>
   );

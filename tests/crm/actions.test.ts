@@ -52,7 +52,7 @@ describe("CRM — actions serveur", () => {
     const runs = db.all("runs").filter((r) => r.automationId === "back_in_stock" && pending.some((p) => r.key === `bis:${p.id}`));
     expect(runs.length).toBe(pending.length);
     expect(runs.every((r) => r.delivery === "simule")).toBe(true); // adresses @example.com : jamais envoyées
-    expect(db.all("mails").filter((m) => pending.some((p) => p.email === m.to)).length).toBe(pending.length); // visibles dans la boîte de démo
+    expect(db.all("mails").filter((m) => m.kind === "back_in_stock" && pending.some((p) => p.email === m.to)).length).toBe(pending.length); // visibles dans la boîte de démo
     await act.crmHandler("automation/run")(u, { id: "back_in_stock" });
     expect(db.all("runs").filter((r) => pending.some((p) => r.key === `bis:${p.id}`)).length).toBe(pending.length);
   });

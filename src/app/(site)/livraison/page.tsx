@@ -15,7 +15,7 @@ export default function Page() {
           { t: "↩ Retours", d: "14 jours après réception pour exercer ton droit de rétractation (produits non ouverts, pour des raisons d'hygiène). Demande ton retour depuis ton compte." },
           { t: "Remboursements", d: "Remboursement sur le moyen de paiement initial sous 14 jours après réception du retour. Les feuilles gagnées sur la commande sont alors retirées." },
         ].map((x) => <div key={x.t} className="rounded-none bg-ivory p-7"><h2 className="font-display text-2xl">{x.t}</h2><p className="mt-2 text-forest-soft">{x.d}</p></div>)}
-        <p className="text-xs text-forest-soft md:col-span-2">Conditions de démonstration à faire valider juridiquement avant mise en ligne.</p>
+        <p className="text-xs text-forest-soft md:col-span-2">SKINCLEAN est une marque fictive créée pour un projet académique : aucune commande n'est réellement expédiée.</p>
       </div>
     </>
   );

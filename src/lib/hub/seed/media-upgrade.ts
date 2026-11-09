@@ -2,7 +2,7 @@ import "server-only";
 import { products } from "@/data/products";
 import { create, get, list, update } from "../repo";
 import { BRAND, FORMATS, carouselJars, tplCarousel, type FormatKey } from "../templates";
-import { DEMO_VIDEO_NOTE, videoPicker } from "../video-library";
+import { DEMO_VIDEOS, DEMO_VIDEO_NOTE, videoPicker } from "../video-library";
 import type { Campaign, Design, Post, TextLayer } from "../types";
 import { lancementPlan, skinDiagPlan } from "./campaign-content";
 import { niacinamidePlan } from "./example-campaign";
@@ -111,5 +111,44 @@ export function upgradeVisualsV5() {
       const next = withJars(p, p.visual.design);
       if (next) touch(p, { visual: { ...p.visual, design: next } });
     }
+  }
+}
+
+/**
+ * v6 : chaque vidéo de démonstration sert au plus deux fois parmi les TikTok.
+ * Les vidéos sont redistribuées par thème ; les TikTok en surplus deviennent des carrousels photo
+ * avec les produits mis en scène (aucun contenu supprimé). Contenus publiés et vidéo de la marque inchangés.
+ */
+export function upgradeVideosV6() {
+  const MAX = 2;
+  const used = new Map<string, number>();
+  const all = list("posts").filter((p) => p.platform === "tiktok" && p.visual?.kind === "video" && p.visual.src);
+  const fixed = (p: Post) => ["publie", "publie_test"].includes(p.status) || !p.visual?.src?.startsWith("/media/videos/demo/");
+  for (const p of all) if (fixed(p)) used.set(p.visual!.src!, (used.get(p.visual!.src!) ?? 0) + 1);
+  // Priorité : contenus à valider, puis bibliothèque, puis brouillons par date
+  const rank = (p: Post) => (p.status === "a_valider" ? 0 : p.library ? 1 : 2);
+  const queue = all.filter((p) => !fixed(p)).sort((a, b) => rank(a) - rank(b) || a.date.localeCompare(b.date));
+  const norm = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  for (const p of queue) {
+    const topic = norm([p.title, p.script?.hook, p.caption.split("\n")[0], ...p.productIds.map((id) => products.find((x) => x.id === id)?.type)].join(" "));
+    const free = DEMO_VIDEOS.filter((v) => (used.get(v.src) ?? 0) < MAX);
+    if (free.length) {
+      const scored = free.map((v) => ({ v, s: v.tags.filter((t) => topic.includes(t)).length, n: used.get(v.src) ?? 0 }));
+      scored.sort((a, b) => b.s - a.s || a.n - b.n);
+      const src = scored[0].v.src;
+      used.set(src, (used.get(src) ?? 0) + 1);
+      if (src !== p.visual!.src) update("posts", p.id, { visual: { ...p.visual!, src, note: DEMO_VIDEO_NOTE } });
+      continue;
+    }
+    // Plus de vidéo disponible : carrousel photo TikTok avec les produits
+    const lines = (p.script?.scenes.map((s) => s.onScreen).filter(Boolean) ?? []).slice(0, 5);
+    const items = lines.length >= 3 ? lines : p.caption.split("\n").map((l) => l.replace(/^[\d.•\-–\s]+/, "").trim()).filter((l) => l.length > 12 && l.length < 110).slice(0, 4);
+    const ids = p.productIds.filter((id) => shot(id));
+    const prods = carouselJars(items.length, ids.length ? ids : ["sc-sr-01", "sc-cr-01", "sc-sp-01"]);
+    update("posts", p.id, {
+      format: "carrousel", script: undefined,
+      visual: { kind: "design", design: tplCarousel({ format: "tiktok", eyebrow: p.pillar, headline: p.script?.hook ?? p.title, packshot: shot(prods[0]), bg: BRAND.sageSoft, items, packshots: prods.map(shot), labels: prods.map(label), cta: p.cta || "Trouve ta routine avec le Skin Diag" }) },
+      ...(["valide", "programme"].includes(p.status) && !p.library ? { status: "a_valider" as const, scheduledPages: undefined, publishClaimed: false } : {}),
+    });
   }
 }

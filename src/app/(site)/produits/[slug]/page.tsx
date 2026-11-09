@@ -134,7 +134,7 @@ export default async function ProductPage({ params }: PageProps<"/produits/[slug
                 items={[
                   { title: "Description", content: <p>{p.description}</p> },
                   ...(p.usage ? [{ title: isAccessory ? "Utilisation & entretien" : "Conseils d'application", content: <><p>{p.usage}</p>{p.tips.length > 0 && <ul className="mt-3 list-disc space-y-1 pl-5">{p.tips.map((t) => <li key={t}>{t}</li>)}</ul>}</> }] : []),
-                  ...(isAccessory ? [] : [{ title: "Composition (INCI)", content: <><p className="text-sm">{p.inci}</p><p className="mt-2 text-xs text-forest-soft">Liste de démonstration modifiable — à remplacer par la liste INCI validée. {p.naturalOrigin != null ? `${p.naturalOrigin} % d'ingrédients d'origine naturelle.` : "Pourcentage d'ingrédients d'origine naturelle communiqué après validation de la formule."}</p></> }]),
+                  ...(isAccessory ? [] : [{ title: "Composition (INCI)", content: <><p className="text-sm">{p.inci}</p><p className="mt-2 text-xs text-forest-soft">Liste INCI de démonstration (marque fictive). {p.naturalOrigin != null ? `${p.naturalOrigin} % d'ingrédients d'origine naturelle.` : "Pourcentage d'ingrédients d'origine naturelle communiqué après validation de la formule."}</p></> }]),
                   ...(p.precautions?.length ? [{ title: "Précautions", content: <ul className="list-disc space-y-1 pl-5">{p.precautions.map((t) => <li key={t}>{t}</li>)}</ul> }] : []),
                   ...(p.faq.length ? [{ title: "Questions fréquentes", content: <div className="space-y-4">{p.faq.map((f) => <div key={f.q}><p className="font-semibold">{f.q}</p><p>{f.a}</p></div>)}</div> }] : []),
                 ]}

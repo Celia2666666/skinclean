@@ -36,7 +36,7 @@ let seedPromise: Promise<void> | null = null;
 export async function ensureSeeded() {
   db();
   if (getMeta("seeded")) {
-    if (!getMeta("seed-articles-v2") || !getMeta("seed-example-v3") || !getMeta("seed-media-v4") || !getMeta("seed-visuals-v5")) await import("./seed").then((m) => m.upgradeSeed());
+    if (!getMeta("seed-articles-v2") || !getMeta("seed-example-v3") || !getMeta("seed-media-v4") || !getMeta("seed-visuals-v5") || !getMeta("seed-videos-v6")) await import("./seed").then((m) => m.upgradeSeed());
     return;
   }
   seedPromise ??= import("./seed").then((m) => m.seedAll()).finally(() => { seedPromise = null; });

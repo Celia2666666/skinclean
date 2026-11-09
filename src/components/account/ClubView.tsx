@@ -47,7 +47,7 @@ export function ClubView() {
           <div>
             <p className="eyebrow text-forest/60">Programme de fidélité</p>
             <h1 className="mt-3 font-display text-[clamp(3rem,8vw,6.5rem)] leading-[0.9]">SKINCLEAN Club</h1>
-            <p className="mt-5 max-w-lg text-lg">Chaque soin te fait gagner des feuilles  à échanger contre des réductions. Plus tu prends soin de toi, plus ton arbre grandit.</p>
+            <p className="mt-5 max-w-lg text-lg">Chaque soin te fait gagner des feuilles à échanger contre des réductions. Plus tu prends soin de toi, plus ton arbre grandit.</p>
             {!acc && h && (
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link href="/compte/inscription" className="btn btn-primary">Rejoindre le Club gratuitement</Link>
