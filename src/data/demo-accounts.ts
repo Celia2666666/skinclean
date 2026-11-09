@@ -40,6 +40,31 @@ function order(id: string, daysAgo: number, email: string, ids: string[], status
 
 const address = { id: "ad_demo", name: "Camille Martin", line1: "12 rue des Lilas", zip: "75011", city: "Paris", country: "France", phone: "06 00 00 00 00", isDefault: true };
 
+/**
+ * Skin Journal pré-rempli de Camille (démonstration) : suivi de 32 jours avec la routine enregistrée.
+ * Photos : progression construite à partir du comparateur avant/après « imperfections » du site.
+ */
+export function camilleJournal(): Account["journal"] {
+  const start = now() - 32 * DAY;
+  const products = ["sc-cl-02", "sc-tn-01", "sc-sr-01", "sc-cr-03", "sc-sp-01"];
+  const entry = (day: number, m: [number, number, number, number], note: string) => ({
+    id: `j_demo_${day}`, day, date: start + day * DAY, photoKey: `/media/journal/camille-j${day}.webp`,
+    hydration: m[0], imperfections: m[1], redness: m[2], glow: m[3], products, note, routineDone: true,
+  });
+  // Routine faite presque tous les jours (quelques oublis réalistes)
+  const missed = new Set([5, 11, 12, 19, 26]);
+  const checkins = Array.from({ length: 33 }, (_, d) => d).filter((d) => !missed.has(d)).map((d) => new Date(start + d * DAY).toISOString().slice(0, 10));
+  return {
+    enabled: true, consentAt: start, startDate: start, reminders: true, routineId: "r_demo", retentionMonths: 12, checkins,
+    entries: [
+      entry(0, [2, 4, 3, 2], "Point de départ : plusieurs boutons sur les joues et le menton, peau qui brille en fin de journée."),
+      entry(7, [3, 4, 3, 2], "La peau tiraille moins après le nettoyage. Encore quelques boutons, mais ils dégonflent plus vite."),
+      entry(14, [3, 3, 2, 3], "Moins de nouveaux boutons cette semaine, le teint commence à s'unifier."),
+      entry(30, [4, 2, 1, 4], "Peau nettement plus nette et plus confortable. Je garde la routine et le SPF tous les matins."),
+    ],
+  };
+}
+
 export const demoAccounts: DemoAccount[] = [
   {
     label: "Cliente fidèle",
@@ -77,7 +102,7 @@ export const demoAccounts: DemoAccount[] = [
         birthday: "2001-04-12", phone: address.phone, addresses: [address],
         newsletter: { status: "confirmed", confirmedAt: now() - 130 * DAY, marketing: true },
         ledger, orders: [o3, o2, o1], routines: [routine],
-        journal: { enabled: false, reminders: true, entries: [], retentionMonths: 12 },
+        journal: camilleJournal(),
         favorites: ["sc-sr-02", "sc-cr-01", "sc-ms-01"],
       };
     },

@@ -17,12 +17,16 @@ const MEASURES: { k: "hydration" | "imperfections" | "redness" | "glow"; label: 
 ];
 const dayKey = (d = new Date()) => d.toISOString().slice(0, 10);
 
-/** Charge une photo du journal depuis IndexedDB (jamais envoyée à un serveur en mode démo). */
+/**
+ * Charge une photo du journal depuis IndexedDB (jamais envoyée à un serveur en mode démo).
+ * Une clé commençant par « / » est une image du site (journal pré-rempli du compte de démonstration).
+ */
 function usePhoto(key?: string) {
   const [url, setUrl] = useState<string>();
   useEffect(() => {
     let u: string | undefined;
-    if (key) getPhoto(key).then((b) => { if (b) { u = URL.createObjectURL(b); setUrl(u); } });
+    if (key?.startsWith("/")) setUrl(key);
+    else if (key) getPhoto(key).then((b) => { if (b) { u = URL.createObjectURL(b); setUrl(u); } });
     else setUrl(undefined);
     return () => { if (u) URL.revokeObjectURL(u); };
   }, [key]);

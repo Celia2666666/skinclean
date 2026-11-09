@@ -205,6 +205,12 @@ export const useStore = create<State>()(
             }
           }
           if (!acc || acc.passwordHash !== (await hash(password))) return "E-mail ou mot de passe incorrect.";
+          // Compte de démonstration créé avant l'ajout du journal pré-rempli : on le complète.
+          const demo = findDemoAccount(e, password);
+          if (demo && acc.journal.entries.length === 0) {
+            const built = demo.build();
+            if (built.journal.entries.length) acc = { ...acc, journal: built.journal };
+          }
           const favs = Array.from(new Set([...acc.favorites, ...get().favorites]));
           set({ session: e, accounts: { ...get().accounts, [e]: { ...acc, favorites: favs } }, favorites: [] });
           return null;

@@ -59,7 +59,7 @@ export function ShopByCategory() {
                   variants={{ hidden: { clipPath: "inset(100% 0% 0% 0%)" }, show: { clipPath: "inset(0% 0% 0% 0%)", transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: col * 0.09 + Math.floor(i / 4) * 0.12 } } }}
                 />
                 {/* Cercle qui s'élargit au survol */}
-                <span aria-hidden className="absolute left-1/2 top-[42%] h-[46%] w-[58%] -translate-x-1/2 -translate-y-1/2 scale-75 rounded-full bg-ivory/70 opacity-0 transition-all duration-700 ease-[var(--ease-glow)] group-hover:scale-110 group-hover:opacity-100" />
+                <span aria-hidden className="absolute left-1/2 top-[42%] aspect-square w-[88%] -translate-x-1/2 -translate-y-1/2 scale-75 rounded-full bg-ivory/75 opacity-0 transition-all duration-700 ease-[var(--ease-glow)] group-hover:scale-110 group-hover:opacity-100" />
                 {/* Produit qui surgit puis sort du cadre au survol */}
                 <motion.div
                   className="absolute inset-x-[20%] bottom-[22%] top-[6%]"
