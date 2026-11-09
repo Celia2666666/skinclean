@@ -7,6 +7,7 @@ import { analyse, visibleQuestions, type Answers } from "@/lib/diag";
 import { useHydrated, useStore } from "@/lib/store";
 import { useUI } from "@/lib/ui";
 import { ArrowIcon, CheckIcon, ChatIcon, DropIcon, LeafIcon } from "@/components/ui/Icons";
+import { LineIcon, diagIcon } from "@/components/ui/LineIcons";
 
 export function SkinDiag() {
   const router = useRouter();
@@ -155,7 +156,11 @@ export function SkinDiag() {
                         aria-pressed={on}
                         className={`group relative flex items-center gap-4 overflow-hidden rounded-none border-2 p-4 text-left transition-colors ${on ? "border-forest bg-ivory" : "border-transparent bg-ivory/70 hover:bg-ivory"}`}
                       >
-                        {o.emoji && <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-[2px] text-2xl transition ${on ? "bg-sage" : "bg-cream group-hover:bg-sky"}`}>{o.emoji}</span>}
+                        {diagIcon[`${q.id}:${o.value}`] && (
+                          <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-full border transition ${on ? "border-forest bg-forest text-ivory" : "border-line bg-cream text-forest group-hover:border-forest/40"}`}>
+                            <LineIcon name={diagIcon[`${q.id}:${o.value}`]} size={22} />
+                          </span>
+                        )}
                         <span className="min-w-0 flex-1">
                           <span className="block font-semibold">{o.label}</span>
                           {o.hint && <span className="block text-xs text-forest-soft">{o.hint}</span>}

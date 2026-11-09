@@ -155,7 +155,7 @@ export const questions: Question[] = [
     title: "Combien de temps souhaites-tu consacrer à ta routine ?",
     options: [
       { value: "1", label: "Moins de 5 minutes", },
-      { value: "2", label: "5 à 10 minutes", emoji: "⏱" },
+      { value: "2", label: "5 à 10 minutes" },
       { value: "3", label: "Plus de 10 minutes", },
     ],
   },

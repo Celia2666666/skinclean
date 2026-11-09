@@ -3,7 +3,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { getProduct } from "@/lib/catalog";
 import { Packshot } from "@/components/product/Packshot";
-import { Reveal } from "@/components/ui/Reveal";
+import { Parallax, Reveal } from "@/components/ui/Reveal";
 
 /** SECTION 2 — trois grandes pastilles d'accès rapide. */
 export function QuickCircles() {
@@ -15,7 +15,9 @@ export function QuickCircles() {
         <div className="relative h-full w-full">
           {set.map((p, i) => (
             <div key={p.id} className="absolute bottom-[14%] h-[58%] w-[34%] transition-transform duration-700 group-hover:-translate-y-2" style={{ left: `${12 + i * 26}%`, transform: `rotate(${(i - 1) * 9}deg)`, transitionDelay: `${i * 60}ms` }}>
-              <Packshot product={p} className="h-full w-full" showTag={false} sizes="120px" />
+              <Parallax amount={8 + i * 6} rotate={(i - 1) * 3} className="h-full w-full">
+                <Packshot product={p} className="h-full w-full" showTag={false} sizes="120px" />
+              </Parallax>
             </div>
           ))}
         </div>

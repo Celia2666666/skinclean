@@ -11,6 +11,7 @@ import { NewsletterForm } from "@/components/layout/NewsletterForm";
 import { Reveal, Parallax, Stagger, staggerItem } from "@/components/ui/Reveal";
 import { ArrowIcon, ChevronIcon, DropIcon } from "@/components/ui/Icons";
 import { SectionTitle } from "./SectionTitle";
+import { LineIcon } from "@/components/ui/LineIcons";
 import { homeMedia } from "@/data/home";
 import { euro } from "@/lib/format";
 import { useStore } from "@/lib/store";
@@ -35,7 +36,9 @@ export function ShopByCategory() {
             <motion.div key={c.slug} variants={staggerItem} className="w-[62vw] shrink-0 snap-start sm:w-[40vw] md:w-auto">
               <Link href={`/soins-visage/${c.slug}`} className="group relative block aspect-square overflow-hidden rounded-[var(--radius-card)] p-4" style={{ background: pastel[i] }}>
                 <div className="absolute inset-x-[18%] bottom-[16%] top-[10%] transition-transform duration-700 ease-[var(--ease-glow)] group-hover:-translate-y-3 group-hover:rotate-[-4deg] group-hover:scale-110">
-                  <Packshot product={p} className="h-full w-full" showTag={false} sizes="(max-width:768px) 50vw, 20vw" />
+                  <Parallax amount={i % 2 ? 26 : 14} rotate={i % 2 ? 4 : -3} className="h-full w-full">
+                    <Packshot product={p} className="h-full w-full" showTag={false} sizes="(max-width:768px) 50vw, 20vw" />
+                  </Parallax>
                 </div>
                 <div className="absolute inset-x-4 bottom-4 flex items-end justify-between">
                   <div>
@@ -73,7 +76,9 @@ export function Bestsellers() {
         {items.map((p, i) => (
           <Reveal key={p.id} delay={i * 0.06} className="w-[72vw] shrink-0 snap-start sm:w-[44vw] md:w-[30vw] lg:w-[23vw]">
             <p className="mb-3 border-b border-forest/15 pb-2 text-xs font-semibold tracking-[0.2em] text-forest/50">{String(i + 1).padStart(2, "0")}</p>
-            <ProductCard product={p} priority={i < 2} />
+            <Parallax amount={i % 2 ? 22 : -10} className="will-change-transform">
+              <ProductCard product={p} priority={i < 2} />
+            </Parallax>
           </Reveal>
         ))}
         <Link href="/best-sellers" className="group grid w-[60vw] shrink-0 snap-start place-items-center rounded-[var(--radius-card)] bg-forest p-8 text-center text-ivory sm:w-[30vw] lg:w-[18vw]">
@@ -116,7 +121,11 @@ export function ShopByConcern() {
           <Reveal key={x.slug} delay={i * 0.05} className={i === 0 ? "col-span-2 row-span-2" : ""}>
             <Link href={`/soins-visage/${x.slug}`} className={`@container group relative flex h-full flex-col justify-between overflow-hidden rounded-[var(--radius-card)] p-5 transition-all duration-500 hover:shadow-[var(--shadow-lift)] ${i === 0 ? "min-h-[360px] md:min-h-[480px]" : "min-h-[200px] md:min-h-[230px]"}`} style={{ background: x.c.bg }}>
               <div className={`absolute right-2 ${i === 0 ? "bottom-0 h-[70%] w-[44%]" : "top-2 h-[50%] w-[44%] md:bottom-0 md:top-auto md:h-[58%] md:w-[38%]"} transition-transform duration-700 group-hover:-translate-y-2 group-hover:rotate-3`}>
-                {x.hero && <Packshot product={x.hero} className="h-full w-full" showTag={false} sizes="25vw" />}
+                {x.hero && (
+                  <Parallax amount={i === 0 ? 34 : 18} rotate={i % 2 ? 5 : -4} className="h-full w-full">
+                    <Packshot product={x.hero} className="h-full w-full" showTag={false} sizes="25vw" />
+                  </Parallax>
+                )}
               </div>
               <span className="relative eyebrow text-forest/50">{String(i + 1).padStart(2, "0")}</span>
               {/* Le texte reste à gauche du flacon */}
@@ -149,11 +158,11 @@ export function ShopByConcern() {
 /* ───────── SECTION 6 — Philosophie ───────── */
 export function Philosophy() {
   const vals = [
-    { t: "Cruelty-free", d: "Aucun test sur les animaux, ni sur nos produits finis ni sur nos ingrédients.", bg: "#EFEEEA" },
-    { t: "Ingrédients d'origine naturelle", d: "Une forte proportion d'ingrédients d'origine naturelle — le pourcentage exact est indiqué produit par produit dès validation.", bg: "#EFEEEA" },
-    { t: "Transparence", d: "Listes INCI complètes, rôle de chaque ingrédient clé, précautions : tout est sur la fiche.", bg: "#EFEEEA" },
-    { t: "Des routines pour chacun·e", d: "Le Skin Diag construit une routine adaptée à ta peau, ton temps et ton budget.", bg: "#EFEEEA" },
-    { t: "Beauté accessible", d: "Des soins entre 7 et 36 €, et zéro injonction à la peau parfaite.", bg: "#F4F3EF" },
+    { icon: "rabbit", t: "Cruelty-free", d: "Aucun test sur les animaux, ni sur nos produits finis ni sur nos ingrédients.", bg: "#EFEEEA" },
+    { icon: "sprout", t: "Ingrédients d'origine naturelle", d: "Une forte proportion d'ingrédients d'origine naturelle — le pourcentage exact est indiqué produit par produit dès validation.", bg: "#EFEEEA" },
+    { icon: "list", t: "Transparence", d: "Listes INCI complètes, rôle de chaque ingrédient clé, précautions : tout est sur la fiche.", bg: "#EFEEEA" },
+    { icon: "people", t: "Des routines pour chacun·e", d: "Le Skin Diag construit une routine adaptée à ta peau, ton temps et ton budget.", bg: "#EFEEEA" },
+    { icon: "tag", t: "Beauté accessible", d: "Des soins entre 7 et 36 €, et zéro injonction à la peau parfaite.", bg: "#F4F3EF" },
   ];
   return (
     <section className="relative overflow-hidden bg-sage-soft py-24 md:py-32">
@@ -173,7 +182,10 @@ export function Philosophy() {
           {vals.map((v, i) => (
             <Reveal key={v.t} delay={i * 0.08} className={i === 4 ? "sm:col-span-2" : ""}>
               <motion.div className="h-full border-t border-forest/20 rounded-[var(--radius-card)] p-6" style={{ background: v.bg }}>
-                <span className="text-xs font-medium tracking-[0.12em] text-forest-soft">{String(i + 1).padStart(2, "0")}</span>
+                <div className="flex items-center justify-between">
+                  <motion.span whileHover={{ rotate: -8, scale: 1.08 }} className="grid h-11 w-11 place-items-center rounded-full border border-forest/25 text-forest"><LineIcon name={v.icon} size={22} /></motion.span>
+                  <span className="text-xs font-medium tracking-[0.12em] text-forest-soft">{String(i + 1).padStart(2, "0")}</span>
+                </div>
                 <p className="mt-4 font-display text-2xl">{v.t}</p>
                 <p className="mt-2 text-sm text-forest-soft">{v.d}</p>
               </motion.div>
@@ -228,7 +240,9 @@ export function SeasonalKits() {
                     <span className="absolute left-4 top-4 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-forest/60">{k.season ? season[k.season] : ""}</span>
                     {pr.lines.slice(0, 4).map((l, j) => (
                       <div key={l.product.id} className="absolute bottom-[8%] h-[62%] w-[30%] transition-transform duration-700 group-hover:-translate-y-3" style={{ left: `${6 + j * 21}%`, transform: `rotate(${(j - 1.5) * 6}deg)`, transitionDelay: `${j * 50}ms`, zIndex: j === 1 || j === 2 ? 2 : 1 }}>
-                        <Packshot product={l.product} className="h-full w-full" showTag={false} sizes="15vw" />
+                        <Parallax amount={10 + j * 8} rotate={(j - 1.5) * 3} className="h-full w-full">
+                          <Packshot product={l.product} className="h-full w-full" showTag={false} sizes="15vw" />
+                        </Parallax>
                       </div>
                     ))}
                   </div>
