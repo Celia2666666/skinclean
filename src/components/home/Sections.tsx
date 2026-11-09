@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useRef } from "react";
 import { typeCategories, concernCategories } from "@/data/categories";
 import { getBestsellers, getKits, getProduct, getProducts, kitPricing } from "@/lib/catalog";
@@ -8,7 +8,7 @@ import { Packshot } from "@/components/product/Packshot";
 import { ProductCard } from "@/components/product/ProductCard";
 import { BeforeAfter } from "@/components/product/BeforeAfter";
 import { NewsletterForm } from "@/components/layout/NewsletterForm";
-import { Reveal, Parallax, Stagger, staggerItem } from "@/components/ui/Reveal";
+import { Reveal, Parallax } from "@/components/ui/Reveal";
 import { ArrowIcon, ChevronIcon, DropIcon } from "@/components/ui/Icons";
 import { SectionTitle } from "./SectionTitle";
 import { LineIcon } from "@/components/ui/LineIcons";
@@ -25,6 +25,7 @@ export function ShopByCategory() {
   const slugs = ["nettoyants", "toners", "serums", "cremes", "masques", "patchs", "contours-yeux", "brumes"];
   const cats = slugs.map((s) => typeCategories.find((c) => c.slug === s)!);
   const all = getProducts();
+  const reduce = useReducedMotion();
   const pastel = ["#EFEEEA", "#EFEEEA", "#EFEEEA", "#EFEEEA", "#EFEEEA", "#EFEEEA", "#EFEEEA", "#EFEEEA"];
   return (
     <section className={`${wrap} py-24 md:py-32`}>
@@ -36,30 +37,53 @@ export function ShopByCategory() {
           href: `/soins-visage/${c.slug}`,
         }))}
       />
-      <Stagger className="no-scrollbar -mx-4 mt-12 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:px-0">
+      {/* Grille en quinconce : les cartes se déroulent de bas en haut, puis le produit surgit ; au survol il sort du cadre. */}
+      <div className="no-scrollbar -mx-4 mt-16 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-10 pt-10 md:mx-0 md:grid md:grid-cols-4 md:gap-x-5 md:gap-y-14 md:overflow-visible md:px-0 md:pb-12">
         {cats.map((c, i) => {
           const p = all.find((x) => c.types.includes(x.type) && x.bestseller) ?? all.find((x) => c.types.includes(x.type))!;
           const count = all.filter((x) => c.types.includes(x.type)).length;
+          const col = i % 4;
           return (
-            <motion.div key={c.slug} variants={staggerItem} className="w-[62vw] shrink-0 snap-start sm:w-[40vw] md:w-auto">
-              <Link href={`/soins-visage/${c.slug}`} className="group relative block aspect-square overflow-hidden rounded-[var(--radius-card)] p-4" style={{ background: pastel[i] }}>
-                <div className="absolute inset-x-[18%] bottom-[16%] top-[10%] transition-transform duration-700 ease-[var(--ease-glow)] group-hover:-translate-y-3 group-hover:rotate-[-4deg] group-hover:scale-110">
-                  <Parallax amount={i % 2 ? 26 : 14} rotate={i % 2 ? 4 : -3} className="h-full w-full">
-                    <Packshot product={p} className="h-full w-full" showTag={false} sizes="(max-width:768px) 50vw, 20vw" />
-                  </Parallax>
-                </div>
-                <div className="absolute inset-x-4 bottom-4 flex items-end justify-between">
+            <motion.div
+              key={c.slug}
+              className={`w-[62vw] shrink-0 snap-start sm:w-[40vw] md:w-auto ${col % 2 ? "md:translate-y-12" : ""}`}
+              initial={reduce ? false : "hidden"}
+              whileInView="show"
+              viewport={{ once: true, margin: "-60px" }}
+            >
+              <Link href={`/soins-visage/${c.slug}`} className="group relative block aspect-[4/5] focus-visible:outline-none">
+                {/* Fond qui se déroule */}
+                <motion.div
+                  className="absolute inset-0 rounded-[var(--radius-card)]"
+                  style={{ background: pastel[i] }}
+                  variants={{ hidden: { clipPath: "inset(100% 0% 0% 0%)" }, show: { clipPath: "inset(0% 0% 0% 0%)", transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: col * 0.09 + Math.floor(i / 4) * 0.12 } } }}
+                />
+                {/* Cercle qui s'élargit au survol */}
+                <span aria-hidden className="absolute left-1/2 top-[42%] h-[46%] w-[58%] -translate-x-1/2 -translate-y-1/2 scale-75 rounded-full bg-ivory/70 opacity-0 transition-all duration-700 ease-[var(--ease-glow)] group-hover:scale-110 group-hover:opacity-100" />
+                {/* Produit qui surgit puis sort du cadre au survol */}
+                <motion.div
+                  className="absolute inset-x-[20%] bottom-[22%] top-[6%]"
+                  variants={{ hidden: { y: 70, opacity: 0, rotate: col % 2 ? 8 : -8 }, show: { y: 0, opacity: 1, rotate: 0, transition: { type: "spring", stiffness: 140, damping: 13, delay: 0.35 + col * 0.09 + Math.floor(i / 4) * 0.12 } } }}
+                >
+                  <div className="h-full w-full transition-transform duration-700 ease-[var(--ease-glow)] group-hover:-translate-y-[16%] group-hover:scale-[1.14] group-hover:rotate-[-3deg]">
+                    <Packshot product={p} className="h-full w-full drop-shadow-[0_14px_16px_rgba(31,51,41,0.14)]" showTag={false} sizes="(max-width:768px) 50vw, 20vw" />
+                  </div>
+                </motion.div>
+                <motion.div
+                  className="absolute inset-x-4 bottom-4 flex items-end justify-between"
+                  variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.55 + col * 0.09 + Math.floor(i / 4) * 0.12 } } }}
+                >
                   <div>
                     <p className="font-display text-2xl">{c.short}</p>
                     <p className="text-xs text-forest-soft">{count} soin{count > 1 ? "s" : ""}</p>
                   </div>
-                  <span className="grid h-10 w-10 place-items-center rounded-full bg-ivory transition-all duration-500 group-hover:bg-forest group-hover:text-ivory"><ArrowIcon size={18} /></span>
-                </div>
+                  <span className="grid h-10 w-10 place-items-center rounded-full bg-ivory transition-all duration-500 group-hover:rotate-[-45deg] group-hover:bg-forest group-hover:text-ivory"><ArrowIcon size={18} /></span>
+                </motion.div>
               </Link>
             </motion.div>
           );
         })}
-      </Stagger>
+      </div>
     </section>
   );
 }
