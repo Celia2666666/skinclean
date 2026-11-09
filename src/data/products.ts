@@ -487,7 +487,7 @@ const baseProducts: Product[] = [
     concerns: ["terne", "glow", "deshydratation"],
     skinTypes: ["normale", "mixte", "seche", "grasse"],
     description:
-      "Notre Gradual Self-Tanning Serum (lot L31) : un sérum hydratant qui développe un hâle naturel et progressif en quelques heures grâce à la DHA, associée à la pulpe de caroube. À doser goutte à goutte pour un bonne-mine sur-mesure.",
+      "Un sérum hydratant qui développe un hâle naturel et progressif en quelques heures grâce à la DHA, associée à la pulpe de caroube. À doser goutte à goutte pour une bonne mine sur mesure.",
     benefits: ["Hâle progressif et modulable", "Hydrate la peau", "Effet bonne mine naturel"],
     variants: [{ id: "std", label: "Format classique", size: "30 ml", price: 27, stock: 85 }],
     keyIngredients: [
@@ -495,7 +495,7 @@ const baseProducts: Product[] = [
       { name: "Pulpe de caroube", role: "Accompagne la coloration" },
       { name: "Acide hyaluronique", role: "Hydrate" },
     ],
-    inci: "Liste INCI à renseigner à partir de l'étiquetage réglementaire du produit (lot L31).",
+    inci: "Aqua, Glycerin, Dihydroxyacetone, Ceratonia Siliqua Fruit Extract, Propanediol, Sodium Hyaluronate, Xanthan Gum, Sodium Metabisulfite, Phenoxyethanol, Ethylhexylglycerin, Citric Acid.",
     usage: "Le soir, mélanger 1 à 3 gouttes à ta crème hydratante, appliquer uniformément sur le visage. Augmenter le nombre de gouttes pour un hâle plus intense.",
     tips: ["Lave-toi les mains après application", "Évite sourcils et racine des cheveux", "Exfolie la veille pour un résultat homogène"],
     moments: ["soir"],
@@ -751,7 +751,7 @@ const baseProducts: Product[] = [
     slug: "spot-hero-patchs-anti-imperfections",
     name: "Spot Hero Day",
     kind: "Patchs invisibles de jour",
-    tagline: "Your spot rescue",
+    tagline: "Ton SOS anti-bouton",
     type: "patchs",
     concerns: ["acne"],
     skinTypes: ["grasse", "mixte", "normale", "sensible", "seche"],

@@ -39,7 +39,7 @@ const byType: Record<string, { pos: string[]; detail: string[]; meh: string[] }>
   },
   demaquillant: {
     pos: ["Le maquillage fond en quelques secondes.", "Même le mascara part sans frotter.", "Ma peau reste douce après le rinçage."],
-    detail: ["Je le suis toujours d'un nettoyant, comme conseillé.", "La texture est vraiment fondante.", "Pratique aussi pour retirer la crème solaire."],
+    detail: ["Je fais toujours suivre d'un nettoyant, comme conseillé.", "La texture est vraiment fondante.", "Pratique aussi pour retirer la crème solaire."],
     meh: ["Il laisse un léger film si on rince mal.", "Le pot n'est pas idéal sous la douche."],
   },
   toner: {
@@ -49,21 +49,21 @@ const byType: Record<string, { pos: string[]; detail: string[]; meh: string[] }>
   },
   serum: {
     pos: ["Texture légère qui pénètre tout de suite.", "Ma peau est plus confortable depuis que je l'utilise.", "Je vois une différence sur mon grain de peau après quelques semaines."],
-    detail: ["Trois gouttes suffisent pour tout le visage.", "La pipette est pratique pour doser.", "Je l'utilise dans ma routine du soir."],
+    detail: ["Trois gouttes suffisent pour tout le visage.", "La pipette est pratique pour doser.", "Il s'intègre facilement à ma routine."],
     meh: ["Il faut être patiente pour voir un effet.", "Un peu collant si on en met trop."],
   },
   creme: {
     pos: ["Ma peau reste hydratée toute la journée.", "Elle pénètre vite, pas d'effet gras.", "Parfaite sous le maquillage."],
     detail: ["Une noisette suffit pour le visage et le cou.", "Le pot est joli dans la salle de bain.", "Je l'utilise matin et soir."],
-    meh: ["Un peu légère pour l'hiver sur ma peau.", "J'aurais aimé une version sans pot, avec pompe."],
+    meh: ["Il m'a fallu quelques jours pour m'habituer à la texture.", "J'aurais aimé une version sans pot, avec pompe."],
   },
   "contour-yeux": {
-    pos: ["Mon regard a l'air moins fatigué le matin.", "L'embout frais est très agréable.", "Il ne pique pas les yeux."],
+    pos: ["Mon regard a l'air moins fatigué le matin.", "La texture est très agréable.", "Il ne pique pas les yeux."],
     detail: ["Je le garde au frigo.", "Une petite quantité suffit pour les deux yeux.", "Je l'applique en tapotant."],
     meh: ["Effet surtout immédiat, pas miraculeux sur les cernes.", "Le tube est petit."],
   },
   patchs: {
-    pos: ["Le bouton est beaucoup moins visible le lendemain.", "Ça m'empêche enfin d'y toucher.", "Ils tiennent bien toute la nuit."],
+    pos: ["Le bouton est beaucoup moins visible le lendemain.", "Ça m'empêche enfin d'y toucher.", "Ils tiennent bien plusieurs heures."],
     detail: ["Je les pose sur peau bien sèche.", "Les deux tailles sont pratiques.", "Presque invisibles en journée."],
     meh: ["Sur les zones qui bougent, ils se décollent un peu.", "Moins efficaces sur les boutons pas encore sortis."],
   },
@@ -75,7 +75,7 @@ const byType: Record<string, { pos: string[]; detail: string[]; meh: string[] }>
   "toner-pads": {
     pos: ["Super pratique, surtout le matin.", "Ma peau est plus lisse au toucher.", "Idéal en voyage."],
     detail: ["Je les utilise trois fois par semaine.", "Les disques sont bien imbibés jusqu'au bout.", "Le pot ferme bien."],
-    meh: ["La pince fournie serait un plus.", "Un peu chers au disque."],
+    meh: ["Une petite pince fournie serait un plus.", "Un peu chers au disque."],
   },
   brume: {
     pos: ["Fraîcheur instantanée, j'adore en été.", "La brume est vraiment fine.", "Elle ne fait pas couler le maquillage."],
@@ -99,8 +99,8 @@ const byType: Record<string, { pos: string[]; detail: string[]; meh: string[] }>
   },
   accessoire: {
     pos: ["Joli et pratique.", "Exactement ce qu'il me fallait pour ma routine.", "Bonne qualité, ça se voit."],
-    detail: ["Je l'utilise tous les jours.", "Il passe très bien en machine.", "Idée cadeau sympa."],
-    meh: ["La couleur est un peu différente de la photo.", "J'en aurais pris deux."],
+    detail: ["Je l'utilise tous les jours.", "Livré rapidement et bien emballé.", "Idée cadeau sympa."],
+    meh: ["La couleur est un peu différente de la photo.", "Un peu plus petit que ce que j'imaginais."],
   },
 };
 
@@ -135,7 +135,7 @@ function reviewsFor(p: Product): Review[] {
   for (let i = 0; i < count; i++) {
     const x = r();
     const rating = x < 0.55 ? 5 : x < 0.85 ? 4 : x < 0.96 ? 3 : 2;
-    const parts = rating >= 4 ? [pick(pool.pos), pick(pool.detail)] : rating === 3 ? [pick(pool.pos), pick(pool.meh)] : [pick(pool.meh), "Ça ne convient pas à ma peau, mais le service client a été réactif."];
+    const parts = rating >= 4 ? [pick(pool.pos), pick(pool.detail)] : rating === 3 ? [pick(pool.pos), pick(pool.meh)] : [pick(pool.meh), p.type === "accessoire" ? "Pas tout à fait ce que j'attendais, mais le service client a été réactif." : "Ça ne convient pas à ma peau, mais le service client a été réactif."];
     if (rating === 5 && r() > 0.5) parts.push(`Je rachèterai ${p.name}.`);
     const st = p.type === "accessoire" ? undefined : p.skinTypes.length ? (r() > 0.25 ? pick(p.skinTypes) : pick(skinTypes)) : undefined;
     const daysAgo = Math.floor(r() * 300) + 3;

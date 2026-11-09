@@ -72,7 +72,7 @@ export const loyalty = {
   ],
   /** Paliers sur feuilles gagnées en 12 mois glissants. */
   tiers: [
-    { id: "pousse", name: "Pousse", min: 0, color: "#CDD6C9", perks: ["1  par euro dépensé", "Cadeau de bienvenue", "Bonus anniversaire"] },
+    { id: "pousse", name: "Pousse", min: 0, color: "#CDD6C9", perks: ["1 feuille par euro dépensé", "Cadeau de bienvenue", "Bonus anniversaire"] },
     { id: "bourgeon", name: "Bourgeon", min: 300, color: "#E6E8E4", perks: ["Avant-premières nouveautés", "Échantillon offert à chaque commande", "Bonus anniversaire"] },
     { id: "fleur", name: "Fleur", min: 700, color: "#DDE3DA", perks: ["Livraison offerte sans minimum", "Accès ventes privées", "Échantillons au choix"] },
     { id: "canopee", name: "Canopée", min: 1200, color: "#E9EBE6", perks: ["Coffret surprise annuel", "Conseil skincare prioritaire", "Tous les avantages précédents"] },

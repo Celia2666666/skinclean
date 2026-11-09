@@ -34,7 +34,7 @@ const pages: Record<string, { title: string; body: string[] }> = {
   "conditions-offres": { title: "Conditions des offres", body: [
     `Offre newsletter : -${welcomeOffer.newsletterPercent} % sur la première commande éligible, après confirmation de l'adresse e-mail (double opt-in). Code unique, valable ${welcomeOffer.validityDays} jours, utilisable une seule fois, une seule fois par adresse e-mail.`,
     `Exclusions : ${welcomeOffer.excludeKits ? "kits et coffrets déjà remisés ; " : ""}non cumulable avec d'autres codes${welcomeOffer.combinableWithLeaves ? "" : " ni avec l'utilisation de feuilles"}.`,
-    `Bonus fidélité newsletter : ${loyalty.newsletterBonus} feuilles, crédités une seule fois après confirmation et rattachement à un compte SKINCLEAN Club.`,
+    `Bonus fidélité newsletter : ${loyalty.newsletterBonus} feuilles, créditées une seule fois après confirmation et rattachement à un compte SKINCLEAN Club.`,
     firstOrderGift.enabled ? `Cadeau de première commande : ${firstOrderGift.name} (${firstOrderGift.description}), ajouté automatiquement, une fois par client.` : "",
     `Feuilles : ${loyalty.leavesPerEuro} feuille par euro dépensé hors livraison, créditées à l'${loyalty.creditedOn}, retirées en cas de retour. Expiration après ${loyalty.expiryMonthsInactivity} mois sans utilisation. Paliers calculés sur ${loyalty.tierWindowMonths} mois glissants.`,
     "SKINCLEAN se réserve le droit de modifier ces offres ; les conditions applicables sont celles en vigueur au jour de la commande.",
