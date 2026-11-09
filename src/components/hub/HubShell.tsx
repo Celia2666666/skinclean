@@ -31,6 +31,7 @@ export const NAV: { href: string; label: string; icon: (p: { size?: number }) =>
   { href: "/hub/messages", label: "Messages & demandes", icon: ChatI },
   { href: "/hub/assistant", label: "Assistant marketing IA", icon: SparkI },
   { href: "/hub/compte", label: "Mon compte", icon: UserI },
+  { href: "/crm", label: "CRM — clients, ventes, stock", icon: ChartI },
 ];
 
 export function HubShell({ user, children, unread, badges }: { user: ClientUser; children: React.ReactNode; unread: number; badges: Record<string, number> }) {

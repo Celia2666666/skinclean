@@ -288,7 +288,8 @@ export async function cartsData(sp: Record<string, string | string[] | undefined
     series.push({ label: bucketLabel(d, "day"), abandoned: cs.filter((c) => c.status !== "recupere").reduce((a, c) => a + c.value, 0), recovered: cs.filter((c) => c.status === "recupere").reduce((a, c) => a + c.value, 0) });
   }
   const sel = sp.id ? carts.find((c) => c.id === sp.id) : undefined;
-  return { source, period, kpis: k, prev: kp, total: list.length, page, pages: Math.max(1, Math.ceil(list.length / per)), rows: list.slice((page - 1) * per, page * per), items, series, selected: sel ?? null };
+  const sessions = trafficOf(source).filter((t) => inRange(t.day, period.from, period.to)).reduce((a, t) => a + t.sessions, 0);
+  return { source, period, bounce: await bouncePages(sessions, period.from), kpis: k, prev: kp, total: list.length, page, pages: Math.max(1, Math.ceil(list.length / per)), rows: list.slice((page - 1) * per, page * per), items, series, selected: sel ?? null };
 }
 
 /* ───────── Rentabilité ───────── */
@@ -422,4 +423,34 @@ export async function automationsData() {
     source, list, byProduct, pendingAlerts: pending.slice().sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 60), log,
     kpis: { runs30: list.reduce((a, x) => a + x.runs30, 0), revenue: list.reduce((a, x) => a + x.revenue, 0), active: list.filter((a) => a.enabled).length, pending: pending.length, alertRate: sentAlerts.length ? (alertConv / sentAlerts.length) * 100 : null, resend: !!process.env.RESEND_API_KEY },
   };
+}
+
+/**
+ * Pages d'entrée avec le plus fort taux de rebond (démonstration : aucun outil d'analytics n'est branché).
+ * Répartition déterministe des sessions de la période entre les vraies pages du site, avec des taux de rebond
+ * réalistes par type de page (blog et pages d'information plus élevés, Skin Diag et panier plus bas).
+ */
+async function bouncePages(sessions: number, seed: string) {
+  if (!sessions) return [];
+  const { baseProducts } = await import("@/data/products");
+  const top = baseProducts.filter((p) => p.bestseller).sort((a, b) => (a.bestseller ?? 9) - (b.bestseller ?? 9)).slice(0, 5);
+  const PAGES: { path: string; label: string; w: number; bounce: number; time: number; tip: string }[] = [
+    { path: "/", label: "Accueil", w: 30, bounce: 38, time: 74, tip: "Mettre le Skin Diag et les best-sellers plus haut dans la page." },
+    { path: "/soins-visage", label: "Tous les soins", w: 12, bounce: 33, time: 96, tip: "Ajouter des filtres par préoccupation visibles dès l'arrivée." },
+    ...top.map((p, i) => ({ path: `/produits/${p.slug}`, label: `Fiche ${p.name}`, w: 6 - i * 0.7, bounce: 46 + i * 3, time: 58, tip: "Afficher les avis et le prix dès le haut de la fiche, ajouter « Complète ta routine »." })),
+    { path: "/conseils", label: "Blog Conseils", w: 9, bounce: 71, time: 132, tip: "Ajouter des encarts produits et un lien vers le Skin Diag dans les articles." },
+    { path: "/skin-diag", label: "Skin Diag", w: 6, bounce: 24, time: 188, tip: "Page qui retient bien : la mettre en avant dans les campagnes." },
+    { path: "/club", label: "SKINCLEAN Club", w: 3, bounce: 57, time: 49, tip: "Clarifier l'avantage immédiat (feuilles offertes à l'inscription)." },
+    { path: "/livraison", label: "Livraison & retours", w: 2, bounce: 66, time: 41, tip: "Ajouter un bouton de retour vers les best-sellers." },
+    { path: "/kits", label: "Coffrets & routines", w: 4, bounce: 42, time: 81, tip: "Montrer l'économie réalisée sur chaque coffret." },
+    { path: "/panier", label: "Panier", w: 3, bounce: 29, time: 63, tip: "Rassurer : livraison offerte dès 100 €, paiement sécurisé." },
+  ];
+  const hash = (str: string) => { let h = 2166136261; for (const c of str) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return ((h >>> 0) % 1000) / 1000; };
+  const total = PAGES.reduce((a, p) => a + p.w, 0);
+  return PAGES.map((p) => {
+    const n = hash(p.path + seed);
+    const entries = Math.round((sessions * p.w) / total * (0.85 + n * 0.3));
+    const bounce = Math.min(92, Math.max(12, p.bounce + (n - 0.5) * 8));
+    return { path: p.path, label: p.label, entries, bounce, bounced: Math.round((entries * bounce) / 100), time: Math.round(p.time * (0.9 + n * 0.2)), tip: p.tip };
+  }).sort((a, b) => b.bounce - a.bounce);
 }

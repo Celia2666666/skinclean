@@ -33,10 +33,35 @@ export function CartsView({ data: d, periods }: { data: Data; periods: { id: str
         <Kpi label="Relancés" value={pctf((k.relaunched / (k.count || 1)) * 100, 0)} hint={`${k.relaunched} paniers`} />
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-5">
-        <Card className="xl:col-span-3" title="Tunnel de conversion" subtitle="De la visite à la commande, sur la période">
+      <div className="mt-6 grid items-start gap-6 xl:grid-cols-5">
+        <div className="space-y-6 xl:col-span-3">
+        <Card title="Tunnel de conversion" subtitle="De la visite à la commande, sur la période">
           {k.funnel.length ? <Funnel steps={k.funnel} /> : <Empty>Aucune donnée de trafic : branche un outil d'analytics (GA4, Plausible) pour alimenter le tunnel.</Empty>}
         </Card>
+        <Card title="Pages avec le plus fort taux de rebond" subtitle="Part des visiteurs arrivés sur la page qui repartent sans rien consulter d'autre" pad={false}>
+          {d.bounce.length ? (
+            <>
+              <div className="flex items-start gap-3 border-b border-line bg-[#FBF1F1] px-5 py-3 text-sm text-[#7A2B2B]">
+                <span className="mt-0.5 shrink-0 text-lg">↩</span>
+                <p><b>{d.bounce[0].label}</b> ({d.bounce[0].path}) est la page la plus quittée : <b>{pctf(d.bounce[0].bounce, 0)}</b> de rebond, {d.bounce[0].bounced.toLocaleString("fr-FR")} visiteurs perdus. Piste : {d.bounce[0].tip}</p>
+              </div>
+              <table className="w-full text-sm">
+                <thead className={thead}><tr><th className="px-5 py-2">Page d'entrée</th><th className="px-3 text-right">Entrées</th><th className="px-3">Taux de rebond</th><th className="px-5 text-right">Temps moyen</th></tr></thead>
+                <tbody>
+                  {d.bounce.slice(0, 8).map((p) => (
+                    <tr key={p.path} className={trow} title={`Piste : ${p.tip}`}>
+                      <td className="px-5 py-2"><span className="font-medium">{p.label}</span><span className="block text-xs text-forest-soft">{p.path}</span></td>
+                      <td className="px-3 text-right tabular-nums">{p.entries.toLocaleString("fr-FR")}</td>
+                      <td className="w-48 px-3"><div className="flex items-center gap-2"><div className="h-2 flex-1 rounded-full bg-[#F1F0EC]"><div className="h-2 rounded-full" style={{ width: `${p.bounce}%`, background: p.bounce >= 60 ? "#B4443B" : p.bounce >= 45 ? SERIES[2] : SERIES[0] }} /></div><span className="w-10 text-right text-xs font-semibold tabular-nums">{pctf(p.bounce, 0)}</span></div></td>
+                      <td className="px-5 text-right tabular-nums text-forest-soft">{Math.floor(p.time / 60)} min {String(p.time % 60).padStart(2, "0")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          ) : <div className="p-5"><Empty>Aucune donnée de trafic : branche un outil d'analytics (GA4, Plausible) pour connaître le taux de rebond par page.</Empty></div>}
+        </Card>
+        </div>
         <div className="space-y-6 xl:col-span-2">
           <Card title="Où abandonnent-ils ?">
             <HBars items={k.byStep.map(([s, n]) => ({ label: CART_STEP_LABEL[s as keyof typeof CART_STEP_LABEL], value: n, sub: pctf((n / (k.count || 1)) * 100, 0) }))} format={(n) => `${n}`} />
