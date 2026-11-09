@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { Avatar, Card, PageHeader } from "@/components/hub/ui";
 import { DownloadI } from "@/components/hub/icons";
 import { eur } from "../charts";
-import { Pager, Pill, SearchBox, SortTh, SourceNote, thead, trow, useParam, Empty } from "../ui";
+import { Pager, Pill, SearchBox, SortTh, thead, trow, useParam, Empty } from "../ui";
 import { CHANNEL_SHORT, LIFECYCLE_LABEL, RFM_LABEL, type Lifecycle, type RfmSegment } from "@/lib/crm/types";
 import type { customersPage } from "@/lib/crm/pages";
 
@@ -23,7 +23,6 @@ export function CustomersView({ data: d }: { data: Data }) {
     <>
       <PageHeader eyebrow="Clients" title="Contacts" intro={<>{d.totals.all.toLocaleString("fr-FR")} contacts, dont {d.totals.buyers.toLocaleString("fr-FR")} acheteurs et {d.totals.optin.toLocaleString("fr-FR")} inscrits aux e-mails. Chaque contact est classé par cycle de vie et par segment RFM (récence, fréquence, montant).</>}
         actions={<a className="hub-btn hub-btn-secondary" href="/api/crm/export/clients"><DownloadI size={15} />Export CSV</a>} />
-      <SourceNote source={d.source} what="Ces contacts" />
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
         {LC.map((l) => (
           <button key={l} onClick={() => set({ lifecycle: lc === l ? null : l })} className={clsx("hub-card p-3 text-left transition hover:border-forest", lc === l && "border-forest ring-2 ring-forest/10")}>

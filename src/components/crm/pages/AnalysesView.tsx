@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, PageHeader } from "@/components/hub/ui";
 import { BarChart } from "@/components/hub/charts";
 import { HBars, SERIES, StackedBars, eur, fmtN, pctf, seq } from "../charts";
-import { Kpi, SourceNote, thead, trow } from "../ui";
+import { Kpi, thead, trow } from "../ui";
 import { CHANNEL_SHORT, RFM_ACTION, RFM_LABEL, SKIN_LABEL, type RfmSegment, type Customer } from "@/lib/crm/types";
 import type { analysesData } from "@/lib/crm/pages";
 
@@ -21,7 +21,6 @@ export function AnalysesView({ data: d }: { data: Data }) {
   return (
     <>
       <PageHeader eyebrow="Clients" title="Segments, cohortes & valeur client" intro="Qui sont les meilleurs clients, combien reviennent, combien ils rapportent et combien ils coûtent à acquérir." />
-      <SourceNote source={d.source} />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">
         <Kpi label="Acheteurs" value={fmtN(k.buyers)} />
         <Kpi label="Taux de réachat" value={pctf(k.repeat)} hint="≥ 2 commandes" />

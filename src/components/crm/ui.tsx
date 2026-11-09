@@ -1,14 +1,11 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import clsx from "clsx";
 import { useToast } from "@/components/hub/ui";
-import { ChevronLeftI, ChevronRightI, InfoI, SearchI } from "@/components/hub/icons";
+import { ChevronLeftI, ChevronRightI, SearchI } from "@/components/hub/icons";
 import { Sparkline, pctf } from "./charts";
-
-/** Vrai sur la démo en ligne (Vercel) : pas de données réelles ni de bascule. */
-export const OnlineCtx = createContext(false);
 
 /* ───────── Appels API ───────── */
 export async function crmApi<T = unknown>(name: string, body?: unknown): Promise<T> {
@@ -158,17 +155,6 @@ export function SortTh({ id, children, sort, className }: { id: string; children
 
 export const thead = "border-b border-line bg-[#FAF9F6] text-left text-[0.7rem] uppercase tracking-[0.04em] text-forest-soft";
 export const trow = "border-b border-line last:border-0 hover:bg-[#FAF9F6]";
-
-export function SourceNote({ source, what = "Ces indicateurs" }: { source: "demo" | "reel"; what?: string }) {
-  const online = useContext(OnlineCtx);
-  if (source === "reel") return null;
-  return (
-    <div className="mb-5 flex items-start gap-2 rounded-lg border border-[#F0DDA6] bg-[#FFF8E6] px-4 py-2.5 text-xs leading-relaxed text-[#6B5000]">
-      <InfoI size={15} className="mt-0.5 shrink-0" />
-      <p>{what} portent sur le <b>jeu de démonstration</b> : clients et commandes fictifs (adresses @example.com) générés à partir du vrai catalogue SKINCLEAN, prix et formats compris. {online ? "Les données réelles (questions au chatbot, alertes de stock, messages envoyés depuis le site) sont dans le jeu « Données réelles », jamais mélangées." : "Les commandes réelles payées via Stripe s'affichent dans le jeu « Données réelles », jamais mélangées."}</p>
-    </div>
-  );
-}
 
 export function Empty({ children }: { children: React.ReactNode }) {
   return <p className="rounded-lg border border-dashed border-line px-4 py-8 text-center text-sm text-forest-soft">{children}</p>;

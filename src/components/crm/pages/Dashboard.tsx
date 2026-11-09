@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { Card, PageHeader } from "@/components/hub/ui";
 import { AlertI, ArrowRightI, InfoI } from "@/components/hub/icons";
 import { HBars, Heatmap, SERIES, TrendChart, eur, fmtN, pctf } from "../charts";
-import { Kpi, PeriodTabs, Pill, ORDER_TONE, SourceNote } from "../ui";
+import { Kpi, PeriodTabs, Pill, ORDER_TONE } from "../ui";
 import { CHANNEL_SHORT, DEVICE_LABEL, ORDER_STATUS_LABEL, PAYMENT_LABEL, type Channel, type Device, type OrderStatus, type Payment } from "@/lib/crm/types";
 import type { DashboardData } from "@/lib/crm/pages";
 
@@ -21,7 +21,6 @@ export function Dashboard({ data: d, periods }: { data: DashboardData; periods: 
       <PageHeader eyebrow="CRM SKINCLEAN" title="Tableau de bord commercial"
         intro={<>Du {d.period.from.split("-").reverse().join("/")} au {d.period.to.split("-").reverse().join("/")}, comparé à la période précédente de même durée{d.period.key === "annee" ? " (an dernier)" : ""}.</>}
         actions={<PeriodTabs periods={periods} value={d.period.key} />} />
-      <SourceNote source={d.source} />
       {empty && d.source === "reel" && (
         <div className="mb-6 rounded-xl border border-line bg-white p-6 text-sm leading-relaxed text-forest-soft">
           <p className="font-display text-lg font-semibold text-forest">Aucune commande réelle pour l'instant</p>
@@ -44,7 +43,7 @@ export function Dashboard({ data: d, periods }: { data: DashboardData; periods: 
         <Kpi label="Valeur du stock" value={eur(d.stock.value)} hint={`${fmtN(d.stock.units)} unités · ${d.stock.refs} réf.`} href="/crm/stock" />
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-3">
+      <div className="mt-6 grid items-start gap-6 xl:grid-cols-3">
         <Card className="xl:col-span-2" title="Chiffre d'affaires TTC" subtitle={`Par ${d.period.grain === "day" ? "jour" : d.period.grain === "week" ? "semaine" : "mois"}, comparé à la période précédente`}>
           <TrendChart labels={d.series.labels} current={d.series.revenue} previous={d.series.prevRevenue} format={(n) => `${fmtN(n)} €`} />
           {d.campaigns.length > 0 && (
@@ -54,7 +53,7 @@ export function Dashboard({ data: d, periods }: { data: DashboardData; periods: 
             </div>
           )}
         </Card>
-        <div className="space-y-6">
+        <div>
           <Card title="Objectif du mois" subtitle="Objectif modifiable dans Paramètres">
             <div className="flex items-end justify-between">
               <div><p className="font-display text-2xl font-semibold tabular-nums">{eur(mtd)}</p><p className="text-xs text-forest-soft">réalisé sur {eur(target)}</p></div>
@@ -69,22 +68,29 @@ export function Dashboard({ data: d, periods }: { data: DashboardData; periods: 
               ({projected >= target ? <span className="text-[#2E5E3E]">objectif atteignable</span> : <span className="text-[#8A2B2B]">écart de {eur(target - projected)}</span>}).
             </p>
           </Card>
-          <Card title="Alertes" subtitle="Ce qui demande une action" pad={false}>
-            {d.alerts.length === 0 ? <p className="p-5 text-sm text-forest-soft">Rien d'urgent. 🎉</p> : (
-              <ul>
-                {d.alerts.map((a, i) => (
-                  <li key={i} className="border-b border-line last:border-0">
-                    <Link href={a.href} className="flex items-start gap-3 px-5 py-3 text-sm hover:bg-[#FAF9F6]">
-                      <span className={clsx("mt-0.5 shrink-0", a.level === "bad" ? "text-[#B4443B]" : a.level === "warn" ? "text-[#B07D00]" : "text-[#6A4E2C]")}>{a.level === "info" ? <InfoI size={16} /> : <AlertI size={16} />}</span>
-                      <span className="flex-1">{a.text}</span><ArrowRightI size={14} className="mt-1 shrink-0 text-forest-soft" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
+          <Card className="mt-6" title="Service client">
+            <div className="grid grid-cols-2 gap-3">
+              <Kpi label="Demandes ouvertes" value={d.tickets.open} href="/crm/sav" />
+              <Kpi label="Satisfaction (CSAT)" value={d.tickets.csat ? `${d.tickets.csat.toFixed(1).replace(".", ",")} / 5` : "—"} href="/crm/sav" />
+            </div>
+            <p className="mt-4 text-xs leading-relaxed text-forest-soft">Taux de remboursement sur la période : <b className="text-forest">{pctf(k.refundRate)}</b> ({eur(k.refunds)}). Remises accordées : <b className="text-forest">{eur(k.discount)}</b>, soit {pctf(k.discountRate)} du chiffre d'affaires brut.</p>
           </Card>
         </div>
       </div>
+      <Card className="mt-6" title="Alertes" subtitle="Ce qui demande une action" pad={false}>
+        {d.alerts.length === 0 ? <p className="p-5 text-sm text-forest-soft">Rien d'urgent. 🎉</p> : (
+          <ul className="grid md:grid-cols-2">
+            {d.alerts.map((a, i) => (
+              <li key={i} className="border-b border-line md:odd:border-r">
+                <Link href={a.href} className="flex items-start gap-3 px-5 py-3 text-sm hover:bg-[#FAF9F6]">
+                  <span className={clsx("mt-0.5 shrink-0", a.level === "bad" ? "text-[#B4443B]" : a.level === "warn" ? "text-[#B07D00]" : "text-[#6A4E2C]")}>{a.level === "info" ? <InfoI size={16} /> : <AlertI size={16} />}</span>
+                  <span className="flex-1">{a.text}</span><ArrowRightI size={14} className="mt-1 shrink-0 text-forest-soft" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         <Card title="Meilleures ventes" subtitle="CA TTC sur la période" action={<Link href="/crm/produits" className="text-xs underline">Tout voir</Link>}>
@@ -119,7 +125,7 @@ export function Dashboard({ data: d, periods }: { data: DashboardData; periods: 
         </Card>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <div className="mt-6">
         <Card title="Dernières commandes" pad={false} action={<Link href="/crm/ventes" className="text-xs underline">Toutes les commandes</Link>}>
           <ul>
             {d.latest.map((o) => (
@@ -133,13 +139,6 @@ export function Dashboard({ data: d, periods }: { data: DashboardData; periods: 
               </li>
             ))}
           </ul>
-        </Card>
-        <Card title="Service client">
-          <div className="grid grid-cols-2 gap-3">
-            <Kpi label="Demandes ouvertes" value={d.tickets.open} href="/crm/sav" />
-            <Kpi label="Satisfaction (CSAT)" value={d.tickets.csat ? `${d.tickets.csat.toFixed(1).replace(".", ",")} / 5` : "—"} href="/crm/sav" />
-          </div>
-          <p className="mt-4 text-xs leading-relaxed text-forest-soft">Taux de remboursement sur la période : <b className="text-forest">{pctf(k.refundRate)}</b> ({eur(k.refunds)}). Remises accordées : <b className="text-forest">{eur(k.discount)}</b>, soit {pctf(k.discountRate)} du chiffre d'affaires brut.</p>
         </Card>
       </div>
     </>

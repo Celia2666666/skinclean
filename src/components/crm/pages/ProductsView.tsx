@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import clsx from "clsx";
 import { Card, PageHeader } from "@/components/hub/ui";
 import { HBars, SERIES, Scatter, eur, fmtN, pctf } from "../charts";
-import { Kpi, PeriodTabs, Pill, SourceNote, thead, trow } from "../ui";
+import { Kpi, PeriodTabs, Pill, thead, trow } from "../ui";
 import type { productsData } from "@/lib/crm/pages";
 
 type Data = Awaited<ReturnType<typeof productsData>>;
@@ -20,7 +20,6 @@ export function ProductsView({ data: d, periods }: { data: Data; periods: { id: 
   return (
     <>
       <PageHeader eyebrow="Ventes" title="Produits & best-sellers" intro="Classement des produits, matrice volume × marge, ventes croisées et efficacité des codes promo." actions={<PeriodTabs periods={periods} value={d.period.key} />} />
-      <SourceNote source={d.source} />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Kpi label="Meilleure vente" value={top ? top.name : "—"} hint={top ? `${eur(top.revenue)} · ${top.qty} u.` : undefined} />
         <Kpi label="Références vendues" value={d.rows.length} hint={`${fmtN(d.rows.reduce((a, r) => a + r.qty, 0))} unités`} />

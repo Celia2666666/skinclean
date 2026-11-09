@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { Card, PageHeader } from "@/components/hub/ui";
 import { DownloadI } from "@/components/hub/icons";
 import { HBars, PosNegBars, SERIES, Waterfall, eur, pctf } from "../charts";
-import { Kpi, SourceNote, thead } from "../ui";
+import { Kpi, thead } from "../ui";
 import { CHANNEL_SHORT, PAID_CHANNELS } from "@/lib/crm/types";
 import type { profitData } from "@/lib/crm/pages";
 
@@ -33,7 +33,6 @@ export function ProfitView({ data: d }: { data: Data }) {
     <>
       <PageHeader eyebrow="Pilotage" title="Rentabilité & prévisions" intro={<>Compte de résultat simplifié, économie unitaire d'une commande, seuil de rentabilité et prévision des ventes. Les hypothèses (TVA, logistique, frais de paiement, charges fixes) se règlent dans <Link href="/crm/parametres" className="underline">Paramètres</Link>.</>}
         actions={<a className="hub-btn hub-btn-secondary" href="/api/crm/export/rentabilite"><DownloadI size={15} />Export CSV</a>} />
-      <SourceNote source={d.source} />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
         <Kpi label={`CA TTC ${new Date().getFullYear()}`} value={eur(d.ytd.revenue)} hint={`${eur(d.ytd.ht)} HT`} />
         <Kpi label="Marge brute (année)" value={eur(d.ytd.gross)} hint={pctf((d.ytd.gross / (d.ytd.ht || 1)) * 100)} />

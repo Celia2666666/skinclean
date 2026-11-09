@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { Button, Card, Field, Modal, PageHeader, Tabs } from "@/components/hub/ui";
 import { EditI, PlayI } from "@/components/hub/icons";
 import { eur, pctf } from "../charts";
-import { Kpi, Pill, SourceNote, thead, trow, useCrmAction, Empty } from "../ui";
+import { Kpi, Pill, thead, trow, useCrmAction, Empty } from "../ui";
 import { DELIVERY_LABEL, type Automation } from "@/lib/crm/types";
 import type { automationsData } from "@/lib/crm/pages";
 
@@ -24,7 +24,6 @@ export function AutomationsView({ data: d }: { data: Data }) {
     <>
       <PageHeader eyebrow="Automatisation" title="Automatisations" intro="Scénarios qui s'exécutent tout seuls : alerte de retour en stock, relances de paniers abandonnés, bienvenue, demande d'avis, rappel de réapprovisionnement, réactivation. Exécution automatique toutes les 10 minutes et à chaque réception de stock."
         actions={<Button variant="primary" icon={<PlayI size={14} />} disabled={busy} onClick={() => run<{ message: string }>("automation/run", {}, (r) => r.message)}>Exécuter maintenant</Button>} />
-      <SourceNote source={d.source} what="Ces envois" />
       <div className={clsx("mb-5 rounded-lg border px-4 py-2.5 text-xs leading-relaxed", k.resend ? "border-sage bg-sage-soft text-forest" : "border-line bg-white text-forest-soft")}>
         {k.resend ? "Resend est configuré : les e-mails aux vraies adresses partent réellement. " : "Resend n'est pas configuré (RESEND_API_KEY) : aucun e-mail ne part, les envois sont marqués « Simulé ». "}
         Les e-mails des contacts de démonstration (@example.com) arrivent dans la <Link href="/crm/boite-demo" className="underline">Boîte mail de démo</Link>. Un client ne reçoit jamais deux fois le même message.

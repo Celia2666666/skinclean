@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import clsx from "clsx";
 import { Button, Card, Drawer, Field, Modal, PageHeader } from "@/components/hub/ui";
 import { MailI, PlusI } from "@/components/hub/icons";
-import { Kpi, Pill, SourceNote, trow, useCrmAction, useParam, Empty } from "../ui";
+import { Kpi, Pill, trow, useCrmAction, useParam, Empty } from "../ui";
 import { AiBadge, AiPanel, initialDraft } from "../SupportAi";
 import { TICKET_CHANNEL_LABEL, TICKET_STATUS_LABEL, type Ticket } from "@/lib/crm/types";
 import type { supportData } from "@/lib/crm/pages";
@@ -26,7 +26,6 @@ export function MessagesView({ data: d }: { data: Data }) {
     <>
       <PageHeader eyebrow="Clients" title="Messages & contact" intro={<>Boîte de réception des messages envoyés depuis le formulaire « Nous contacter » du site (<Link href="/contact" target="_blank" className="underline">page Contact</Link>) et depuis le Glow Assistant (« Parler à l'équipe »). Réponds directement d'ici ou écris à n'importe quel contact.</>}
         actions={<Button variant="primary" icon={<PlusI size={15} />} onClick={() => setCompose({ to: "", subject: "", body: "" })}>Nouveau message</Button>} />
-      <SourceNote source={d.source} what="Ces messages" />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Kpi label="Non lus / ouverts" value={d.counts.ouvert ?? 0} tone={(d.counts.ouvert ?? 0) ? "warn" : undefined} />
         <Kpi label="En cours" value={d.counts.en_cours ?? 0} />

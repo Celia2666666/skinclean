@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { Button, Card, Drawer, PageHeader } from "@/components/hub/ui";
 import { HBars, pctf } from "../charts";
 import { AiBadge, AiPanel, initialDraft } from "../SupportAi";
-import { Kpi, ORDER_TONE, Pill, SourceNote, thead, trow, useCrmAction, useParam } from "../ui";
+import { Kpi, ORDER_TONE, Pill, thead, trow, useCrmAction, useParam } from "../ui";
 import { ORDER_STATUS_LABEL, TICKET_CATEGORY_LABEL, TICKET_CHANNEL_LABEL, TICKET_STATUS_LABEL, type Ticket } from "@/lib/crm/types";
 import type { supportData } from "@/lib/crm/pages";
 
@@ -26,7 +26,6 @@ export function SupportView({ data: d }: { data: Data }) {
   return (
     <>
       <PageHeader eyebrow="Clients" title="Service client" intro="Demandes reçues par e-mail, chat, Instagram et téléphone, liées à la commande concernée. Délais de réponse et satisfaction." />
-      <SourceNote source={d.source} what="Ces demandes" />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
         <Kpi label="Demandes ouvertes" value={k.open} tone={k.open ? "warn" : undefined} hint={`${k.total} au total`} />
         <Kpi label="1ʳᵉ réponse (médiane)" value={dur(k.medianFirst)} />

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button, Card, PageHeader } from "@/components/hub/ui";
 import { PlusI } from "@/components/hub/icons";
 import { HBars, SERIES, TrendChart, fmtN, pctf } from "../charts";
-import { Kpi, PeriodTabs, Pill, SourceNote, thead, trow, useCrmAction, Empty } from "../ui";
+import { Kpi, PeriodTabs, Pill, thead, trow, useCrmAction, Empty } from "../ui";
 import { INTENT_LABEL } from "@/lib/crm/types";
 import { delta } from "@/lib/crm/analytics";
 import type { chatbotData } from "@/lib/crm/pages";
@@ -19,7 +19,6 @@ export function ChatbotView({ data: d, periods }: { data: Data; periods: { id: s
     <>
       <PageHeader eyebrow="Automatisation" title="Chatbot — Glow Assistant" intro="Ce que les visiteurs demandent à l'assistant du site, les réponses qui reviennent le plus, les questions auxquelles il ne sait pas encore répondre et les actions déclenchées (alertes de retour en stock, messages à l'équipe)."
         actions={<PeriodTabs periods={periods} value={d.period.key} />} />
-      <SourceNote source={d.source} what="Ces conversations" />
       {d.source === "reel" && !k.questions && <div className="mb-5"><Empty>Aucune question réelle sur la période. Chaque question posée au Glow Assistant du site apparaît ici, de façon anonyme : ouvre le site, pose une question à l'assistant, puis reviens sur cette page.</Empty></div>}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-7">
         <Kpi label="Questions posées" value={fmtN(k.questions)} delta={delta(k.questions, k.prevQuestions)} />

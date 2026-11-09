@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { Button, Card, Drawer, PageHeader } from "@/components/hub/ui";
 import { DownloadI, MailI } from "@/components/hub/icons";
 import { Funnel, HBars, SERIES, StackedBars, eur, fmtN, pctf } from "../charts";
-import { Kpi, Pager, PeriodTabs, Pill, SourceNote, thead, trow, useCrmAction, useParam, Empty } from "../ui";
+import { Kpi, Pager, PeriodTabs, Pill, thead, trow, useCrmAction, useParam, Empty } from "../ui";
 import { CART_STATUS_LABEL, CART_STEP_LABEL, DEVICE_LABEL, type CartStatus } from "@/lib/crm/types";
 import { delta } from "@/lib/crm/analytics";
 import type { cartsData } from "@/lib/crm/pages";
@@ -24,7 +24,6 @@ export function CartsView({ data: d, periods }: { data: Data; periods: { id: str
     <>
       <PageHeader eyebrow="Ventes" title="Paniers abandonnés" intro="Paniers dont l'e-mail est connu (client connecté ou e-mail saisi au paiement), relances automatiques (1 h puis 24 h) et paniers récupérés."
         actions={<><PeriodTabs periods={periods} value={d.period.key} /><a className="hub-btn hub-btn-secondary" href="/api/crm/export/paniers"><DownloadI size={15} />Export CSV</a></>} />
-      <SourceNote source={d.source} what="Ces paniers" />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
         <Kpi label="Taux d'abandon" value={k.abandonmentRate === null ? "—" : pctf(k.abandonmentRate, 0)} invert points delta={k.abandonmentRate !== null && p.abandonmentRate !== null ? k.abandonmentRate - p.abandonmentRate : undefined} hint="ajouts au panier non convertis" />
         <Kpi label="Paniers identifiés" value={fmtN(k.count)} delta={delta(k.count, p.count)} invert hint={`valeur moyenne ${eur(k.avgValue)}`} />

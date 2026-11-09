@@ -7,7 +7,7 @@ import clsx from "clsx";
 import { Avatar, ToastProvider, UserProvider, Modal, type ClientUser } from "@/components/hub/ui";
 import { ArrowRightI, ChartI, ChatI, HomeI, LogoutI, MailI, MegaphoneI, MenuI, SearchI, StoreI } from "@/components/hub/icons";
 import { BoltI, BoxI, CartI, EuroI, GearI, PipelineI, SegmentI, TaskI, TicketI, UsersI, TrendUpI } from "./icons";
-import { OnlineCtx, crmApi } from "./ui";
+import { crmApi } from "./ui";
 
 type Icon = (p: { size?: number }) => React.ReactElement;
 export const CRM_NAV: { group: string; items: { href: string; label: string; icon: Icon }[] }[] = [
@@ -77,7 +77,6 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
 
   return (
     <UserProvider user={user}>
-      <OnlineCtx.Provider value={online}>
       <ToastProvider>
         <div className="min-h-screen bg-[#F6F5F1] text-forest lg:pl-[256px] print:bg-white print:pl-0">
           <aside className="fixed inset-y-0 left-0 z-40 hidden w-[256px] bg-forest lg:block print:hidden">{sidebar}</aside>
@@ -108,7 +107,6 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
             </div>
           </header>
           {source === "reel" && online && <div className="border-b border-line bg-white px-4 py-1.5 text-center text-[0.72rem] text-forest-soft md:px-6 print:hidden">Données réelles de la version en ligne : questions posées au Glow Assistant, alertes « retour en stock » et messages envoyés depuis le site. Base temporaire : elles peuvent être effacées au redémarrage du serveur.</div>}
-          {source === "demo" && <div className="border-b border-[#F0DDA6] bg-[#FFF8E6] px-4 py-1.5 text-center text-[0.72rem] text-[#6B5000] md:px-6 print:hidden">{online ? "Démo en ligne : données fictives générées à partir du vrai catalogue. Tu peux tout tester ; les modifications ne sont pas conservées et aucun e-mail n'est envoyé. Bascule sur « Données réelles » pour voir ce que les visiteurs du site ont envoyé." : "Mode démonstration : données fictives générées à partir du vrai catalogue. Bascule sur « Données réelles » pour voir les commandes Stripe."}</div>}
           <main className="mx-auto max-w-[1500px] px-4 py-6 md:px-8 md:py-8">{children}</main>
           <footer className="mx-auto flex max-w-[1500px] flex-wrap items-center gap-x-6 gap-y-2 border-t border-line px-4 py-5 text-sm text-forest-soft md:px-8 print:hidden">
             <span className="flex items-center gap-2"><Image src="/media/brand/transparent/logo-mark.png" alt="" width={16} height={20} className="h-5 w-auto" />CRM SKINCLEAN</span>
@@ -118,7 +116,6 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
           <GlobalSearch open={search} onClose={() => setSearch(false)} />
         </div>
       </ToastProvider>
-      </OnlineCtx.Provider>
     </UserProvider>
   );
 }

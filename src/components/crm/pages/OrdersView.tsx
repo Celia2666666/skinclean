@@ -7,7 +7,7 @@ import { Button, Card, Drawer, PageHeader } from "@/components/hub/ui";
 import { DownloadI } from "@/components/hub/icons";
 import { TruckI } from "../icons";
 import { eur, pctf } from "../charts";
-import { Kpi, ORDER_TONE, Pager, PeriodTabs, Pill, SearchBox, Select, SortTh, SourceNote, thead, trow, useCrmAction, useParam, Empty } from "../ui";
+import { Kpi, ORDER_TONE, Pager, PeriodTabs, Pill, SearchBox, Select, SortTh, thead, trow, useCrmAction, useParam, Empty } from "../ui";
 import { CHANNELS, CHANNEL_SHORT, DEVICE_LABEL, ORDER_STATUS_LABEL, PAYMENT_LABEL, type OrderStatus } from "@/lib/crm/types";
 import type { ordersPage } from "@/lib/crm/pages";
 
@@ -30,7 +30,6 @@ export function OrdersView({ data: d, periods }: { data: Data; periods: { id: st
     <>
       <PageHeader eyebrow="Ventes" title="Commandes" intro="Suivi des commandes, de la préparation au remboursement. Clique sur une commande pour voir sa marge et changer son statut."
         actions={<><PeriodTabs periods={periods} value={d.period.key} /><a className="hub-btn hub-btn-secondary" href={`/api/crm/export/commandes?from=${d.period.from}&to=${d.period.to}`}><DownloadI size={15} />Export CSV</a></>} />
-      <SourceNote source={d.source} what="Ces commandes" />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
         <Kpi label="CA TTC (filtre)" value={eur(d.kpis.revenue)} />
         <Kpi label="Commandes" value={d.kpis.orders.toLocaleString("fr-FR")} />
