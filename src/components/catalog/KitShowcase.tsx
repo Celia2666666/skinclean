@@ -3,6 +3,7 @@ import { motion, useInView, useReducedMotion, useScroll, useTransform } from "fr
 import { useRef } from "react";
 import type { Product } from "@/lib/types";
 import { Packshot } from "@/components/product/Packshot";
+import { LeafIcon } from "@/components/ui/Icons";
 
 /**
  * Déballage du kit : les soins tombent un à un dans une boîte ouverte, puis s'écartent en éventail au défilement.
@@ -23,9 +24,7 @@ export function KitShowcase({ products, color, discount }: { products: Product[]
         <div aria-hidden className="absolute left-1/2 top-[55%] h-[70%] w-[60%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(255,255,255,0.8),transparent)]" />
 
         {/* Fond de la boîte */}
-        <div aria-hidden className="absolute bottom-[10%] left-1/2 h-[26%] w-[min(70%,520px)] -translate-x-1/2 bg-ivory/90 shadow-[0_20px_40px_-24px_rgba(31,51,41,0.45)]">
-          <div className="absolute inset-y-0 left-1/2 w-6 -translate-x-1/2 bg-sage" />
-        </div>
+        <div aria-hidden className="absolute bottom-[10%] left-1/2 h-[24%] w-[min(70%,520px)] -translate-x-1/2 bg-[#2A4236]" />
 
         {/* Produits */}
         {products.map((p, i) => (
@@ -41,14 +40,15 @@ export function KitShowcase({ products, color, discount }: { products: Product[]
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           style={{ transformOrigin: "bottom" }}
         >
-          <div className="absolute inset-y-0 left-1/2 w-6 -translate-x-1/2 bg-sage" />
-          <p className="absolute inset-0 grid place-items-center font-display text-sm uppercase tracking-[0.3em] text-ivory/90 md:text-base">skinclean</p>
+          {/* Rebord supérieur : la face avant et le fond se lisent comme une seule boîte */}
+          <span className="absolute inset-x-0 top-0 h-1.5 bg-[#2E4A3C]" />
+          <p className="absolute inset-0 flex items-center justify-center gap-2 font-display text-sm uppercase tracking-[0.3em] text-ivory/90 md:text-base"><LeafIcon size={16} className="text-sage" /> skinclean</p>
         </motion.div>
 
         {/* Pastille remise */}
         {discount > 0 && (
           <motion.div
-            className="absolute right-[6%] top-[10%] grid h-20 w-20 place-items-center rounded-full bg-forest text-center font-display text-xl text-ivory md:right-[12%] md:h-24 md:w-24 md:text-2xl"
+            className="absolute right-4 top-[8%] z-30 grid h-20 w-20 place-items-center rounded-full bg-forest text-center font-display text-xl text-ivory md:right-[12%] md:h-24 md:w-24 md:text-2xl"
             initial={reduce ? false : { scale: 0, rotate: -120 }}
             animate={play || reduce ? { scale: 1, rotate: -8 } : undefined}
             transition={{ type: "spring", stiffness: 180, damping: 12, delay: 0.25 + n * 0.12 }}
