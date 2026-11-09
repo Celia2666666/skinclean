@@ -1,13 +1,14 @@
 "use client";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { analyse, visibleQuestions, type Answers } from "@/lib/diag";
 import { putPhoto, useHydrated, useStore } from "@/lib/store";
 import { useUI } from "@/lib/ui";
 import { ArrowIcon, CameraIcon, CheckIcon, ChatIcon, DropIcon, LeafIcon } from "@/components/ui/Icons";
 import { LineIcon, diagIcon } from "@/components/ui/LineIcons";
+import { homeMedia } from "@/data/home";
 import { resizeImage } from "@/lib/photo";
 
 export function SkinDiag() {
@@ -94,13 +95,15 @@ export function SkinDiag() {
     <div className="relative min-h-[calc(100svh-100px)] overflow-hidden bg-[radial-gradient(120%_90%_at_10%_0%,#EFEEEA,#F4F3EF_55%,#EFEEEA)]">
       <AnimatePresence mode="wait">
         {phase === "intro" && (
-          <motion.div key="intro" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }} className="relative mx-auto flex min-h-[calc(100svh-100px)] max-w-3xl flex-col items-center justify-center px-5 py-16 text-center">
-            <motion.div animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.06, 1] }} transition={{ repeat: Infinity, duration: 6 }} className="mb-6 grid h-24 w-24 place-items-center rounded-full bg-ivory text-4xl text-sage-deep shadow-[var(--shadow-soft)]"><DropIcon size={34} /></motion.div>
-            <p className="eyebrow text-sage-deep">Skin Diag · 2 minutes</p>
+          <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative min-h-[calc(100svh-100px)] text-ivory">
+            <IntroVideo />
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="relative mx-auto flex min-h-[calc(100svh-100px)] max-w-3xl flex-col items-center justify-center px-5 py-16 text-center">
+            <motion.div animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.06, 1] }} transition={{ repeat: Infinity, duration: 6 }} className="mb-6 grid h-24 w-24 place-items-center rounded-full bg-ivory/95 text-4xl text-sage-deep shadow-[var(--shadow-soft)]"><DropIcon size={34} /></motion.div>
+            <p className="eyebrow text-sage">Skin Diag · 2 minutes</p>
             <h2 className="mt-4 font-display text-[clamp(2.8rem,8vw,5.5rem)] leading-[0.92]">Faisons connaissance avec ta peau</h2>
-            <p className="mt-5 max-w-xl text-forest-soft">Une dizaine de questions pour construire une routine matin & soir adaptée à ton type de peau, tes préoccupations, ta sensibilité, ton temps et ton budget.</p>
+            <p className="mt-5 max-w-xl text-ivory/85">Une dizaine de questions pour construire une routine matin & soir adaptée à ton type de peau, tes préoccupations, ta sensibilité, ton temps et ton budget.</p>
             {prefill && search.get("prefill") && (
-              <div className="mt-6 rounded-none bg-ivory p-4 text-sm">
+              <div className="mt-6 rounded-none bg-ivory p-4 text-sm text-forest">
                 <p>Tu as déjà répondu à quelques questions avec le Glow Assistant. On les utilise pour préremplir ton diag ?</p>
                 <div className="mt-3 flex justify-center gap-2">
                   <button className="btn btn-primary px-4 py-2" onClick={() => { start({ answers: prefill, index: 0 }); setPrefill(undefined); }}>Oui, préremplir</button>
@@ -109,10 +112,11 @@ export function SkinDiag() {
               </div>
             )}
             <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <button className="btn btn-primary px-8 py-4 text-base" onClick={() => start()}>Commencer <ArrowIcon size={18} /></button>
-              {progress && Object.keys(progress.answers).length > 0 && <button className="btn btn-light px-8 py-4 text-base" onClick={() => start(progress)}>Reprendre où j&apos;en étais</button>}
+              <button className="btn btn-light btn-shine px-8 py-4 text-base" onClick={() => start()}>Commencer <ArrowIcon size={18} /></button>
+              {progress && Object.keys(progress.answers).length > 0 && <button className="btn border-ivory/60 px-8 py-4 text-base text-ivory hover:bg-ivory hover:text-forest" onClick={() => start(progress)}>Reprendre où j&apos;en étais</button>}
             </div>
-            <p className="mt-8 max-w-md text-xs text-forest-soft">Outil de conseil cosmétique, pas un diagnostic médical. Tes réponses restent sur ton appareil tant que tu ne crées pas de compte.</p>
+            <p className="mt-8 max-w-md text-xs text-ivory/70">Outil de conseil cosmétique, pas un diagnostic médical. Tes réponses restent sur ton appareil tant que tu ne crées pas de compte.</p>
+            </motion.div>
           </motion.div>
         )}
 
@@ -300,6 +304,28 @@ function PhotoStep({ onBack, onDone }: { onBack: () => void; onDone: (photoKey?:
           <button onClick={confirm} disabled={busy || !blob} className="btn btn-primary px-8 disabled:opacity-40">Découvrir ma routine <ArrowIcon size={18} /></button>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Vidéo d'ambiance de l'écran d'accueil du Skin Diag (même vidéo que l'encart de la page d'accueil). */
+function IntroVideo() {
+  const reduce = useReducedMotion();
+  return (
+    <div aria-hidden className="absolute inset-0 overflow-hidden bg-forest">
+      {reduce ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={homeMedia.skinDiagPoster} alt="" className="h-full w-full object-cover object-[40%_center]" />
+      ) : (
+        <video
+          src={homeMedia.skinDiagVideo}
+          poster={homeMedia.skinDiagPoster}
+          autoPlay muted loop playsInline
+          ref={(v) => { if (v) v.playbackRate = 0.8; }}
+          className="h-full w-full origin-top scale-[1.16] object-cover object-[40%_center]"
+        />
+      )}
+      <div className="absolute inset-0 bg-[radial-gradient(110%_90%_at_50%_45%,rgba(31,51,41,0.72),rgba(31,51,41,0.86))]" />
     </div>
   );
 }
