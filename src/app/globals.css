@@ -182,3 +182,13 @@ body {
 .hub-prose ul { list-style: disc; } .hub-prose ol { list-style: decimal; }
 .hub-prose a { text-decoration: underline; text-underline-offset: 3px; }
 }
+
+/* Reflet lumineux qui balaie un bouton (appel à l'action principal) */
+.btn-shine { position: relative; overflow: hidden; isolation: isolate; }
+.btn-shine::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.28) 50%, transparent 70%);
+  transform: translateX(-120%); animation: btn-shine 3.6s ease-in-out 1s infinite;
+}
+@keyframes btn-shine { 0%, 55% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+@media (prefers-reduced-motion: reduce) { .btn-shine::after { animation: none; } }

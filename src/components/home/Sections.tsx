@@ -9,7 +9,7 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { BeforeAfter } from "@/components/product/BeforeAfter";
 import { NewsletterForm } from "@/components/layout/NewsletterForm";
 import { Reveal, Parallax } from "@/components/ui/Reveal";
-import { ArrowIcon, ChevronIcon, DropIcon } from "@/components/ui/Icons";
+import { ArrowIcon, ChevronIcon } from "@/components/ui/Icons";
 import { SectionTitle } from "./SectionTitle";
 import { LineIcon } from "@/components/ui/LineIcons";
 import { ProductOrbit } from "./ProductOrbit";
@@ -351,17 +351,23 @@ export function RoutineCTA() {
 /* ───────── SECTION 11 — Newsletter ───────── */
 export function NewsletterSection() {
   return (
-    <section className="px-4 pb-28 md:px-8">
-      <div className="relative mx-auto grid max-w-[1400px] items-center gap-10 overflow-hidden rounded-none bg-blush px-6 py-14 md:grid-cols-2 md:px-14 md:py-20">
-        <div className="relative">
-          <p className="eyebrow text-sage-deep">Newsletter</p>
-          <h2 className="mt-3 font-display text-[clamp(2.4rem,5vw,4.2rem)] leading-[0.95]">Join the Glow Club</h2>
-          <p className="mt-4 max-w-md text-forest-soft">Inscris-toi à notre newsletter et reçois {loyalty.newsletterBonus} feuilles pour commencer ton aventure SKINCLEAN, plus <b>-{welcomeOffer.newsletterPercent} %</b> sur ta première commande éligible.</p>
-          <p className="mt-2 text-xs text-forest-soft">Avantages accordés une seule fois, après confirmation de ton adresse. Les feuilles sont créditées sur ton compte fidélité.</p>
+    <section className="px-4 pb-28 pt-20 md:px-8 md:pt-28">
+      <Reveal>
+        <div className="relative mx-auto grid max-w-[1400px] items-center gap-10 overflow-hidden border border-line bg-ivory px-6 py-14 shadow-[var(--shadow-lift)] md:grid-cols-2 md:px-14 md:py-20">
+          {/* Liseré vert : délimite nettement l'encart */}
+          <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-forest" />
+          <div className="relative">
+            <p className="eyebrow text-sage-deep">Newsletter</p>
+            <h2 className="mt-3 font-display text-[clamp(2.4rem,5vw,4.2rem)] leading-[0.95]">Join the Glow Club</h2>
+            <p className="mt-4 max-w-md text-forest-soft">Inscris-toi à notre newsletter et reçois {loyalty.newsletterBonus} feuilles pour commencer ton aventure SKINCLEAN, plus <b>-{welcomeOffer.newsletterPercent} %</b> sur ta première commande éligible.</p>
+            <p className="mt-2 text-xs text-forest-soft">Avantages accordés une seule fois, après confirmation de ton adresse. Les feuilles sont créditées sur ton compte fidélité.</p>
+          </div>
+          <div className="relative"><NewsletterForm /></div>
+          <Parallax amount={20} rotate={8} className="pointer-events-none absolute -right-8 -top-8 h-44 w-44 text-sage">
+            <LineIcon name="leaf" size={176} strokeWidth={0.8} />
+          </Parallax>
         </div>
-        <div className="relative"><NewsletterForm /></div>
-        <DropIcon className="absolute -right-6 -top-6 h-40 w-40 rotate-12 text-ivory/50" />
-      </div>
+      </Reveal>
     </section>
   );
 }

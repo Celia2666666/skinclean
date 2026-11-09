@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { AnimatePresence, motion, useSpring } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
 import { getKits, getProduct, complementary } from "@/lib/catalog";
 import { computeTotals } from "@/lib/pricing";
 import { euro } from "@/lib/format";
@@ -116,14 +116,28 @@ export function FreeShippingBar() {
   const t = useCartTotals();
   if (t.itemCount === 0) return null;
   const pct = Math.min(100, ((shipping.freeFrom - t.freeShippingRemaining) / shipping.freeFrom) * 100);
+  const done = t.freeShippingRemaining <= 0;
   return (
     <div className="rounded-[2px] bg-ivory p-3 text-sm">
-      <p className="flex items-center gap-2">
-        <TruckIcon size={18} />
-        {t.freeShippingRemaining > 0 ? <>Plus que <b>{euro(t.freeShippingRemaining)}</b> pour la livraison offerte</> : <b>Livraison offerte</b>}
-      </p>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-sage-soft">
-        <motion.div className="h-full rounded-full bg-forest" initial={false} animate={{ width: `${pct}%` }} transition={{ type: "spring", stiffness: 120, damping: 20 }} />
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.p key={done ? "ok" : "todo"} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="flex items-center gap-2">
+          {done ? <><GiftIcon size={18} /> <b>Livraison offerte</b> sur ta commande</> : <><TruckIcon size={18} /> Plus que <b>{euro(t.freeShippingRemaining)}</b> pour la livraison offerte</>}
+        </motion.p>
+      </AnimatePresence>
+      {/* Le camion avance avec la progression */}
+      <div className="relative mt-3 h-5">
+        <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 overflow-hidden rounded-full bg-sage-soft">
+          <motion.div className="h-full rounded-full bg-forest" initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ type: "spring", stiffness: 90, damping: 18 }} />
+        </div>
+        <motion.span
+          className="absolute top-1/2 grid h-6 w-6 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-forest bg-ivory text-forest"
+          initial={{ left: "0%" }}
+          animate={{ left: `${Math.max(3, Math.min(97, pct))}%`, y: done ? [0, -6, 0] : 0 }}
+          transition={{ left: { type: "spring", stiffness: 90, damping: 18 }, y: { duration: 0.5, repeat: done ? 2 : 0 } }}
+          aria-hidden
+        >
+          <TruckIcon size={13} />
+        </motion.span>
       </div>
     </div>
   );
@@ -174,6 +188,15 @@ export function PromoAndRewards() {
   );
 }
 
+/** Montant qui défile jusqu'à sa nouvelle valeur. */
+function CountUp({ value }: { value: number }) {
+  const mv = useSpring(value, { stiffness: 120, damping: 20 });
+  const [shown, setShown] = useState(value);
+  useEffect(() => { mv.set(value); }, [mv, value]);
+  useEffect(() => mv.on("change", (v) => setShown(Math.round(v * 100) / 100)), [mv]);
+  return <motion.span key={Math.round(value)} initial={{ scale: 1.08 }} animate={{ scale: 1 }} className="tabular-nums">{euro(shown)}</motion.span>;
+}
+
 export function TotalsBlock() {
   const t = useCartTotals();
   const row = (l: string, v: string, strong = false) => (
@@ -187,7 +210,7 @@ export function TotalsBlock() {
       {t.rewardDiscount > 0 && row("Récompense feuilles", `-${euro(t.rewardDiscount)}`)}
       {row("Livraison", t.shipping === 0 ? "Offerte" : euro(t.shipping))}
       <div className="my-2 h-px bg-line" />
-      {row("Total TTC", euro(t.total), true)}
+      <div className="flex justify-between text-lg font-semibold"><span>Total TTC</span><CountUp value={t.total} /></div>
       <p className="text-right text-xs text-forest-soft">Tu gagnes <b>{t.leavesEarned} feuilles</b> avec cette commande (créditées à l&apos;{loyalty.creditedOn}).</p>
     </div>
   );
@@ -206,15 +229,15 @@ export function CartSuggestions() {
     <div>
       <p className="eyebrow mb-3 text-forest/60">Complète ta routine</p>
       <div className="no-scrollbar -mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
-        {sugg.map((p) => (
-          <div key={p.id} className="w-36 shrink-0 rounded-[2px] bg-ivory p-2">
+        {sugg.map((p, i) => (
+          <motion.div key={p.id} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + i * 0.1, type: "spring", stiffness: 160, damping: 18 }} whileHover={{ y: -5 }} className="w-36 shrink-0 rounded-[2px] bg-ivory p-2">
             <Link href={`/produits/${p.slug}`} className="block">
               <div className="relative h-24 rounded-[2px] p-1" style={{ background: p.color.bg }}><Packshot product={p} className="h-full w-full" showTag={false} sizes="140px" /></div>
               <p className="mt-2 truncate text-sm font-semibold">{p.name}</p>
               <p className="text-xs text-forest-soft">{euro(p.variants[0].price)}</p>
             </Link>
             <AddToCartButton productId={p.id} label="Ajouter" openDrawer={false} className="mt-2 w-full px-3 py-2 text-xs" />
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
