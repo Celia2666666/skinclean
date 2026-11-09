@@ -14,10 +14,10 @@ export default function Home() {
       <Bestsellers />
       <FeaturedCollection />
       <ShopByConcern />
-      <Philosophy />
+      <RoutineCTA />
       <BeforeAfterSection />
       <SeasonalKits />
-      <RoutineCTA />
+      <Philosophy />
       <NewsletterSection />
     </>
   );
