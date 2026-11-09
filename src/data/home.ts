@@ -17,6 +17,9 @@ const baseHomeMedia = {
    * `illustrative: true` → elles illustrent le type de résultat recherché, ce ne sont PAS des résultats
    * obtenus avec un produit SKINCLEAN : la mention reste affichée sur le comparateur.
    */
+  /** Vidéo d'ambiance de l'encart Skin Diag (accueil) et son image de repli. */
+  skinDiagVideo: "/media/videos/skin-diag.mp4",
+  skinDiagPoster: "/media/videos/skin-diag-poster.webp",
   beforeAfter: [
     // Vraie paire avant/après (même personne), fournie par la marque ; « après » recalé sur l'« avant » (décalage + zoom ×1,07).
     { productId: "sc-sr-01", demo: "imperfections" as const, before: "/media/before-after/acne-avant.webp" as string | undefined, after: "/media/before-after/acne-apres.webp" as string | undefined, illustrative: true, caption: "Peau avec imperfections → peau plus nette", duration: "8 semaines", usage: "matin et soir" },

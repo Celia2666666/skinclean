@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { typeCategories, concernCategories } from "@/data/categories";
 import { getBestsellers, getKits, getProduct, getProducts, kitPricing } from "@/lib/catalog";
 import { Packshot } from "@/components/product/Packshot";
@@ -299,17 +299,47 @@ export function SeasonalKits() {
 
 /* ───────── SECTION 9 — Trouve ta routine ───────── */
 export function RoutineCTA() {
+  const reduce = useReducedMotion();
+  const video = useRef<HTMLVideoElement>(null);
+  const box = useRef<HTMLDivElement>(null);
+
+  // La vidéo ne joue que lorsque l'encart est visible (économise batterie et données).
+  useEffect(() => {
+    const v = video.current, el = box.current;
+    if (!v || !el || reduce) return;
+    v.playbackRate = 0.8;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) v.play().catch(() => {}); else v.pause(); }, { threshold: 0.25 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [reduce]);
+
   return (
     <section className="px-4 py-12 md:px-8">
-      <div className="relative mx-auto max-w-[1400px] overflow-hidden rounded-none bg-sky px-6 py-20 text-center md:py-32">
+      <div ref={box} className="relative mx-auto max-w-[1400px] overflow-hidden rounded-none bg-forest px-6 py-20 text-center text-ivory md:py-32">
+        {/* Vidéo d'ambiance : zoomée depuis le haut pour sortir du cadre la mention de l'outil de génération (coin inférieur droit). */}
+        <div aria-hidden className="absolute inset-0">
+          {reduce ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={homeMedia.skinDiagPoster} alt="" className="h-full w-full object-cover object-[40%_center]" />
+          ) : (
+            <video
+              ref={video}
+              src={homeMedia.skinDiagVideo}
+              poster={homeMedia.skinDiagPoster}
+              muted loop playsInline preload="none"
+              className="h-full w-full origin-top scale-[1.16] object-cover object-[40%_center]"
+            />
+          )}
+          <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_50%,rgba(31,51,41,0.78),rgba(31,51,41,0.55))]" />
+        </div>
         <div className="relative">
-          <Reveal><p className="eyebrow text-sage-deep">Skin Diag</p></Reveal>
+          <Reveal><p className="eyebrow text-sage">Skin Diag</p></Reveal>
           <Reveal delay={0.1}><h2 className="mx-auto mt-4 max-w-3xl font-display text-[clamp(2.4rem,6vw,5rem)] leading-[0.95]">2 minutes pour découvrir ta routine idéale</h2></Reveal>
-          <Reveal delay={0.2}><p className="mx-auto mt-5 max-w-lg text-forest-soft">10 questions, une routine matin & soir pensée pour ta peau, ton temps et ton budget. Sans inscription obligatoire.</p></Reveal>
-          <Reveal delay={0.3}><Link href="/skin-diag" className="btn btn-primary mt-8 px-8 py-4 text-base">Faire mon Skin Diag <ArrowIcon size={18} /></Link></Reveal>
+          <Reveal delay={0.2}><p className="mx-auto mt-5 max-w-lg text-ivory/80">10 questions, une routine matin & soir pensée pour ta peau, ton temps et ton budget. Sans inscription obligatoire.</p></Reveal>
+          <Reveal delay={0.3}><Link href="/skin-diag" className="btn btn-light mt-8 px-8 py-4 text-base">Faire mon Skin Diag <ArrowIcon size={18} /></Link></Reveal>
           <div className="mt-10 flex flex-wrap justify-center gap-3 text-sm">
             {["Type de peau", "Préoccupations", "Sensibilité", "Objectifs", "Temps", "Budget"].map((t, i) => (
-              <motion.span key={t} className="chip bg-ivory/80 px-4 py-2" initial={{ opacity: 0, scale: 0.6 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.4 + i * 0.07, type: "spring" }}>{t}</motion.span>
+              <motion.span key={t} className="chip border border-ivory/25 bg-ivory/10 px-4 py-2 text-ivory backdrop-blur-sm" initial={{ opacity: 0, scale: 0.6 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.4 + i * 0.07, type: "spring" }}>{t}</motion.span>
             ))}
           </div>
         </div>
