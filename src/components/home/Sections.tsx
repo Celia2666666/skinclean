@@ -12,6 +12,7 @@ import { Reveal, Parallax, Stagger, staggerItem } from "@/components/ui/Reveal";
 import { ArrowIcon, ChevronIcon, DropIcon } from "@/components/ui/Icons";
 import { SectionTitle } from "./SectionTitle";
 import { LineIcon } from "@/components/ui/LineIcons";
+import { ProductOrbit } from "./ProductOrbit";
 import { homeMedia } from "@/data/home";
 import { euro } from "@/lib/format";
 import { useStore } from "@/lib/store";
@@ -28,6 +29,13 @@ export function ShopByCategory() {
   return (
     <section className={`${wrap} py-24 md:py-32`}>
       <SectionTitle eyebrow="Nos catégories" title="Trouve le soin qui te ressemble" />
+      <ProductOrbit
+        items={cats.map((c) => ({
+          product: all.find((x) => c.types.includes(x.type) && x.bestseller) ?? all.find((x) => c.types.includes(x.type))!,
+          category: c.short,
+          href: `/soins-visage/${c.slug}`,
+        }))}
+      />
       <Stagger className="no-scrollbar -mx-4 mt-12 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-4 md:mx-0 md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:px-0">
         {cats.map((c, i) => {
           const p = all.find((x) => c.types.includes(x.type) && x.bestseller) ?? all.find((x) => c.types.includes(x.type))!;
