@@ -171,6 +171,20 @@ function EntryEditor({ day, existing, products, onClose }: { day: number; existi
   const [e, setE] = useState<JournalEntry>(existing ?? { id: uid("j_"), day, date: Date.now(), hydration: 3, imperfections: 3, redness: 3, glow: 3, products: [...products], note: "", routineDone: true });
   const [saving, setSaving] = useState(false);
   const preview = usePhoto(e.photoKey);
+  // Photo de départ prise pendant le Skin Diag (le plus récent qui en a une)
+  const diagPhotoKey = useStore((s) => s.diagHistory.find((d) => d.photoKey)?.photoKey);
+  const applyDiagPhoto = async () => {
+    if (!diagPhotoKey) return;
+    setSaving(true);
+    const b = await getPhoto(diagPhotoKey);
+    if (b) {
+      const key = `photo-${e.id}-${Date.now()}`;
+      await putPhoto(key, b); // copie : supprimer la photo du diag ne vide pas le journal
+      if (e.photoKey) await deletePhoto(e.photoKey);
+      setE({ ...e, photoKey: key });
+    }
+    setSaving(false);
+  };
 
   const onFile = async (f?: File) => {
     if (!f) return;
@@ -187,13 +201,18 @@ function EntryEditor({ day, existing, products, onClose }: { day: number; existi
       <motion.div initial={{ y: 60 }} animate={{ y: 0 }} exit={{ y: 60 }} onClick={(x) => x.stopPropagation()} role="dialog" aria-label={`Bilan J${day}`} className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-[2rem] bg-cream p-6 md:rounded-none">
         <p className="font-display text-3xl">Bilan J{day}</p>
         <div className="mt-5 grid gap-5 md:grid-cols-[200px_1fr]">
-          <label className="relative grid aspect-[4/5] cursor-pointer place-items-center overflow-hidden rounded-none bg-ivory text-center text-sm">
-            {preview ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={preview} alt={`Photo J${day}`} className="absolute inset-0 h-full w-full object-cover" />
-            ) : <span className="p-4"><CameraIcon className="mx-auto" size={30} /><span className="mt-2 block">{saving ? "Enregistrement…" : "Ajouter une photo (lumière naturelle, de face)"}</span></span>}
-            <input type="file" accept="image/*" capture="user" className="sr-only" onChange={(x) => onFile(x.target.files?.[0])} />
-          </label>
+          <div>
+            <label className="relative grid aspect-[4/5] cursor-pointer place-items-center overflow-hidden rounded-none bg-ivory text-center text-sm">
+              {preview ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={preview} alt={`Photo J${day}`} className="absolute inset-0 h-full w-full object-cover" />
+              ) : <span className="p-4"><CameraIcon className="mx-auto" size={30} /><span className="mt-2 block">{saving ? "Enregistrement…" : "Ajouter une photo (lumière naturelle, de face)"}</span></span>}
+              <input type="file" accept="image/*" capture="user" className="sr-only" onChange={(x) => onFile(x.target.files?.[0])} />
+            </label>
+            {!e.photoKey && diagPhotoKey && (
+              <button type="button" onClick={applyDiagPhoto} className="mt-2 text-left text-xs underline underline-offset-2">Utiliser ma photo du Skin Diag</button>
+            )}
+          </div>
           <div className="space-y-4">
             {MEASURES.map((m) => (
               <div key={m.k}>

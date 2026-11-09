@@ -213,6 +213,8 @@ export interface DiagResult {
   level: 1 | 2 | 3;
   items: RoutineItem[];
   notes: string[];
+  /** Photo de départ facultative (clé IndexedDB, reste sur l'appareil). */
+  photoKey?: string;
 }
 
 const concernMap: Record<string, Concern[]> = {

@@ -93,6 +93,7 @@ interface State {
   setDiagPrefill: (a?: Answers) => void;
   pushDiag: (r: DiagResult) => void;
   updateDiagItems: (diagId: string, items: RoutineItem[]) => void;
+  removeDiagPhoto: (diagId: string) => void;
   saveRoutine: (r: Omit<SavedRoutine, "id" | "createdAt">) => SavedRoutine | null;
   deleteRoutine: (id: string) => void;
   // Journal
@@ -316,6 +317,7 @@ export const useStore = create<State>()(
         setDiagPrefill: (a) => set({ diagPrefill: a }),
         pushDiag: (r) => set({ diagHistory: [r, ...get().diagHistory].slice(0, 20), diagProgress: undefined }),
         updateDiagItems: (id, items) => set({ diagHistory: get().diagHistory.map((d) => (d.id === id ? { ...d, items } : d)) }),
+        removeDiagPhoto: (id) => set({ diagHistory: get().diagHistory.map((d) => (d.id === id ? { ...d, photoKey: undefined } : d)) }),
         saveRoutine: (r) => {
           const email = get().session;
           if (!email) return null;

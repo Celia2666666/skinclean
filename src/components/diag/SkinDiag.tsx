@@ -4,10 +4,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { analyse, visibleQuestions, type Answers } from "@/lib/diag";
-import { useHydrated, useStore } from "@/lib/store";
+import { putPhoto, useHydrated, useStore } from "@/lib/store";
 import { useUI } from "@/lib/ui";
-import { ArrowIcon, CheckIcon, ChatIcon, DropIcon, LeafIcon } from "@/components/ui/Icons";
+import { ArrowIcon, CameraIcon, CheckIcon, ChatIcon, DropIcon, LeafIcon } from "@/components/ui/Icons";
 import { LineIcon, diagIcon } from "@/components/ui/LineIcons";
+import { resizeImage } from "@/lib/photo";
 
 export function SkinDiag() {
   const router = useRouter();
@@ -20,7 +21,8 @@ export function SkinDiag() {
   const pushDiag = useStore((s) => s.pushDiag);
   const openAssistant = useUI((s) => s.openAssistant);
 
-  const [phase, setPhase] = useState<"intro" | "quiz" | "analyse">("intro");
+  const [phase, setPhase] = useState<"intro" | "quiz" | "photo" | "analyse">("intro");
+  const [finalAnswers, setFinalAnswers] = useState<Answers>();
   const [answers, setAnswers] = useState<Answers>({});
   const [index, setIndex] = useState(0);
   const [dir, setDir] = useState(1);
@@ -59,16 +61,16 @@ export function SkinDiag() {
   const goNext = (a: Answers) => {
     setShowHelp(false);
     setDir(1);
-    if (index + 1 >= visibleQuestions(a).length) finish(a);
+    if (index + 1 >= visibleQuestions(a).length) { setFinalAnswers(a); setPhase("photo"); }
     else setIndex(index + 1);
   };
 
   const back = () => { setShowHelp(false); setDir(-1); if (index === 0) setPhase("intro"); else setIndex(index - 1); };
 
-  const finish = (a: Answers) => {
+  const finish = (a: Answers, photoKey?: string) => {
     setPhase("analyse");
     setTimeout(() => {
-      const r = analyse(a);
+      const r = { ...analyse(a), photoKey };
       pushDiag(r);
       router.push(`/skin-diag/resultats?id=${r.id}`);
     }, 2600);
@@ -184,6 +186,12 @@ export function SkinDiag() {
           </motion.div>
         )}
 
+        {phase === "photo" && finalAnswers && (
+          <motion.div key="photo" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} className="relative mx-auto max-w-3xl px-5 py-12 md:py-20">
+            <PhotoStep onBack={() => { setPhase("quiz"); }} onDone={(key) => finish(finalAnswers, key)} />
+          </motion.div>
+        )}
+
         {phase === "analyse" && (
           <motion.div key="analyse" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative flex min-h-[calc(100svh-100px)] flex-col items-center justify-center px-5 text-center">
             <div className="relative h-40 w-40">
@@ -209,5 +217,79 @@ function AnalyseText() {
     <AnimatePresence mode="wait">
       <motion.p key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mt-10 font-display text-3xl">{steps[i]}</motion.p>
     </AnimatePresence>
+  );
+}
+
+/** Étape facultative : photo de départ de la peau (reste sur l'appareil, sert de point de comparaison). */
+function PhotoStep({ onBack, onDone }: { onBack: () => void; onDone: (photoKey?: string) => void }) {
+  const [preview, setPreview] = useState<string>();
+  const [blob, setBlob] = useState<Blob>();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string>();
+
+  useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
+
+  const onFile = async (f?: File) => {
+    if (!f) return;
+    if (!f.type.startsWith("image/")) { setError("Choisis une image (JPEG, PNG ou HEIC)."); return; }
+    setBusy(true);
+    setError(undefined);
+    try {
+      const b = await resizeImage(f);
+      setBlob(b);
+      setPreview(URL.createObjectURL(b));
+    } catch {
+      setError("Cette photo n'a pas pu être lue. Essaie avec une autre.");
+    }
+    setBusy(false);
+  };
+
+  const confirm = async () => {
+    if (!blob) return onDone();
+    setBusy(true);
+    const key = `diag-photo-${Date.now()}`;
+    try { await putPhoto(key, blob); onDone(key); } catch { onDone(); }
+  };
+
+  return (
+    <div>
+      <p className="eyebrow text-forest/60">Dernière étape · facultative</p>
+      <h2 className="mt-3 font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]">Une photo de ta peau ?</h2>
+      <p className="mt-3 max-w-2xl text-forest-soft">Elle devient ta <b className="font-medium text-forest">photo de départ</b> : tu la retrouves avec tes résultats et tu pourras la comparer dans ton Skin Journal après quelques semaines de routine. Ta routine est calculée à partir de tes réponses, pas de la photo.</p>
+
+      <div className="mt-8 grid gap-6 sm:grid-cols-[220px_1fr]">
+        <label className="group relative grid aspect-[4/5] cursor-pointer place-items-center overflow-hidden border-2 border-dashed border-line bg-ivory text-center text-sm transition hover:border-forest/40">
+          {preview ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={preview} alt="Aperçu de ta photo de départ" className="absolute inset-0 h-full w-full object-cover" />
+          ) : (
+            <span className="p-4 text-forest-soft">
+              <span className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-line bg-cream text-forest transition group-hover:border-forest"><CameraIcon size={24} /></span>
+              <span className="mt-3 block font-medium text-forest">{busy ? "Préparation…" : "Prendre ou choisir une photo"}</span>
+            </span>
+          )}
+          <input type="file" accept="image/*" capture="user" className="sr-only" onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ""; }} />
+          {preview && <span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-ivory/90 px-3 py-1 text-xs">Changer</span>}
+        </label>
+        <div className="text-sm">
+          <p className="font-medium">Pour une photo utile</p>
+          <ul className="mt-2 space-y-1.5 text-forest-soft">
+            <li>· De face, à la lumière naturelle (près d&apos;une fenêtre)</li>
+            <li>· Sans maquillage, cheveux attachés</li>
+            <li>· Même endroit et même lumière pour les photos suivantes</li>
+          </ul>
+          <p className="mt-4 rounded-[2px] bg-sage-soft p-3 text-xs">Ta photo reste <b>uniquement sur cet appareil</b> : elle n&apos;est envoyée à aucun serveur. Tu peux la supprimer à tout moment depuis tes résultats.</p>
+          {error && <p role="alert" className="mt-3 text-[#a14d5f]">{error}</p>}
+        </div>
+      </div>
+
+      <div className="mt-10 flex flex-wrap items-center justify-between gap-3">
+        <button onClick={onBack} className="text-sm text-forest-soft underline-offset-4 hover:underline">Retour aux questions</button>
+        <div className="flex flex-wrap gap-3">
+          <button onClick={() => onDone()} disabled={busy} className="btn btn-ghost">Passer cette étape</button>
+          <button onClick={confirm} disabled={busy || !blob} className="btn btn-primary px-8 disabled:opacity-40">Découvrir ma routine <ArrowIcon size={18} /></button>
+        </div>
+      </div>
+    </div>
   );
 }

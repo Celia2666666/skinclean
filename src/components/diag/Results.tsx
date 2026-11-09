@@ -2,12 +2,12 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { complementsFor, type DiagResult, type RoutineItem } from "@/lib/diag";
 import { getProduct, resolveVariant } from "@/lib/catalog";
 import { stepLabels } from "@/data/categories";
 import { euro } from "@/lib/format";
-import { useAccount, useHydrated, useStore } from "@/lib/store";
+import { deletePhoto, getPhoto, useAccount, useHydrated, useStore } from "@/lib/store";
 import { useUI } from "@/lib/ui";
 import { Packshot } from "@/components/product/Packshot";
 import { CheckIcon, MoonIcon, SunIcon, PlusIcon, ArrowIcon } from "@/components/ui/Icons";
@@ -178,10 +178,13 @@ function ResultView({ diag }: { diag: DiagResult }) {
         <EmailRoutine diag={diag} items={selected} />
 
         <section className="mt-10 grid gap-4 md:grid-cols-2">
-          <div className="rounded-none bg-blush-soft p-6">
-            <p className="font-display text-2xl">Suis l&apos;évolution de ta peau</p>
-            <p className="mt-2 text-sm text-forest-soft">Active ton Skin Journal : photos et observations à J0, J7, J14 et J30, en privé.</p>
-            <Link href="/compte/journal" className="btn btn-primary mt-4">Activer mon Skin Journal</Link>
+          <div className="flex gap-5 rounded-none bg-blush-soft p-6">
+            <DiagPhoto diagId={diag.id} photoKey={diag.photoKey} />
+            <div>
+              <p className="font-display text-2xl">Suis l&apos;évolution de ta peau</p>
+              <p className="mt-2 text-sm text-forest-soft">{diag.photoKey ? "Ta photo de départ est enregistrée sur cet appareil. Active ton Skin Journal pour la comparer à J7, J14 et J30." : "Active ton Skin Journal : photos et observations à J0, J7, J14 et J30, en privé."}</p>
+              <Link href="/compte/journal" className="btn btn-primary mt-4">{diag.photoKey ? "Comparer dans mon Skin Journal" : "Activer mon Skin Journal"}</Link>
+            </div>
           </div>
           <div className="rounded-none bg-sage-soft p-6">
             <p className="font-display text-2xl">Pas tout à fait ça ?</p>
@@ -262,5 +265,25 @@ function EmailRoutine({ diag, items }: { diag: DiagResult; items: RoutineItem[] 
         )}
       </AnimatePresence>
     </section>
+  );
+}
+
+/** Photo de départ du diag (IndexedDB, sur l'appareil) avec suppression. */
+function DiagPhoto({ diagId, photoKey }: { diagId: string; photoKey?: string }) {
+  const [url, setUrl] = useState<string>();
+  const removeDiagPhoto = useStore((s) => s.removeDiagPhoto);
+  useEffect(() => {
+    let u: string | undefined;
+    if (photoKey) getPhoto(photoKey).then((b) => { if (b) { u = URL.createObjectURL(b); setUrl(u); } });
+    return () => { if (u) URL.revokeObjectURL(u); };
+  }, [photoKey]);
+  if (!photoKey || !url) return null;
+  return (
+    <figure className="relative w-28 shrink-0 sm:w-32">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={url} alt="Ta photo de départ" className="aspect-[4/5] w-full object-cover" />
+      <figcaption className="mt-1 text-[0.7rem] text-forest-soft">Photo de départ</figcaption>
+      <button onClick={async () => { await deletePhoto(photoKey); removeDiagPhoto(diagId); }} className="mt-0.5 text-[0.7rem] underline underline-offset-2">Supprimer</button>
+    </figure>
   );
 }
