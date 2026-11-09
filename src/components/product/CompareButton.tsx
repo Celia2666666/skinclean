@@ -61,7 +61,7 @@ export function CompareBar() {
         <motion.div
           initial={{ y: 120, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 120, opacity: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 26 }}
-          className="fixed bottom-4 left-1/2 z-[55] flex w-[min(560px,calc(100vw-6.5rem))] -translate-x-1/2 items-center gap-3 border border-line bg-ivory/95 p-2.5 shadow-[var(--shadow-lift)] backdrop-blur max-sm:left-4 max-sm:translate-x-0"
+          className="fixed bottom-4 left-1/2 z-[55] transition-[bottom] duration-300 in-data-[sticky-buy=on]:bottom-24 flex w-[min(560px,calc(100vw-6.5rem))] -translate-x-1/2 items-center gap-3 border border-line bg-ivory/95 p-2.5 shadow-[var(--shadow-lift)] backdrop-blur max-sm:left-4 max-sm:translate-x-0"
           role="region" aria-label="Comparateur"
         >
           <div className="flex min-w-0 flex-1 gap-2">

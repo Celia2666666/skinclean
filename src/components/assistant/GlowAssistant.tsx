@@ -100,7 +100,7 @@ export function GlowAssistant() {
       {/* Suggestion contextuelle */}
       <AnimatePresence>
         {hint && !open && (
-          <motion.div initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10 }} className="fixed bottom-24 right-4 z-[45] flex max-w-[260px] items-start gap-2 rounded-[2px] rounded-br-sm bg-ivory p-3 text-sm shadow-[var(--shadow-lift)] md:right-6">
+          <motion.div initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10 }} className="fixed bottom-24 right-4 z-[45] in-data-[sticky-buy=on]:bottom-40 flex max-w-[260px] items-start gap-2 rounded-[2px] rounded-br-sm bg-ivory p-3 text-sm shadow-[var(--shadow-lift)] md:right-6">
             <button className="text-left" onClick={() => openA(hint.intent)}>{hint.text}</button>
             <button aria-label="Fermer la suggestion" onClick={() => { setHintClosed((h) => [...h, hint.intent]); setHint(null); }} className="shrink-0 text-forest-soft"><CloseIcon size={16} /></button>
           </motion.div>
@@ -111,7 +111,7 @@ export function GlowAssistant() {
       <motion.button
         onClick={() => (open ? close() : openA())}
         whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}
-        className="fixed bottom-5 right-4 z-[46] grid h-14 w-14 place-items-center rounded-full bg-sage text-forest shadow-[var(--shadow-lift)] animate-pulse-ring md:right-6"
+        className="fixed bottom-5 right-4 z-[46] transition-[bottom] duration-300 in-data-[sticky-buy=on]:bottom-[5.5rem] grid h-14 w-14 place-items-center rounded-full bg-sage text-forest shadow-[var(--shadow-lift)] animate-pulse-ring md:right-6"
         aria-label={open ? "Fermer le Glow Assistant" : "Ouvrir le Glow Assistant"}
         aria-expanded={open}
       >

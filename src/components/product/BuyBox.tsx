@@ -42,13 +42,13 @@ export function BuyBox({ product }: { product: Product }) {
       )}
 
       <div className="flex gap-3">
-        <div className="flex items-center border border-line bg-ivory">
-          <button className="grid h-12 w-12 place-items-center" onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Diminuer"><MinusIcon size={18} /></button>
+        <div className="flex shrink-0 items-center border border-line bg-ivory">
+          <button className="grid h-12 w-10 place-items-center sm:w-12" onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Diminuer"><MinusIcon size={18} /></button>
           <span className="w-6 text-center font-semibold" aria-live="polite">{qty}</span>
-          <button className="grid h-12 w-12 place-items-center" onClick={() => setQty(Math.min(10, qty + 1))} aria-label="Augmenter"><PlusIcon size={18} /></button>
+          <button className="grid h-12 w-10 place-items-center sm:w-12" onClick={() => setQty(Math.min(10, qty + 1))} aria-label="Augmenter"><PlusIcon size={18} /></button>
         </div>
-        <AddToCartButton productId={product.id} variantId={variantId} qty={qty} className="flex-1 py-4" />
-        <FavoriteButton productId={product.id} className="h-[52px] w-[52px] bg-ivory" />
+        <AddToCartButton productId={product.id} variantId={variantId} qty={qty} className="min-w-0 flex-1 px-3 py-4 max-sm:text-[0.8rem]" />
+        <FavoriteButton productId={product.id} className="h-[52px] w-[52px] shrink-0 bg-ivory" />
       </div>
 
       {h && v.stock <= 0 && <StockAlertForm productId={product.id} variantId={v.id} origin="fiche_produit" />}

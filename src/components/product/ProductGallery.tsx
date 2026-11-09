@@ -41,7 +41,15 @@ export function ProductGallery({ product }: { product: Product }) {
             style={zoom ? { transformOrigin: `${zoom.x}% ${zoom.y}%` } : undefined}
           >
             <div className={`h-full w-full transition-transform duration-300 ${zoom ? "scale-[1.8]" : ""}`} style={zoom ? { transformOrigin: `${zoom.x}% ${zoom.y}%` } : undefined}>
-              {s.kind === "packshot" && <div className="absolute inset-[10%] animate-float-slow"><Packshot product={product} className="h-full w-full" priority sizes="(max-width:768px) 90vw, 45vw" /></div>}
+              {s.kind === "packshot" && (
+                <>
+                  {/* Ombre au sol qui « respire » avec le flottement du flacon */}
+                  <motion.div aria-hidden className="absolute bottom-[7%] left-1/2 h-[5%] w-[42%] -translate-x-1/2 rounded-[50%] bg-forest/15 blur-md" animate={{ scaleX: [1, 0.82, 1], opacity: [0.9, 0.6, 0.9] }} transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }} />
+                  <motion.div className="absolute inset-[10%]" initial={{ y: -40, rotate: -6, opacity: 0 }} animate={{ y: 0, rotate: 0, opacity: 1 }} transition={{ type: "spring", stiffness: 120, damping: 12, delay: 0.1 }}>
+                    <div className="h-full w-full animate-float-slow"><Packshot product={product} className="h-full w-full" priority sizes="(max-width:768px) 90vw, 45vw" /></div>
+                  </motion.div>
+                </>
+              )}
               {s.kind === "image" && <Image src={s.src} alt={product.name} fill className="object-cover" sizes="(max-width:768px) 90vw, 45vw" />}
               {s.kind === "video" && <video src={s.src} autoPlay muted loop playsInline className="h-full w-full object-cover" />}
             </div>

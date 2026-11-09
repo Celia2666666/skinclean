@@ -5,11 +5,12 @@ import { categoryOfType, complementary, getProduct, getProducts } from "@/lib/ca
 import { concernCategories, concernLabels, skinTypeLabels, stepLabels } from "@/data/categories";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { BuyBox } from "@/components/product/BuyBox";
+import { StickyBuyBar } from "@/components/product/StickyBuyBar";
 import { ProductCard } from "@/components/product/ProductCard";
 import { BeforeAfter } from "@/components/product/BeforeAfter";
 import { Packshot } from "@/components/product/Packshot";
 import { Accordion } from "@/components/ui/Accordion";
-import { Reveal } from "@/components/ui/Reveal";
+import { Parallax, Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
 import { MoonIcon, SunIcon } from "@/components/ui/Icons";
 import { siteUrlPublic } from "@/lib/site";
 import { productSeo } from "@/lib/site-overrides";
@@ -86,30 +87,32 @@ export default async function ProductPage({ params }: PageProps<"/produits/[slug
         <div className="grid gap-10 md:grid-cols-2 md:gap-14">
           <ProductGallery product={p} />
           <div>
-            <div className="flex flex-wrap gap-2">
-              {p.bestseller && <span className="chip bg-forest text-ivory">Best-seller</span>}
-              {p.isNew && <span className="chip bg-blush">Nouveau</span>}
-              <span className="chip bg-ivory">{stepLabels[p.step]}</span>
-            </div>
-            <h1 className="mt-4 font-display text-[clamp(2.6rem,5vw,4.2rem)] leading-[0.95]">{p.name}</h1>
-            <p className="mt-2 text-lg text-forest-soft">{p.kind}</p>
-            <div className="mt-2"><RatingSummary productId={p.id} size={16} link /></div>
-            <p className="mt-5 text-lg text-forest/80">{p.tagline}</p>
-            {p.benefits.length > 0 && <ul className="mt-5 space-y-2">
-              {p.benefits.map((b) => <li key={b} className="flex items-start gap-2"><span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-sage-deep" />{b}</li>)}
-            </ul>}
-            {!isAccessory && <div className="mt-6 flex flex-wrap gap-2 text-xs">
-              {p.skinTypes.map((s) => <span key={s} className="chip bg-sky">{skinTypeLabels[s]}</span>)}
-            </div>}
-            <div className="mt-3 flex flex-wrap gap-2 text-xs">
-              {concernCats.map((c) => <Link key={c.slug} href={`/soins-visage/${c.slug}`} className="chip bg-blush-soft hover:bg-blush">{c.short}</Link>)}
-            </div>
-            <div className="mt-4 flex gap-3 text-sm">
-              {p.moments.includes("matin") && <span className="flex items-center gap-1.5 border border-line px-3 py-1.5"><SunIcon size={16} /> Matin</span>}
-              {p.moments.includes("soir") && <span className="flex items-center gap-1.5 border border-line px-3 py-1.5"><MoonIcon size={16} /> Soir</span>}
-              <span className="border border-line px-3 py-1.5">{p.frequency}</span>
-            </div>
-            <div className="mt-8"><BuyBox product={p} /></div>
+            <Stagger gap={0.07}>
+              <StaggerItem className="flex flex-wrap gap-2">
+                {p.bestseller && <span className="chip bg-forest text-ivory">Best-seller</span>}
+                {p.isNew && <span className="chip bg-blush">Nouveau</span>}
+                <span className="chip bg-ivory">{stepLabels[p.step]}</span>
+              </StaggerItem>
+              <StaggerItem><h1 className="mt-4 font-display text-[clamp(2.6rem,5vw,4.2rem)] leading-[0.95]">{p.name}</h1></StaggerItem>
+              <StaggerItem><p className="mt-2 text-lg text-forest-soft">{p.kind}</p></StaggerItem>
+              <StaggerItem className="mt-2"><RatingSummary productId={p.id} size={16} link /></StaggerItem>
+              <StaggerItem><p className="mt-5 text-lg text-forest/80">{p.tagline}</p></StaggerItem>
+              {p.benefits.length > 0 && <StaggerItem><ul className="mt-5 space-y-2">
+                {p.benefits.map((b) => <li key={b} className="flex items-start gap-2"><span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-sage-deep" />{b}</li>)}
+              </ul></StaggerItem>}
+              {!isAccessory && <StaggerItem className="mt-6 flex flex-wrap gap-2 text-xs">
+                {p.skinTypes.map((s) => <span key={s} className="chip bg-sky">{skinTypeLabels[s]}</span>)}
+              </StaggerItem>}
+              <StaggerItem className="mt-3 flex flex-wrap gap-2 text-xs">
+                {concernCats.map((c) => <Link key={c.slug} href={`/soins-visage/${c.slug}`} className="chip bg-blush-soft hover:bg-blush">{c.short}</Link>)}
+              </StaggerItem>
+              <StaggerItem className="mt-4 flex gap-3 text-sm">
+                {p.moments.includes("matin") && <span className="flex items-center gap-1.5 border border-line px-3 py-1.5"><SunIcon size={16} /> Matin</span>}
+                {p.moments.includes("soir") && <span className="flex items-center gap-1.5 border border-line px-3 py-1.5"><MoonIcon size={16} /> Soir</span>}
+                <span className="border border-line px-3 py-1.5">{p.frequency}</span>
+              </StaggerItem>
+            </Stagger>
+            <div id="achat" className="mt-8 scroll-mt-28"><BuyBox product={p} /></div>
 
             {p.keyIngredients.length > 0 && <div className="mt-10">
               <p className="eyebrow mb-4 text-forest/60">{isAccessory ? "Matière" : "Ingrédients clés"}</p>
@@ -146,7 +149,7 @@ export default async function ProductPage({ params }: PageProps<"/produits/[slug
         <div className="mx-auto grid max-w-[1400px] items-center gap-10 px-4 md:grid-cols-2 md:px-8">
           <Reveal>
             <div className="relative aspect-[4/5] overflow-hidden rounded-none">
-              {p.media.howToVideo ? <video src={p.media.howToVideo} controls playsInline preload="none" className="h-full w-full object-cover" /> : <div className="h-full w-full p-[12%]" style={{ background: p.color.bg }}><Packshot product={p} className="h-full w-full" showTag={false} /></div>}
+              {p.media.howToVideo ? <video src={p.media.howToVideo} controls playsInline preload="none" className="h-full w-full object-cover" /> : <div className="h-full w-full p-[12%]" style={{ background: p.color.bg }}><Parallax amount={36} rotate={5} className="h-full w-full"><Packshot product={p} className="h-full w-full" showTag={false} /></Parallax></div>}
             </div>
           </Reveal>
           <div>
@@ -187,6 +190,7 @@ export default async function ProductPage({ params }: PageProps<"/produits/[slug
       </section>
 
       <ReviewsSection productId={p.id} productName={p.name} isAccessory={isAccessory} />
+      <StickyBuyBar product={p} />
     </>
   );
 }

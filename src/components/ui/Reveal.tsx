@@ -73,3 +73,8 @@ export const staggerItem = {
   hidden: { opacity: 0, y: 30, scale: 0.97 },
   show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const } },
 };
+
+/** Élément d'un <Stagger> (utilisable depuis une page serveur). */
+export function StaggerItem({ children, className }: { children: ReactNode; className?: string }) {
+  return <motion.div variants={staggerItem} className={className}>{children}</motion.div>;
+}
