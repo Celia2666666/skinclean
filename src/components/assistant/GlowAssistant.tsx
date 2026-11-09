@@ -22,6 +22,8 @@ import { euro } from "@/lib/format";
 export function GlowAssistant() {
   const open = useUI((s) => s.assistantOpen);
   const intent = useUI((s) => s.assistantIntent);
+  const request = useUI((s) => s.assistantRequest);
+  const setDrawer = useStore((s) => s.setDrawer);
   const openA = useUI((s) => s.openAssistant);
   const close = useUI((s) => s.closeAssistant);
   const pathname = usePathname();
@@ -80,14 +82,16 @@ export function GlowAssistant() {
   // Ouverture : accueil + éventuelle intention contextuelle
   useEffect(() => {
     if (!open) return;
-    if (messages.length === 0) setMessages([{ from: "bot", text: "Hello glow!  Comment je peux t'aider aujourd'hui ?", quick: welcomeQuick }]);
+    // Le panier latéral passe au-dessus de tout : on le ferme pour que l'assistant soit visible.
+    setDrawer(false);
+    if (messages.length === 0) setMessages([{ from: "bot", text: "Hello glow ! Comment je peux t'aider aujourd'hui ?", quick: welcomeQuick }]);
     if (intent) {
       const labels: Record<string, string> = { "cart-check": "Mes produits vont-ils bien ensemble ?", "product-fit": "Ce soin correspond-il à ma peau ?", "serum-help": "Aide-moi à choisir mon sérum", "diag-help": "J'ai une question sur le Skin Diag", "club-help": "Comment gagner plus de feuilles ?", "faq-winter": "Quel kit choisir ?" };
       send(intent, labels[intent] ?? intent);
     }
     setHint(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, intent]);
+  }, [open, intent, request]);
 
   const goDiag = (prefill?: Record<string, string | string[]>) => {
     if (prefill) setPrefill(prefill);

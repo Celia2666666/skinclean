@@ -10,6 +10,8 @@ interface UI {
   setSearch: (o: boolean) => void;
   assistantOpen: boolean;
   assistantIntent?: string;
+  /** Change à chaque demande d'ouverture : relance la question même si l'assistant est déjà ouvert. */
+  assistantRequest: number;
   openAssistant: (intent?: string) => void;
   closeAssistant: () => void;
 }
@@ -25,6 +27,7 @@ export const useUI = create<UI>((set, get) => ({
   searchOpen: false,
   setSearch: (o) => set({ searchOpen: o }),
   assistantOpen: false,
-  openAssistant: (intent) => set({ assistantOpen: true, assistantIntent: intent }),
+  assistantRequest: 0,
+  openAssistant: (intent) => set({ assistantOpen: true, assistantIntent: intent, assistantRequest: get().assistantRequest + 1 }),
   closeAssistant: () => set({ assistantOpen: false, assistantIntent: undefined }),
 }));
