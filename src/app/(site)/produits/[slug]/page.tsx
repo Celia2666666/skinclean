@@ -6,11 +6,11 @@ import { concernCategories, concernLabels, skinTypeLabels, stepLabels } from "@/
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { BuyBox } from "@/components/product/BuyBox";
 import { StickyBuyBar } from "@/components/product/StickyBuyBar";
+import { HowToStage } from "@/components/product/HowToStage";
 import { ProductCard } from "@/components/product/ProductCard";
 import { BeforeAfter } from "@/components/product/BeforeAfter";
-import { Packshot } from "@/components/product/Packshot";
 import { Accordion } from "@/components/ui/Accordion";
-import { Parallax, Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
 import { MoonIcon, SunIcon } from "@/components/ui/Icons";
 import { siteUrlPublic } from "@/lib/site";
 import { productSeo } from "@/lib/site-overrides";
@@ -144,31 +144,25 @@ export default async function ProductPage({ params }: PageProps<"/produits/[slug
         </div>
       </div>
 
-      {/* Comment l'utiliser ? */}
-      {!isAccessory && <section className="mt-16 bg-sky-soft py-20">
-        <div className="mx-auto grid max-w-[1400px] items-center gap-10 px-4 md:grid-cols-2 md:px-8">
-          <Reveal>
-            <div className="relative aspect-[4/5] overflow-hidden rounded-none">
-              {p.media.howToVideo ? <video src={p.media.howToVideo} controls playsInline preload="none" className="h-full w-full object-cover" /> : <div className="h-full w-full p-[12%]" style={{ background: p.color.bg }}><Parallax amount={36} rotate={5} className="h-full w-full"><Packshot product={p} className="h-full w-full" showTag={false} /></Parallax></div>}
+      {/* Comment l'utiliser ? — mise en scène au défilement (ou vidéo tutoriel si fournie) */}
+      {!isAccessory && (p.media.howToVideo ? (
+        <section className="mt-16 bg-sky-soft py-20">
+          <div className="mx-auto grid max-w-[1400px] items-center gap-10 px-4 md:grid-cols-2 md:px-8">
+            <div className="relative aspect-[4/5] overflow-hidden"><video src={p.media.howToVideo} controls playsInline preload="none" className="h-full w-full object-cover" /></div>
+            <div>
+              <p className="eyebrow text-sage-deep">Tutoriel</p>
+              <h2 className="mt-3 font-display text-5xl">Comment l&apos;utiliser ?</h2>
+              <ol className="mt-8 space-y-6">
+                {howSteps.map((s, i) => (
+                  <li key={s.t} className="flex gap-5"><span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-ivory font-display text-xl">{i + 1}</span><div><p className="font-display text-2xl">{s.t}</p><p className="mt-1 text-forest-soft">{s.d}</p></div></li>
+                ))}
+              </ol>
             </div>
-          </Reveal>
-          <div>
-            <p className="eyebrow text-sage-deep">Tutoriel</p>
-            <h2 className="mt-3 font-display text-5xl">Comment l&apos;utiliser ?</h2>
-            <ol className="mt-8 space-y-6">
-              {howSteps.map((s, i) => (
-                <Reveal key={s.t} delay={i * 0.1}>
-                  <li className="flex gap-5">
-                    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-ivory font-display text-xl">{i + 1}</span>
-                    <div><p className="font-display text-2xl">{s.t}</p><p className="mt-1 text-forest-soft">{s.d}</p></div>
-                  </li>
-                </Reveal>
-              ))}
-            </ol>
-            <p className="mt-6 text-sm text-forest-soft">Fréquence : {p.frequency} · Étape de routine : {stepLabels[p.step]}</p>
           </div>
-        </div>
-      </section>}
+        </section>
+      ) : (
+        <HowToStage product={p} steps={howSteps} footer={<p className="mt-6 text-sm text-forest-soft">Fréquence : {p.frequency} · Étape de routine : {stepLabels[p.step]}</p>} />
+      ))}
 
       {p.media.beforeAfter?.length ? (
         <section className="mx-auto max-w-[1400px] px-4 py-20 md:px-8">
