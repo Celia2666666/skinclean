@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { NewsletterForm } from "./NewsletterForm";
 import { PaymentLogos } from "@/components/checkout/PaymentMethods";
+import { TeamLinks } from "./TeamLinks";
 import { InstagramIcon, PinterestIcon, TiktokIcon, YoutubeIcon } from "@/components/ui/Icons";
 import { typeCategories } from "@/data/categories";
 import { loyalty, welcomeOffer } from "@/data/config";
@@ -54,6 +55,7 @@ export function Footer() {
           </div>
           <p className="text-xs text-ivory/60">© {new Date().getFullYear()} SKINCLEAN — Marque fictive, projet académique. Conseils cosmétiques, pas de diagnostic médical.</p>
         </div>
+        <div className="mt-6 border-t border-ivory/15 pt-5"><TeamLinks tone="dark" /></div>
       </div>
     </footer>
   );

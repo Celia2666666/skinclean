@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 import { concernCategories, discoverLinks, typeCategories } from "@/data/categories";
+import { TeamLinks } from "./TeamLinks";
 import { BagIcon, ChevronIcon, CloseIcon, LeafIcon, MenuIcon, SearchIcon, UserIcon } from "@/components/ui/Icons";
 import { leavesBalance, useAccount, useHydrated, useStore } from "@/lib/store";
 import { useUI } from "@/lib/ui";
@@ -165,7 +166,7 @@ function MegaCol({ title, items, onClose }: { title: string; items: { href: stri
 function MobileMenu({ onClose }: { onClose: () => void }) {
   const [open, setOpen] = useState<string | null>(null);
   return (
-    <motion.div className="fixed inset-0 z-50 xl:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+    <motion.div className="fixed inset-0 z-[58] xl:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
       <div className="absolute inset-0 bg-forest/30 backdrop-blur-sm" onClick={onClose} />
       <motion.nav
         initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", damping: 30, stiffness: 300 }}
@@ -195,6 +196,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
           <Link href="/faq" className="rounded-[2px] bg-ivory p-3">FAQ & contact</Link>
           <Link href="/livraison" className="rounded-[2px] bg-ivory p-3">Livraison</Link>
         </div>
+        <div className="mt-auto border-t border-line pt-5"><TeamLinks /></div>
       </motion.nav>
     </motion.div>
   );
