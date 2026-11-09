@@ -221,7 +221,7 @@ function DiagAdmin() {
     };
     return {
       skin: count((d) => [d.skinTypeLabel]),
-      goal: count((d) => [d.goal]),
+      goal: count((d) => d.goal.split(" · ")),
       concerns: count((d) => d.concerns),
       products: count((d) => d.items.map((i) => getProduct(i.productId)?.name ?? i.productId)),
     };

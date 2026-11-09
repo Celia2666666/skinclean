@@ -73,7 +73,7 @@ function ResultView({ diag }: { diag: DiagResult }) {
             {[
               { l: "Type de peau", v: diag.skinTypeLabel },
               { l: "Préoccupations", v: diag.concerns.join(", ") || "—" },
-              { l: "Objectif", v: diag.goal },
+              { l: diag.goal.includes(" · ") ? "Objectifs" : "Objectif", v: diag.goal },
               { l: "Hydratation recherchée", v: diag.hydration },
               { l: "Sensibilité", v: diag.sensitivity },
             ].map((c, i) => (

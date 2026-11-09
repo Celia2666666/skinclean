@@ -45,9 +45,9 @@ export const questions: Question[] = [
   {
     id: "concerns",
     title: "Quelles sont tes préoccupations principales ?",
-    subtitle: "Choisis jusqu'à 3 réponses.",
+    subtitle: "Choisis jusqu'à 4 réponses.",
     multi: true,
-    max: 3,
+    max: 4,
     options: [
       { value: "boutons", label: "Boutons", },
       { value: "points-noirs", label: "Points noirs", },
@@ -76,6 +76,9 @@ export const questions: Question[] = [
   {
     id: "acneKind",
     title: "Comment décrirais-tu tes imperfections ?",
+    subtitle: "Choisis jusqu'à 2 réponses.",
+    multi: true,
+    max: 2,
     when: (a) => has(a, "concerns", "boutons") || has(a, "concerns", "points-noirs"),
     options: [
       { value: "occasionnels", label: "Petits boutons occasionnels" },
@@ -107,7 +110,10 @@ export const questions: Question[] = [
   },
   {
     id: "goal",
-    title: "Quel est ton objectif principal ?",
+    title: "Quels sont tes objectifs ?",
+    subtitle: "Choisis jusqu'à 2 réponses : la première compte le plus.",
+    multi: true,
+    max: 2,
     options: [
       { value: "nette", label: "Avoir une peau plus nette", },
       { value: "glowy", label: "Avoir une peau glowy", },
@@ -171,8 +177,9 @@ export const questions: Question[] = [
   {
     id: "current",
     title: "Quels produits utilises-tu déjà ?",
-    subtitle: "Plusieurs réponses possibles.",
+    subtitle: "Choisis jusqu'à 4 réponses.",
     multi: true,
+    max: 4,
     options: [
       { value: "nettoyant", label: "Nettoyant" },
       { value: "serum", label: "Sérum" },
@@ -275,8 +282,9 @@ export function analyse(a: Answers): DiagResult {
   const w: Partial<Record<Concern, number>> = {};
   const add = (c: Concern, n: number) => (w[c] = (w[c] ?? 0) + n);
   many(a, "concerns").forEach((c) => concernMap[c]?.forEach((x) => add(x, 3)));
-  const goal = one(a, "goal") ?? "glowy";
-  goalMap[goal]?.forEach((x) => add(x, 2.5));
+  // Objectifs : le premier choisi pèse le plus, le second un peu moins.
+  const goals = many(a, "goal").length ? many(a, "goal") : ["glowy"];
+  goals.forEach((g, k) => goalMap[g]?.forEach((x) => add(x, k === 0 ? 2.5 : 1.5)));
   if (st === "seche") { add("secheresse", 1.5); add("deshydratation", 1); }
   if (st === "grasse") { add("sebum", 1.5); add("pores", 0.5); }
   if (st === "mixte") { add("sebum", 0.8); add("pores", 0.6); add("deshydratation", 0.5); }
@@ -393,7 +401,7 @@ export function analyse(a: Answers): DiagResult {
   items.sort((x, y) => stepOrder.indexOf(x.step) - stepOrder.indexOf(y.step));
 
   const notes: string[] = [];
-  if (one(a, "acneKind") === "inflammatoires" || one(a, "acneFreq") === "quotidien")
+  if (many(a, "acneKind").includes("inflammatoires") || one(a, "acneFreq") === "quotidien")
     notes.push("Tes imperfections semblent fréquentes ou inflammatoires : si elles sont douloureuses ou persistent, l'avis d'un·e dermatologue ou d'un·e professionnel·le de santé est recommandé. SKINCLEAN accompagne ta routine mais ne remplace pas un traitement.");
   if (one(a, "rednessKind") === "persistantes")
     notes.push("Des rougeurs persistantes peuvent avoir différentes causes : n'hésite pas à consulter un·e professionnel·le de santé pour en parler.");
@@ -408,7 +416,7 @@ export function analyse(a: Answers): DiagResult {
     skinType: st,
     skinTypeLabel: skinTypeLabels[st],
     concerns: many(a, "concerns").map((c) => concernLabels[(concernMap[c]?.[0] ?? "glow") as Concern]),
-    goal: goalLabels[goal] ?? goal,
+    goal: goals.map((g) => goalLabels[g] ?? g).join(" · "),
     hydration: st === "seche" || (w.deshydratation ?? 0) >= 3 || (w.secheresse ?? 0) >= 3 ? "intense" : st === "grasse" ? "légère" : "modérée",
     sensitivity: sensitive ? "élevée" : moderate ? "modérée" : "faible",
     level,

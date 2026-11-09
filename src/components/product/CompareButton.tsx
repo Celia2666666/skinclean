@@ -53,7 +53,7 @@ export function CompareBar() {
   const clear = useStore((s) => s.clearCompare);
   const path = usePathname();
   const h = useHydrated();
-  const show = h && compare.length > 0 && path !== "/comparer" && !path.startsWith("/paiement") && !path.startsWith("/panier");
+  const show = h && compare.length > 0 && path !== "/comparer" && !path.startsWith("/paiement") && !path.startsWith("/panier") && path !== "/skin-diag";
 
   return (
     <AnimatePresence>

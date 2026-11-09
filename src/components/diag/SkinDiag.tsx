@@ -51,9 +51,8 @@ export function SkinDiag() {
       if (q.max && nextVal.length > q.max) return;
       setAnswers({ ...answers, [q.id]: nextVal });
     } else {
-      const updated = { ...answers, [q.id]: v };
-      setAnswers(updated);
-      setTimeout(() => goNext(updated), 380);
+      // Pas de passage automatique : on peut changer d'avis, puis on clique sur « Continuer ».
+      setAnswers({ ...answers, [q.id]: v });
     }
   };
 
@@ -76,6 +75,7 @@ export function SkinDiag() {
     }, 2600);
   };
 
+  const picked = Array.isArray(value) ? value.length : value ? 1 : 0;
   const canNext = q?.multi ? Array.isArray(value) && value.length > 0 : !!value;
 
   // Avant hydratation : écran d'attente au fond du questionnaire (évite une page blanche).
@@ -139,7 +139,15 @@ export function SkinDiag() {
                 className="mt-10 md:mt-14"
               >
                 <h2 className="font-display text-[clamp(2rem,5vw,3.6rem)] leading-[1.02]">{q.title}</h2>
-                {q.subtitle && <p className="mt-3 text-forest-soft">{q.subtitle}</p>}
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <p className="text-forest-soft">{q.subtitle ?? (q.multi ? "Plusieurs réponses possibles." : "Une seule réponse.")}</p>
+                  {q.multi && q.max && (
+                    <motion.span key={picked} initial={{ scale: 0.85 }} animate={{ scale: 1 }} className={`chip ${picked >= q.max ? "bg-forest text-ivory" : "bg-ivory"}`} aria-live="polite">
+                      {picked} / {q.max} choisie{picked > 1 ? "s" : ""}
+                    </motion.span>
+                  )}
+                </div>
+                {q.multi && q.max && picked >= q.max && <p className="mt-2 text-sm text-forest-soft">Maximum atteint : retire une réponse pour en choisir une autre.</p>}
                 {q.help && (
                   <button onClick={() => setShowHelp(!showHelp)} className="mt-3 text-sm underline">Comment savoir ?</button>
                 )}
@@ -148,6 +156,7 @@ export function SkinDiag() {
                 <div className={`mt-8 grid gap-3 ${q.options.length > 6 ? "grid-cols-2 md:grid-cols-3" : "grid-cols-1 sm:grid-cols-2"}`}>
                   {q.options.map((o, i) => {
                     const on = Array.isArray(value) ? value.includes(o.value) : value === o.value;
+                    const locked = !!(q.multi && q.max && !on && picked >= q.max && o.value !== "aucun");
                     return (
                       <motion.button
                         key={o.value}
@@ -156,7 +165,8 @@ export function SkinDiag() {
                         whileHover={{ y: -3 }} whileTap={{ scale: 0.97 }}
                         onClick={() => choose(o.value)}
                         aria-pressed={on}
-                        className={`group relative flex items-center gap-4 overflow-hidden rounded-none border-2 p-4 text-left transition-colors ${on ? "border-forest bg-ivory" : "border-transparent bg-ivory/70 hover:bg-ivory"}`}
+                        aria-disabled={locked}
+                        className={`group relative flex items-center gap-4 overflow-hidden rounded-none border-2 p-4 text-left transition ${on ? "border-forest bg-ivory" : "border-transparent bg-ivory/70 hover:bg-ivory"} ${locked ? "cursor-not-allowed opacity-45" : ""}`}
                       >
                         {diagIcon[`${q.id}:${o.value}`] && (
                           <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-full border transition ${on ? "border-forest bg-forest text-ivory" : "border-line bg-cream text-forest group-hover:border-forest/40"}`}>
