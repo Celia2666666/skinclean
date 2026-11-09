@@ -48,7 +48,7 @@ export function CustomersView({ data: d }: { data: Data }) {
                 <tr key={c.id} className={trow}>
                   <td className="py-2 pl-4 pr-3">
                     <Link href={`/crm/clients/${c.id}`} className="flex items-center gap-2.5">
-                      <Avatar name={c.name} size={30} color="#2A4A6B" />
+                      <Avatar name={c.name} size={30} color="#4A6354" />
                       <span className="min-w-0"><span className="block truncate font-medium hover:underline">{c.name}</span><span className="block truncate text-xs text-forest-soft">{c.email} · {c.city}</span></span>
                     </Link>
                   </td>

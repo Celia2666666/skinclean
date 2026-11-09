@@ -1,13 +1,18 @@
 "use client";
 import { useMemo, useRef, useState } from "react";
-import { Legend, SERIES } from "@/components/hub/charts";
+import { Legend } from "@/components/hub/charts";
 
 /**
  * Graphiques du CRM (SVG sans dépendance), mêmes règles que le Marketing Hub :
  * palette catégorielle fixe (SERIES), une seule échelle par graphique, traits fins, info-bulle au survol,
  * séquentiel = une seule teinte du clair au foncé, textes en encre neutre (jamais la couleur de série).
  */
-export { SERIES, Legend };
+export { Legend };
+/**
+ * Palette catégorielle aux couleurs SKINCLEAN (vert de la marque en premier), validée avec l'outil de contrôle
+ * (luminosité, saturation, séparation daltonisme, contraste). Ordre fixe : la couleur suit l'entité.
+ */
+export const SERIES = ["#13895B", "#5B6FC2", "#E0702E", "#C24F86", "#A88A1C", "#2a78d6", "#e87ba4", "#4a3aa7"];
 export const INK = "#1F3329", MUTED = "#898781", GRID = "#E3E1DC", PREV = "#A9A6A0";
 
 export const fmtN = (n: number) => (Math.abs(n) >= 10000 ? `${Math.round(n / 1000)} k` : Math.abs(n) >= 1000 ? `${(n / 1000).toFixed(1).replace(".", ",")} k` : n.toLocaleString("fr-FR", { maximumFractionDigits: 1 }));
@@ -121,9 +126,9 @@ export function HBars({ items, format = fmtN, color = SERIES[0], max: forced }: 
   );
 }
 
-/** Intensité séquentielle : une seule teinte (bleu) du clair au foncé. */
+/** Intensité séquentielle : une seule teinte (vert SKINCLEAN) du clair au foncé. */
 export const seq = (t: number) => {
-  const a = [238, 244, 252], b = [26, 78, 150];
+  const a = [237, 240, 234], b = [31, 51, 41];
   const k = Math.max(0, Math.min(1, t));
   return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * k)).join(",")})`;
 };

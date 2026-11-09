@@ -75,7 +75,7 @@ export function Dashboard({ data: d, periods }: { data: DashboardData; periods: 
                 {d.alerts.map((a, i) => (
                   <li key={i} className="border-b border-line last:border-0">
                     <Link href={a.href} className="flex items-start gap-3 px-5 py-3 text-sm hover:bg-[#FAF9F6]">
-                      <span className={clsx("mt-0.5 shrink-0", a.level === "bad" ? "text-[#B4443B]" : a.level === "warn" ? "text-[#B07D00]" : "text-[#1F4E86]")}>{a.level === "info" ? <InfoI size={16} /> : <AlertI size={16} />}</span>
+                      <span className={clsx("mt-0.5 shrink-0", a.level === "bad" ? "text-[#B4443B]" : a.level === "warn" ? "text-[#B07D00]" : "text-[#6A4E2C]")}>{a.level === "info" ? <InfoI size={16} /> : <AlertI size={16} />}</span>
                       <span className="flex-1">{a.text}</span><ArrowRightI size={14} className="mt-1 shrink-0 text-forest-soft" />
                     </Link>
                   </li>

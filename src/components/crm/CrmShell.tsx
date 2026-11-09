@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { Avatar, ToastProvider, UserProvider, Modal, type ClientUser } from "@/components/hub/ui";
-import { ArrowRightI, ChartI, ChatI, HomeI, LogoutI, MailI, MenuI, SearchI } from "@/components/hub/icons";
+import { ArrowRightI, ChartI, ChatI, HomeI, LogoutI, MailI, MegaphoneI, MenuI, SearchI, StoreI } from "@/components/hub/icons";
 import { BoltI, BoxI, CartI, EuroI, GearI, PipelineI, SegmentI, TaskI, TicketI, UsersI, TrendUpI } from "./icons";
 import { OnlineCtx, crmApi } from "./ui";
 
@@ -21,7 +21,7 @@ export const CRM_NAV: { group: string; items: { href: string; label: string; ico
 
 type Hit = { kind: string; label: string; sub: string; href: string };
 
-export function CrmShell({ user, source, hasReal, badges, children, online = false }: { user: ClientUser; source: "demo" | "reel"; hasReal: boolean; badges: Record<string, number>; children: React.ReactNode; online?: boolean }) {
+export function CrmShell({ user, source, hasReal, badges, children, online = false, hubUrl = "/hub" }: { user: ClientUser; source: "demo" | "reel"; hasReal: boolean; badges: Record<string, number>; children: React.ReactNode; online?: boolean; hubUrl?: string }) {
   const path = usePathname();
   const router = useRouter();
   const [menu, setMenu] = useState(false);
@@ -42,7 +42,7 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
         <Image src="/media/brand/transparent/logo-mark.png" alt="" width={28} height={35} className="h-8 w-auto" />
         <span>
           <Image src="/media/brand/transparent/logo-wordmark.png" alt="skinclean" width={110} height={25} className="h-[18px] w-auto brightness-0 invert" />
-          <span className="mt-0.5 block text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-[#9FC2E8]">CRM · ventes & clients</span>
+          <span className="mt-0.5 block text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-sage">CRM · ventes & clients</span>
         </span>
       </Link>
       <div className="hub-scroll flex-1 overflow-y-auto px-3 pb-4">
@@ -66,9 +66,11 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
           </div>
         ))}
       </div>
-      <div className="space-y-2 border-t border-white/10 p-4 text-[0.72rem] text-white/60">
-        {!online && <Link href="/hub" className="flex items-center gap-1 text-white/85 hover:text-white">Marketing Hub <ArrowRightI size={12} /></Link>}
-        <Link href="/" target="_blank" className="flex items-center gap-1 text-white/85 hover:text-white">Voir le site SKINCLEAN <ArrowRightI size={12} /></Link>
+      <div className="space-y-1.5 border-t border-white/10 p-3">
+        <a href="/" target="_blank" rel="noopener" className="flex items-center gap-2.5 rounded-md bg-white/8 px-3 py-2 text-[0.8rem] text-white hover:bg-white/14"><StoreI size={16} /><span className="flex-1">Voir le site SKINCLEAN</span><ArrowRightI size={12} /></a>
+        <a href={hubUrl} target={online ? "_blank" : undefined} rel="noopener" className="flex items-center gap-2.5 rounded-md bg-white/8 px-3 py-2 text-[0.8rem] text-white hover:bg-white/14" title={online ? "Le Marketing Hub ne fonctionne qu'en local : lance le projet sur ton ordinateur (npm run dev)" : undefined}>
+          <MegaphoneI size={16} /><span className="flex-1">Marketing Hub{online && <span className="block text-[0.62rem] text-white/55">en local uniquement</span>}</span><ArrowRightI size={12} />
+        </a>
       </div>
     </nav>
   );
@@ -78,11 +80,11 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
       <OnlineCtx.Provider value={online}>
       <ToastProvider>
         <div className="min-h-screen bg-[#F6F5F1] text-forest lg:pl-[256px] print:bg-white print:pl-0">
-          <aside className="fixed inset-y-0 left-0 z-40 hidden w-[256px] bg-[#16263A] lg:block print:hidden">{sidebar}</aside>
+          <aside className="fixed inset-y-0 left-0 z-40 hidden w-[256px] bg-forest lg:block print:hidden">{sidebar}</aside>
           {menu && (
             <div className="fixed inset-0 z-[120] lg:hidden" onClick={() => setMenu(false)}>
               <div className="absolute inset-0 bg-black/40" />
-              <aside className="absolute inset-y-0 left-0 w-[280px] bg-[#16263A]" onClick={(e) => e.stopPropagation()}>{sidebar}</aside>
+              <aside className="absolute inset-y-0 left-0 w-[280px] bg-forest" onClick={(e) => e.stopPropagation()}>{sidebar}</aside>
             </div>
           )}
           <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line bg-white/90 px-4 backdrop-blur md:px-6 print:hidden">
@@ -108,6 +110,11 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
           {source === "reel" && online && <div className="border-b border-line bg-white px-4 py-1.5 text-center text-[0.72rem] text-forest-soft md:px-6 print:hidden">Données réelles de la version en ligne : questions posées au Glow Assistant, alertes « retour en stock » et messages envoyés depuis le site. Base temporaire : elles peuvent être effacées au redémarrage du serveur.</div>}
           {source === "demo" && <div className="border-b border-[#F0DDA6] bg-[#FFF8E6] px-4 py-1.5 text-center text-[0.72rem] text-[#6B5000] md:px-6 print:hidden">{online ? "Démo en ligne : données fictives générées à partir du vrai catalogue. Tu peux tout tester ; les modifications ne sont pas conservées et aucun e-mail n'est envoyé. Bascule sur « Données réelles » pour voir ce que les visiteurs du site ont envoyé." : "Mode démonstration : données fictives générées à partir du vrai catalogue. Bascule sur « Données réelles » pour voir les commandes Stripe."}</div>}
           <main className="mx-auto max-w-[1500px] px-4 py-6 md:px-8 md:py-8">{children}</main>
+          <footer className="mx-auto flex max-w-[1500px] flex-wrap items-center gap-x-6 gap-y-2 border-t border-line px-4 py-5 text-sm text-forest-soft md:px-8 print:hidden">
+            <span className="flex items-center gap-2"><Image src="/media/brand/transparent/logo-mark.png" alt="" width={16} height={20} className="h-5 w-auto" />CRM SKINCLEAN</span>
+            <a href="/" target="_blank" rel="noopener" className="flex items-center gap-1 font-medium text-forest underline-offset-4 hover:underline"><StoreI size={15} />Voir le site SKINCLEAN</a>
+            <a href={hubUrl} target={online ? "_blank" : undefined} rel="noopener" className="flex items-center gap-1 font-medium text-forest underline-offset-4 hover:underline"><MegaphoneI size={15} />Marketing Hub{online && <span className="font-normal text-forest-soft">(en local : lance <code className="rounded bg-white px-1">npm run dev</code> sur ton ordinateur)</span>}</a>
+          </footer>
           <GlobalSearch open={search} onClose={() => setSearch(false)} />
         </div>
       </ToastProvider>

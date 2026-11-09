@@ -44,7 +44,7 @@ export function SupportView({ data: d }: { data: Data }) {
         <div className="flex flex-wrap gap-1.5 border-b border-line bg-[#FAF9F6] px-4 py-2.5">
           <span className="mr-1 self-center text-[0.68rem] font-semibold uppercase tracking-wide text-forest-soft">Assistant SAV</span>
           <button onClick={() => set({ ai: aiF === "humain" ? null : "humain" })} className={clsx("hub-badge border", aiF === "humain" ? "border-[#8A2B2B] bg-[#8A2B2B] text-white" : "border-[#E8C8C8] bg-[#FBF1F1] text-[#7A2B2B]")}>⚠ À toi de répondre <span className="opacity-70">{d.ai.humain}</span></button>
-          <button onClick={() => set({ ai: aiF === "verifier" ? null : "verifier" })} className={clsx("hub-badge border", aiF === "verifier" ? "border-[#1F4E86] bg-[#1F4E86] text-white" : "border-[#BFD3EC] bg-[#EEF4FB] text-[#1F4E86]")}>Réponses auto à vérifier <span className="opacity-70">{d.ai.verifier}</span></button>
+          <button onClick={() => set({ ai: aiF === "verifier" ? null : "verifier" })} className={clsx("hub-badge border", aiF === "verifier" ? "border-[#6A4E2C] bg-[#6A4E2C] text-white" : "border-[#E3D5BE] bg-[#F6F1E8] text-[#6A4E2C]")}>Réponses auto à vérifier <span className="opacity-70">{d.ai.verifier}</span></button>
           <span className="ml-auto self-center text-[0.68rem] text-forest-soft">{d.ai.auto} réponse(s) automatique(s) · {d.ai.ia ? "rédaction par l'IA (Claude)" : "réponses types (ajoute ANTHROPIC_API_KEY pour l'IA)"}</span>
         </div>
           <div className="overflow-x-auto">

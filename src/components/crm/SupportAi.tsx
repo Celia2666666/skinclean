@@ -26,7 +26,7 @@ export function AiPanel({ t, busy, onUseDraft, onCheck, onRegenerate }: { t: Tic
   );
   const engine = ai.engine === "ia" ? "rédigé par l'IA (Claude)" : "réponse type complétée avec la commande";
   if (ai.autoSent) return (
-    <div className={`mt-4 rounded-lg border p-3 text-sm ${ai.checked ? "border-sage bg-sage-soft" : "border-[#BFD3EC] bg-[#EEF4FB]"}`}>
+    <div className={`mt-4 rounded-lg border p-3 text-sm ${ai.checked ? "border-sage bg-sage-soft" : "border-[#E3D5BE] bg-[#F6F1E8]"}`}>
       <p className="flex items-center gap-2 font-semibold"><SparkI size={15} />Réponse envoyée automatiquement le {dt(ai.at)}</p>
       <p className="mt-1 text-xs text-forest-soft">Tri : {ai.reason} Texte {engine}.</p>
       {!ai.checked ? (

@@ -8,7 +8,7 @@ export default async function CrmAppLayout({ children }: { children: React.React
   const user = await requireCrmPage();
   const { source, hasReal, badges } = await shellData();
   return (
-    <CrmShell user={{ id: user.id, name: user.name, email: user.email, role: user.role, title: user.title, avatarColor: user.avatarColor }} source={source} hasReal={hasReal} badges={badges} online={crmOnline()}>
+    <CrmShell user={{ id: user.id, name: user.name, email: user.email, role: user.role, title: user.title, avatarColor: user.avatarColor }} source={source} hasReal={hasReal} badges={badges} online={crmOnline()} hubUrl={crmOnline() ? process.env.NEXT_PUBLIC_HUB_URL || "http://localhost:3000/hub" : "/hub"}>
       {children}
     </CrmShell>
   );

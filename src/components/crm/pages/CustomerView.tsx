@@ -29,7 +29,7 @@ export function CustomerView({ data: d }: { data: Data }) {
     <>
       <Link href="/crm/clients" className="mb-4 inline-flex items-center gap-1 text-sm text-forest-soft hover:text-forest"><ChevronLeftI size={14} />Contacts</Link>
       <div className="hub-card mb-6 flex flex-wrap items-center gap-5 p-5">
-        <Avatar name={s.name} size={64} color="#2A4A6B" />
+        <Avatar name={s.name} size={64} color="#4A6354" />
         <div className="min-w-0 flex-1">
           <h1 className="font-display text-3xl font-semibold">{s.name}</h1>
           <p className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-forest-soft">

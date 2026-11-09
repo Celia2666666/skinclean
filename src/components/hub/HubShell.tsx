@@ -11,6 +11,9 @@ import {
   AdsI, BellI, CalendarI, EyeI, ChartI, ChatI, HomeI, LogoutI, MailI, MegaphoneI, MenuI, PaletteI, RoadmapI, SearchI, ShareI, SparkI, StoreI, TargetI, UserI, XI, ArrowRightI,
 } from "./icons";
 
+/** Adresse publique du site e-commerce et du CRM (Vercel). */
+const PUBLISHED_SITE = (process.env.NEXT_PUBLIC_PUBLISHED_SITE_URL || "https://skinclean.vercel.app").replace(/\/$/, "");
+
 export const NAV: { href: string; label: string; icon: (p: { size?: number }) => React.ReactElement; sub?: boolean }[] = [
   { href: "/hub", label: "Mon Marketing Hub", icon: HomeI },
   { href: "/hub/strategie", label: "Ma stratégie marketing", icon: TargetI },
@@ -87,10 +90,15 @@ export function HubShell({ user, children, unread, badges }: { user: ClientUser;
           );
         })}
       </ul>
-      <div className="border-t border-white/10 p-4 text-[0.7rem] leading-relaxed text-white/50">
-        Outil de stratégie, création et pilotage marketing. La gestion commerciale (clients, commandes, stock) relève du CRM.
-        <Link href="/crm" className="mt-2 flex items-center gap-1 text-white/80 hover:text-white">Ouvrir le CRM <ArrowRightI size={12} /></Link>
-        <Link href="/" target="_blank" className="mt-1 flex items-center gap-1 text-white/80 hover:text-white">Voir le site SKINCLEAN <ArrowRightI size={12} /></Link>
+      {/* Accès directs aux outils publiés (ouverts dans un nouvel onglet) */}
+      <div className="space-y-2 border-t border-white/10 p-4">
+        <p className="px-1 text-[0.65rem] font-semibold uppercase tracking-wider text-white/45">Mes autres outils</p>
+        <a href={PUBLISHED_SITE} target="_blank" rel="noreferrer" className="flex items-center gap-3 rounded-lg bg-white/[0.07] px-3 py-2.5 text-sm text-white transition hover:bg-white/15">
+          <StoreI size={18} /><span className="flex-1"><span className="block font-medium leading-tight">Site e-commerce</span><span className="block text-[0.68rem] text-white/55">{PUBLISHED_SITE.replace(/^https?:\/\//, "")}</span></span><ArrowRightI size={13} />
+        </a>
+        <a href={`${PUBLISHED_SITE}/crm`} target="_blank" rel="noreferrer" className="flex items-center gap-3 rounded-lg bg-white/[0.07] px-3 py-2.5 text-sm text-white transition hover:bg-white/15">
+          <UserI size={18} /><span className="flex-1"><span className="block font-medium leading-tight">CRM</span><span className="block text-[0.68rem] text-white/55">Clients, commandes, stock</span></span><ArrowRightI size={13} />
+        </a>
       </div>
     </nav>
   );

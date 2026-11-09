@@ -85,7 +85,7 @@ export function Kpi({ label, value, delta, invert, hint, spark, href, tone, poin
 }
 
 const TONES: Record<string, string> = {
-  ok: "bg-[#E3EFE6] text-[#2E5E3E]", info: "bg-[#E2ECF8] text-[#1F4E86]", warn: "bg-[#FFF3D6] text-[#7A5B00]", bad: "bg-[#F8E1E1] text-[#8A2B2B]", neutral: "bg-[#F1F0EC] text-[#5C6862]", dark: "bg-forest text-white", violet: "bg-[#E8E2F6] text-[#4A3A86]",
+  ok: "bg-[#E3EFE6] text-[#2E5E3E]", info: "bg-[#F1EADF] text-[#6A4E2C]", warn: "bg-[#FFF3D6] text-[#7A5B00]", bad: "bg-[#F8E1E1] text-[#8A2B2B]", neutral: "bg-[#F1F0EC] text-[#5C6862]", dark: "bg-forest text-white", violet: "bg-[#E8E2F6] text-[#4A3A86]",
 };
 export function Pill({ tone = "neutral", children, className }: { tone?: keyof typeof TONES | string; children: React.ReactNode; className?: string }) {
   return <span className={clsx("hub-badge", TONES[tone] ?? TONES.neutral, className)}>{children}</span>;
