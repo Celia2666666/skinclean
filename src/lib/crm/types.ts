@@ -234,8 +234,9 @@ export interface MailDoc {
   kind?: MailKind;
 }
 
-export type MailKind = "sav" | "cart" | "back_in_stock" | "new_product" | "welcome" | "review" | "replenish" | "winback" | "message";
+export type MailKind = "order" | "sav" | "cart" | "back_in_stock" | "new_product" | "welcome" | "review" | "replenish" | "winback" | "message";
 export const MAIL_KIND: { id: MailKind; label: string }[] = [
+  { id: "order", label: "Confirmations de commande" },
   { id: "sav", label: "Réponses SAV" },
   { id: "cart", label: "Relances panier abandonné" },
   { id: "back_in_stock", label: "Retour en stock" },
@@ -248,6 +249,7 @@ export const MAIL_KIND: { id: MailKind; label: string }[] = [
 ];
 /** Catégorie d'un e-mail (y compris les anciens e-mails enregistrés sans catégorie). */
 export function mailKindOf(m: { kind?: MailKind; origin: string; subject: string }): MailKind {
+  if (m.origin.startsWith("Boutique")) return "order"; // confirmations envoyées par la boutique (y compris les anciens e-mails)
   if (m.kind) return m.kind;
   const o = `${m.origin} ${m.subject}`.toLowerCase();
   if (o.includes("sav") || o.startsWith("réponse") || o.includes("re :")) return "sav";

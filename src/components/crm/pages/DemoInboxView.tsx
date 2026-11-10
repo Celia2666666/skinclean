@@ -10,7 +10,7 @@ import { DELIVERY_LABEL, MAIL_KIND, type MailDoc, type MailKind } from "@/lib/cr
 const dt = (s: string) => `${s.slice(8, 10)}/${s.slice(5, 7)} ${s.slice(11, 16)}`;
 const TONE = { envoye: "ok", simule: "neutral", echec: "bad" } as const;
 
-const KIND_TONE: Record<MailKind, string> = { sav: "info", cart: "warn", back_in_stock: "ok", new_product: "violet", welcome: "dark", review: "neutral", replenish: "ok", winback: "bad", message: "neutral" };
+const KIND_TONE: Record<MailKind, string> = { order: "dark", sav: "info", cart: "warn", back_in_stock: "ok", new_product: "violet", welcome: "dark", review: "neutral", replenish: "ok", winback: "bad", message: "neutral" };
 const kindLabel = (k?: MailKind) => MAIL_KIND.find((x) => x.id === k)?.label ?? "Autre";
 
 export function DemoInboxView({ mails, selected, inbox, redirect, resend, siteOrigin, counts, total, cat }: { mails: Omit<MailDoc, "html">[]; selected: MailDoc | null; inbox: string; redirect: boolean; resend: boolean; siteOrigin: string; counts: Partial<Record<MailKind, number>>; total: number; cat: string }) {

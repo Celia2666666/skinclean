@@ -103,6 +103,6 @@ export async function addSiteOrder(b: Record<string, unknown>): Promise<{ number
   const euro = (n: number) => `${n.toFixed(2).replace(".", ",")} €`;
   const text = `Bonjour ${customer.firstName},\n\nMerci pour ta commande ${number} ! Voici son récapitulatif :\n${items.map((i) => `• ${i.name} (${i.size}) × ${i.qty} : ${euro(i.unit * i.qty)}`).join("\n")}\n\nLivraison : ${shipping ? euro(shipping) : "offerte"}${discount ? `\nRéduction : -${euro(discount)}` : ""}\nTotal TTC : ${euro(total)}\n\nPaiement simulé (projet étudiant INSEEC) : aucune somme n'a été débitée et la commande ne sera pas expédiée.`;
   const { deliver } = await import("./automations");
-  const sent = await deliver(email, `Ta commande ${number} est confirmée`, text, { href: `${process.env.NEXT_PUBLIC_SITE_URL || "https://skinclean.vercel.app"}/compte/commandes`, label: "Suivre ma commande" }, "Boutique (commande)", "message");
+  const sent = await deliver(email, `Ta commande ${number} est confirmée`, text, { href: `${process.env.NEXT_PUBLIC_SITE_URL || "https://skinclean.vercel.app"}/compte/commandes`, label: "Suivre ma commande" }, "Boutique (commande)", "order");
   return { number, mail: sent.delivery };
 }
