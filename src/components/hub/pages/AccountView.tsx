@@ -38,7 +38,7 @@ export function AccountView({ user, users, history, myActivity, notifications, c
   return (
     <div>
       {dialog}
-      <PageHeader eyebrow="Compte" title="Mon compte" intro={<span className="flex items-center gap-3"><Avatar name={user.name} color={user.avatarColor} size={36} /><span><strong className="text-forest">{user.name}</strong> · {ROLE_LABEL[user.role]} · {user.email}{user.lastLoginAt ? ` · dernière connexion ${new Date(user.lastLoginAt).toLocaleString("fr-FR")}` : ""}</span></span>}
+      <PageHeader eyebrow="Compte" title="Mon compte" intro={<span className="flex items-center gap-3"><Avatar name={user.name} color={user.avatarColor} size={36} /><span><strong className="text-forest">{user.name}</strong> · {ROLE_LABEL[user.role]} · {user.email}{user.lastLoginAt ? ` · dernière connexion ${new Date(user.lastLoginAt).toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}` : ""}</span></span>}
         actions={<Button icon={<XI size={15} />} onClick={async () => { await hubApi("auth/logout"); window.location.href = "/hub/connexion"; }}>Déconnexion</Button>} />
       <Tabs value={tab} onChange={setTab} tabs={[
         { id: "infos", label: "Informations" }, { id: "securite", label: "Mot de passe" }, { id: "notifications", label: "Notifications", count: notifications.filter((n) => !n.read).length },
@@ -86,7 +86,7 @@ export function AccountView({ user, users, history, myActivity, notifications, c
             </Card>
             <Card title="Mes notifications" pad={false} action={<Button size="sm" onClick={() => run("notifications/read", { all: true }, "Tout est marqué comme lu")}>Tout marquer comme lu</Button>}>
               {!notifications.length ? <div className="p-5"><Empty title="Aucune notification" /></div> : (
-                <ul className="divide-y divide-line">{notifications.map((n) => <li key={n.id} className={clsx("px-5 py-3", !n.read && "bg-sage-soft/60")}><Link href={n.href ?? "/hub"} className="block hover:underline"><p className="text-sm font-medium">{n.title}</p><p className="text-xs text-forest-soft">{n.body}</p><p className="text-[0.65rem] text-forest-soft">{new Date(n.at).toLocaleString("fr-FR")}</p></Link></li>)}</ul>
+                <ul className="divide-y divide-line">{notifications.map((n) => <li key={n.id} className={clsx("px-5 py-3", !n.read && "bg-sage-soft/60")}><Link href={n.href ?? "/hub"} className="block hover:underline"><p className="text-sm font-medium">{n.title}</p><p className="text-xs text-forest-soft">{n.body}</p><p className="text-[0.65rem] text-forest-soft">{new Date(n.at).toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</p></Link></li>)}</ul>
               )}
             </Card>
           </div>
@@ -116,7 +116,7 @@ export function AccountView({ user, users, history, myActivity, notifications, c
                     <tr key={u.id} className="border-t border-line">
                       <td className="p-3"><span className="flex items-center gap-2"><Avatar name={u.name} color={u.avatarColor} size={28} /><span><span className="block font-medium">{u.name}</span><span className="text-xs text-forest-soft">{u.email}</span></span></span></td>
                       <td className="p-3"><select className="hub-input w-auto py-1" value={u.role} disabled={u.id === user.id} onChange={(e) => run("users/update", { id: u.id, role: e.target.value }, "Rôle mis à jour")}>{(Object.keys(ROLE_LABEL) as Role[]).map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}</select></td>
-                      <td className="p-3 text-forest-soft">{u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString("fr-FR") : "Jamais"}</td>
+                      <td className="p-3 text-forest-soft">{u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString("fr-FR", { timeZone: "Europe/Paris" }) : "Jamais"}</td>
                       <td className="p-3 text-right"><div className="flex justify-end gap-1"><Button size="sm" onClick={() => setReset({ id: u.id, name: u.name, password: "" })}>Mot de passe</Button>{u.id !== user.id && <Button size="sm" variant="ghost" icon={<TrashI size={13} />} aria-label="Supprimer" onClick={async () => { if (await ask(`Supprimer le compte de ${u.name} ?`, "L'historique de ses actions est conservé.", "Supprimer", true)) run("users/delete", { id: u.id }, "Compte supprimé"); }} />}</div></td>
                     </tr>
                   ))}</tbody>
@@ -130,11 +130,11 @@ export function AccountView({ user, users, history, myActivity, notifications, c
           <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
             <Card title="Historique des validations et publications" subtitle="Qui a validé, refusé, publié, dépensé ou modifié le site, et quand." pad={false}>
               {!history.length ? <div className="p-5"><Empty title="Aucune action enregistrée pour l'instant" /></div> : (
-                <ul className="divide-y divide-line">{history.map((a) => <li key={a.id} className="flex flex-wrap items-baseline gap-x-3 px-5 py-2.5 text-sm"><span className="w-36 shrink-0 text-xs text-forest-soft">{new Date(a.at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}</span><span className="hub-badge bg-sage-soft">{ACTION_LABEL[a.action] ?? a.action}</span><span className="font-medium">{a.label}</span><span className="text-forest-soft">par {a.userName}</span>{a.detail && <span className="w-full pl-[9.75rem] text-xs text-forest-soft">{a.detail}</span>}</li>)}</ul>
+                <ul className="divide-y divide-line">{history.map((a) => <li key={a.id} className="flex flex-wrap items-baseline gap-x-3 px-5 py-2.5 text-sm"><span className="w-36 shrink-0 text-xs text-forest-soft">{new Date(a.at).toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" })}</span><span className="hub-badge bg-sage-soft">{ACTION_LABEL[a.action] ?? a.action}</span><span className="font-medium">{a.label}</span><span className="text-forest-soft">par {a.userName}</span>{a.detail && <span className="w-full pl-[9.75rem] text-xs text-forest-soft">{a.detail}</span>}</li>)}</ul>
               )}
             </Card>
             <Card title="Mon activité récente" pad={false}>
-              <ul className="divide-y divide-line">{myActivity.map((a) => <li key={a.id} className="px-4 py-2 text-xs"><span className="text-forest-soft">{new Date(a.at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}</span> · {ACTION_LABEL[a.action] ?? a.action} — {a.label}</li>)}</ul>
+              <ul className="divide-y divide-line">{myActivity.map((a) => <li key={a.id} className="px-4 py-2 text-xs"><span className="text-forest-soft">{new Date(a.at).toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" })}</span> · {ACTION_LABEL[a.action] ?? a.action} — {a.label}</li>)}</ul>
             </Card>
           </div>
         )}

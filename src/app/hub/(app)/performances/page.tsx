@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { requirePageUser } from "@/lib/hub/auth";
 import { list } from "@/lib/hub/repo";
-import { ymdhm } from "@/lib/hub/dates";
+import { ymdhm, nowParis } from "@/lib/hub/dates";
 import { PerformanceView } from "@/components/hub/pages/PerformanceView";
 
 export const metadata: Metadata = { title: "Performances marketing" };
@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Performances marketing" };
 export default async function PerformancePage({ searchParams }: PageProps<"/hub/performances">) {
   await requirePageUser();
   const sp = await searchParams;
-  const now = ymdhm(new Date());
+  const now = ymdhm(nowParis());
   const posts = list("posts").filter((p) => !p.library);
   const past = posts.filter((p) => p.date <= now);
   const editorial = {

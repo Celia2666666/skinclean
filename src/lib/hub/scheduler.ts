@@ -3,7 +3,7 @@ import { listUsers } from "./auth";
 import { claim, ensureSeeded, list, notify, update } from "./repo";
 import { can } from "./permissions";
 import { nowIso } from "./db";
-import { ymdhm } from "./dates";
+import { ymdhm, nowParis } from "./dates";
 import { PLATFORM_LABEL } from "./types";
 import { destinationFor, publishPost } from "./publish";
 import { applyPublishOutcome } from "./handlers";
@@ -23,7 +23,7 @@ export async function tick() {
   g.__hubTickRunning = true;
   try {
     await ensureSeeded();
-    const now = ymdhm(new Date());
+    const now = ymdhm(nowParis());
     const publishers = listUsers().filter((u) => can(u.role, "content.publish")).map((u) => u.id);
     const due = list("posts").filter((x) => x.status === "programme" && !x.publishClaimed && x.date <= now && !x.library);
     for (const p of due) {

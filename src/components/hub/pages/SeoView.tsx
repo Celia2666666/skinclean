@@ -115,7 +115,7 @@ function AuditTab({ products }: { products: ProductSeo[] }) {
             <p><span className="block text-xs text-forest-soft">Pages analysées</span><span className="font-display text-3xl font-semibold">{audit.pages.length}</span></p>
             <p><span className="block text-xs text-forest-soft">Erreurs</span><span className="font-display text-3xl font-semibold text-[#8A2B2B]">{audit.pages.reduce((s, p) => s + p.issues.filter((i) => i.level === "erreur").length, 0)}</span></p>
             <p><span className="block text-xs text-forest-soft">Alertes</span><span className="font-display text-3xl font-semibold text-[#8A3D1E]">{audit.pages.reduce((s, p) => s + p.issues.filter((i) => i.level === "alerte").length, 0)}</span></p>
-            <p className="self-end text-xs text-forest-soft">Analyse du {new Date(audit.at).toLocaleString("fr-FR")}</p>
+            <p className="self-end text-xs text-forest-soft">Analyse du {new Date(audit.at).toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}</p>
           </div>
         )}
       </Card>

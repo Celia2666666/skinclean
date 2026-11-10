@@ -164,7 +164,7 @@ export function HubShell({ user, children, unread, badges, online = false }: { u
                           <Link href={n.href ?? "/hub"} onClick={() => { setNotifOpen(false); hubApi("notifications/read", { id: n.id }).then(() => router.refresh()); }} className="block px-4 py-3 hover:bg-sage-soft">
                             <p className="text-sm font-medium">{n.title}</p>
                             <p className="line-clamp-2 text-xs text-forest-soft">{n.body}</p>
-                            <p className="mt-1 text-[0.65rem] text-forest-soft">{new Date(n.at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}</p>
+                            <p className="mt-1 text-[0.65rem] text-forest-soft">{new Date(n.at).toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" })}</p>
                           </Link>
                         </li>
                       ))}

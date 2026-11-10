@@ -13,7 +13,7 @@ import { ChevronLeftI, ChevronRightI, ClockI, CommentI, HeartI, PlayI, SendI, Tr
 type Net = "instagram" | "tiktok" | "facebook" | "pinterest";
 const NETS: Net[] = ["instagram", "tiktok", "facebook", "pinterest"];
 const netOf = (p: Platform): Net => (p === "story" ? "instagram" : (p as Net));
-const when = (iso: string) => new Date(iso).toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" });
+const when = (iso: string) => new Date(iso).toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "medium", timeStyle: "short" });
 
 /** Profils des réseaux avec les publications du Hub (simulés en local tant que le vrai compte n'est pas connecté). */
 export function SandboxView({ posts, handle, enabled, queue }: { posts: SandboxPost[]; handle: string; enabled: boolean; queue: { id: string; title: string; date: string; platform: Platform }[] }) {

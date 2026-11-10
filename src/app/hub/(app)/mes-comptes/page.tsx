@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { requirePageUser } from "@/lib/hub/auth";
 import { list, settings } from "@/lib/hub/repo";
-import { ymdhm } from "@/lib/hub/dates";
+import { ymdhm, nowParis } from "@/lib/hub/dates";
 import { SandboxView } from "@/components/hub/pages/SandboxView";
 
 export const metadata: Metadata = { title: "Mes comptes réseaux" };
@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Mes comptes réseaux" };
 export default async function SandboxPage() {
   await requirePageUser();
   const s = settings();
-  const now = ymdhm(new Date());
+  const now = ymdhm(nowParis());
   const queue = list("posts")
     .filter((p) => p.status === "programme" && !p.library && p.date > now && ["instagram", "story", "tiktok", "facebook", "pinterest"].includes(p.platform))
     .sort((a, b) => a.date.localeCompare(b.date))

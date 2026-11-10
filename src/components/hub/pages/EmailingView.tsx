@@ -128,7 +128,7 @@ function EmailEditor({ email, campaigns, provider, baseUrl, userEmail, onDeleted
   return (
     <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       {dialog}
-      <Card title={d.name} subtitle={email.send ? `${email.send.mode === "test" ? "Dernier test" : "Envoi"} : ${new Date(email.send.at).toLocaleString("fr-FR")} par ${email.send.by}${email.send.to ? ` → ${email.send.to}` : ""}` : undefined} action={<StatusBadge status={email.status} />}>
+      <Card title={d.name} subtitle={email.send ? `${email.send.mode === "test" ? "Dernier test" : "Envoi"} : ${new Date(email.send.at).toLocaleString("fr-FR", { timeZone: "Europe/Paris" })} par ${email.send.by}${email.send.to ? ` → ${email.send.to}` : ""}` : undefined} action={<StatusBadge status={email.status} />}>
         <fieldset disabled={!editable} className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Nom interne"><input className="hub-input" value={d.name} onChange={(e) => setD({ ...d, name: e.target.value })} /></Field>

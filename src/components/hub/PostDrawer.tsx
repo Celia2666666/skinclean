@@ -167,7 +167,7 @@ export function PostDrawer({ post, refs, onClose, initialTab }: { post: Post | n
 
       {post.publish && (
         <Notice tone={post.publish.mode === "api" ? "ok" : "warn"}>
-          {post.publish.mode === "api" ? `Publication confirmée par ${PLATFORM_LABEL[post.platform]} le ${new Date(post.publish.at).toLocaleString("fr-FR")}${post.publish.externalId ? ` (identifiant ${post.publish.externalId})` : ""}.` : post.publish.message ?? `Déclarée publiée manuellement par ${post.publish.by}.`}
+          {post.publish.mode === "api" ? `Publication confirmée par ${PLATFORM_LABEL[post.platform]} le ${new Date(post.publish.at).toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}${post.publish.externalId ? ` (identifiant ${post.publish.externalId})` : ""}.` : post.publish.message ?? `Déclarée publiée manuellement par ${post.publish.by}.`}
           {post.publish.url && <> <a href={post.publish.url} target="_blank" rel="noreferrer" className="underline">Voir la publication</a></>}
         </Notice>
       )}
@@ -286,7 +286,7 @@ export function PostDrawer({ post, refs, onClose, initialTab }: { post: Post | n
             {!post.comments.length && <p className="text-sm text-forest-soft">Aucun commentaire pour l&apos;instant.</p>}
             {post.comments.map((c: Comment) => (
               <div key={c.id} className={clsx("rounded-lg border p-3 text-sm", c.kind === "refus" ? "border-[#F0C9B8] bg-[#FDF3EE]" : c.kind === "validation" ? "border-sage bg-sage-soft" : "border-line bg-white")}>
-                <p className="text-xs text-forest-soft"><strong className="text-forest">{c.author}</strong> · {ROLE_LABEL[c.role]} · {new Date(c.at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}{c.kind === "refus" ? " · modifications demandées" : c.kind === "validation" ? " · validation" : ""}</p>
+                <p className="text-xs text-forest-soft"><strong className="text-forest">{c.author}</strong> · {ROLE_LABEL[c.role]} · {new Date(c.at).toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" })}{c.kind === "refus" ? " · modifications demandées" : c.kind === "validation" ? " · validation" : ""}</p>
                 <p className="mt-1 whitespace-pre-line">{c.text}</p>
               </div>
             ))}

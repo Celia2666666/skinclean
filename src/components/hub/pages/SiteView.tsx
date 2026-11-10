@@ -81,7 +81,7 @@ export function SiteView({ overrides, products, kits, assets, defaults }: { over
         actions={<Link href="/" target="_blank" className="hub-btn hub-btn-secondary"><EyeI size={15} />Voir le site</Link>} />
       {!allowed("site.edit") && <div className="mb-4"><Notice tone="warn">Ton rôle permet de consulter cette page, pas de modifier le site.</Notice></div>}
       {online && <div className="mb-4"><Notice>Version en ligne de démonstration : tes modifications sont enregistrées dans l&apos;Admin pour la visite, mais <strong>la boutique publiée ne change pas</strong>. La mise à jour réelle du site se fait depuis le Hub en local.</Notice></div>}
-      {overrides.updatedAt && <p className="mb-3 text-xs text-forest-soft">Dernière publication sur le site : {new Date(overrides.updatedAt).toLocaleString("fr-FR")} par {overrides.updatedBy}.</p>}
+      {overrides.updatedAt && <p className="mb-3 text-xs text-forest-soft">Dernière publication sur le site : {new Date(overrides.updatedAt).toLocaleString("fr-FR", { timeZone: "Europe/Paris" })} par {overrides.updatedBy}.</p>}
       <Tabs value={tab} onChange={setTab} tabs={[
         { id: "accueil", label: "Accueil, slider & bannières" }, { id: "produits", label: "Produits : ajouter, descriptions, images", count: products.length }, { id: "collection", label: "Collection mise en avant" },
         { id: "bestsellers", label: "Best-sellers" }, { id: "textes", label: "Textes promotionnels" }, { id: "kits", label: "Kits saisonniers", count: kits.filter((k) => k.group === "saison").length }, { id: "medias", label: "Médiathèque", count: assets.length },

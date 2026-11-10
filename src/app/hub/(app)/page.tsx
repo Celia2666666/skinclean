@@ -1,7 +1,7 @@
 import { requirePageUser } from "@/lib/hub/auth";
 import { list } from "@/lib/hub/repo";
 import { refs } from "@/lib/hub/page-data";
-import { addDays, todayYmd, ymdhm, diffDays } from "@/lib/hub/dates";
+import { addDays, todayYmd, ymdhm, diffDays, nowParis } from "@/lib/hub/dates";
 import { connectors } from "@/lib/hub/connectors";
 import { HomeDashboard, type DayAction, type Priority, type Reco } from "@/components/hub/pages/HomeDashboard";
 import { PLATFORM_LABEL } from "@/lib/hub/types";
@@ -9,7 +9,7 @@ import { PLATFORM_LABEL } from "@/lib/hub/types";
 export default async function HubHome() {
   const user = await requirePageUser();
   const t = todayYmd();
-  const now = ymdhm(new Date());
+  const now = ymdhm(nowParis());
   const posts = list("posts").filter((p) => !p.library);
   const ads = list("ads");
   const emails = list("emails");

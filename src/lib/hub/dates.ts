@@ -3,7 +3,12 @@
 const pad = (n: number) => String(n).padStart(2, "0");
 export const ymd = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 export const ymdhm = (d: Date) => `${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-export const todayYmd = () => ymd(new Date());
+/**
+ * « Maintenant » à l'heure de Paris, quel que soit le fuseau du serveur (Vercel tourne en UTC) :
+ * les getters locaux de la date renvoyée donnent l'heure de Paris.
+ */
+export const nowParis = () => new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Paris" }));
+export const todayYmd = () => ymd(nowParis());
 export const parseLocal = (s: string) => {
   const [date, time = "00:00"] = s.split("T");
   const [y, m, d] = date.split("-").map(Number);

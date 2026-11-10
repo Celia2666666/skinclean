@@ -29,7 +29,7 @@ export function MessagesView({ tickets }: { tickets: Ticket[] }) {
               <button key={t.id} onClick={() => setSel(t.id)} className={clsx("hub-card block w-full p-3 text-left hover:border-forest", sel === t.id && "border-forest ring-1 ring-forest")}>
                 <div className="flex items-center justify-between gap-2 text-xs"><span className="font-semibold text-forest-soft">#{t.number} · {t.type}</span><StatusBadge status={t.status} /></div>
                 <p className="mt-1 text-sm font-medium">{t.subject}</p>
-                <p className="mt-1 flex items-center justify-between text-xs text-forest-soft"><span>{t.messages.length} message(s) · {new Date(t.updatedAt).toLocaleDateString("fr-FR")}</span><span className={clsx("hub-badge", PRIORITY[t.priority])}>{t.priority}</span></p>
+                <p className="mt-1 flex items-center justify-between text-xs text-forest-soft"><span>{t.messages.length} message(s) · {new Date(t.updatedAt).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })}</span><span className={clsx("hub-badge", PRIORITY[t.priority])}>{t.priority}</span></p>
               </button>
             ))}
           </div>
@@ -85,7 +85,7 @@ function Thread({ ticket: t }: { ticket: Ticket }) {
     <Card pad={false}>
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line p-5">
         <div>
-          <p className="text-xs font-semibold text-forest-soft">Demande #{t.number} · {t.type} · ouverte le {new Date(t.createdAt).toLocaleDateString("fr-FR")}</p>
+          <p className="text-xs font-semibold text-forest-soft">Demande #{t.number} · {t.type} · ouverte le {new Date(t.createdAt).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })}</p>
           <h2 className="mt-1 font-display text-xl font-semibold">{t.subject}</h2>
           {t.assignee && <p className="text-xs text-forest-soft">Suivie par {t.assignee}</p>}
         </div>
@@ -109,7 +109,7 @@ function Thread({ ticket: t }: { ticket: Ticket }) {
           return (
             <div key={m.id} className={clsx("flex", mine ? "justify-end" : "justify-start")}>
               <div className={clsx("max-w-[85%] rounded-xl px-4 py-3 text-sm", mine ? "bg-forest text-white" : m.role === "equipe" ? "border border-sage bg-sage-soft" : "border border-line bg-white")}>
-                <p className={clsx("mb-1 text-[0.68rem]", mine ? "text-white/70" : "text-forest-soft")}>{m.author}{m.role === "equipe" ? " · équipe marketing" : ""} · {new Date(m.at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}</p>
+                <p className={clsx("mb-1 text-[0.68rem]", mine ? "text-white/70" : "text-forest-soft")}>{m.author}{m.role === "equipe" ? " · équipe marketing" : ""} · {new Date(m.at).toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" })}</p>
                 <p className="whitespace-pre-line">{m.text}</p>
                 {!!m.attachments?.length && <div className="mt-2 flex flex-wrap gap-1.5">{m.attachments.map((a) => <a key={a.url} href={a.url} target="_blank" rel="noreferrer" className={clsx("hub-badge border", mine ? "border-white/40 text-white" : "border-line bg-white")}><PaperclipI size={11} />{a.name}</a>)}</div>}
               </div>
