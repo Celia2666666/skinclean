@@ -6,6 +6,7 @@ import { Button, Card, PageHeader } from "@/components/hub/ui";
 import { MailI, TrashI } from "@/components/hub/icons";
 import { Pill, useCrmAction, useParam, Empty } from "../ui";
 import { DELIVERY_LABEL, MAIL_KIND, type MailDoc, type MailKind } from "@/lib/crm/types";
+import { SiteOrderMails } from "../SiteOrderMails";
 
 const dt = (s: string) => `${s.slice(8, 10)}/${s.slice(5, 7)} ${s.slice(11, 16)}`;
 const TONE = { envoye: "ok", simule: "neutral", echec: "bad" } as const;
@@ -24,6 +25,7 @@ export function DemoInboxView({ mails, selected, inbox, redirect, resend, siteOr
       <PageHeader eyebrow="Automatisation" title="Boîte mail de démo" intro={<>Tous les e-mails produits par le CRM (automatisations, relances de paniers, alertes de retour en stock, réponses aux messages) arrivent ici, exactement tels que le client les recevrait. Adresse de démonstration : <b className="text-forest">{inbox}</b>{redirect && resend ? " — copie réellement envoyée à cette adresse." : "."} <Link href="/crm/parametres" className="underline">Modifier</Link></>}
         actions={<><Button icon={<MailI size={15} />} variant="primary" disabled={busy} onClick={() => run<{ message: string }>("mail/test", {}, (r) => r.message)}>Générer des e-mails de test</Button><Button icon={<TrashI size={15} />} disabled={busy || !mails.length} onClick={() => run("mail/clear", {}, "Boîte vidée")}>Vider</Button></>} />
       {!resend && <p className="mb-5 rounded-lg border border-line bg-white px-4 py-2.5 text-xs text-forest-soft">Resend n'est pas configuré : les e-mails sont générés et visibles ici, mais aucun ne quitte l'ordinateur. Pour les recevoir dans une vraie boîte, ajoute <code>RESEND_API_KEY</code> puis indique ton adresse comme adresse de démo dans Paramètres.</p>}
+      {(!cat || cat === "order") && <SiteOrderMails />}
       <div className="mb-4 flex flex-wrap gap-1.5" role="tablist" aria-label="Catégories d'e-mails">
         <button role="tab" aria-selected={!cat} onClick={() => set({ cat: null, id: null })} className={clsx("hub-badge border px-3 py-1", !cat ? "border-forest bg-forest text-white" : "border-line bg-white")}>Tous <span className="opacity-70">{total}</span></button>
         {MAIL_KIND.map((k) => (
