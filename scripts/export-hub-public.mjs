@@ -19,16 +19,18 @@ const strategy = all("strategy").sort((a, b) => a.order - b.order).map(({ id, gr
 const personas = all("personas").map(({ id, name, age, color, avatar, summary, skin, motivations, frustrations, digital, messages }) => ({ id, name, age, color, avatar, summary, skin, motivations, frustrations, digital, messages }));
 const objectives = all("objectives").map(({ id, axis, title, kpi, baseline, target, unit, deadline, owner }) => ({ id, axis, title, kpi, baseline, target, unit, deadline, owner }));
 const roadmap = all("roadmap").sort((a, b) => a.month.localeCompare(b.month)).map(({ month, theme, objective, campaigns, networks, posts, seo, sea, newsletters, budget, kpis, deliverables, color }) => ({ month, theme, objective, campaigns, networks, posts, seo, sea, newsletters, budget, kpis, deliverables, color }));
-const campaigns = all("campaigns").map(({ id, name, status, color, objective, target, concept, message, channels, budget, kpis }) => ({ id, name, status, color, objective, target, concept, message, channels, budget: (budget ?? []).reduce((a, b) => a + b.amount, 0), kpis }));
+const campaigns = all("campaigns").map(({ id, name, status, color, objective, target, concept, message, channels, budget, kpis, startDate, durationDays, plan }) => ({ id, name, status, color, objective, target, concept, message, channels, budget: (budget ?? []).reduce((a, b) => a + b.amount, 0), kpis, startDate: startDate ?? null, durationDays: durationDays ?? null, plan: plan ?? [] }));
 
-const READY = ["valide", "publie_test"];
+const READY = ["valide", "publie_test", "a_valider"];
 const posts = all("posts")
-  .filter((p) => ["tiktok", "instagram"].includes(p.platform) && READY.includes(p.status) && mediaOk(p.visual))
+  .filter((p) => ["tiktok", "instagram", "pinterest", "facebook", "story"].includes(p.platform) && READY.includes(p.status) && mediaOk(p.visual))
   .map(({ id, title, date, platform, format, objective, pillar, campaignId, visual, caption, hashtags, cta, status }) => ({ id, title, date: date ?? null, platform, format, objective, pillar, campaignId, visual, caption, hashtags, cta, status, comments: [], productIds: [] }));
 // Un même sujet décliné sur deux réseaux n'est montré qu'une fois
-const base = (t) => t.replace(/^Reel — /, "").replace(/ — (carrousel|le guide)$/, "").toLowerCase();
+const base = (t, p) => `${p.platform === "tiktok" || p.platform === "instagram" ? "ti" : p.platform}:${t.replace(/^(Reel|TikTok) — /, "").replace(/ — (carrousel|le guide)$/, "").toLowerCase()}`;
 const seen = new Set();
-const unique = posts.filter((p) => !seen.has(base(p.title)) && seen.add(base(p.title)));
+// Les publications validées passent avant celles en cours de validation
+posts.sort((a, b) => READY.indexOf(a.status) - READY.indexOf(b.status));
+const unique = posts.filter((p) => !seen.has(base(p.title, p)) && seen.add(base(p.title, p)));
 posts.length = 0;
 posts.push(...unique);
 // La vidéo tournée par l'équipe (TikTok « routine sérum ») en premier
@@ -36,8 +38,17 @@ posts.sort((a, b) => Number(b.visual?.src?.includes("tiktok-routine") ?? 0) - Nu
 
 const ads = all("ads").map(({ id, name, platform, status, objective, audience, ads: creatives, budget }) => ({ id, name, platform, status, objective, audience, creatives: (creatives ?? []).slice(0, 1), budget: budget ?? null }));
 
-const out = { exportedAt: new Date().toISOString().slice(0, 10), strategy, personas, objectives, roadmap, campaigns, posts, ads };
+// Le blog /conseils n'est pas publié en ligne : les liens vers d'autres articles deviennent du texte simple
+const unlinkBlog = (md) => md.replace(/\[([^\]]+)\]\(\/conseils[^)]*\)/g, "$1");
+const articles = all("articles").filter((a) => mediaOk(a)).map(({ id, slug, status, keyword, secondary, title, metaTitle, metaDescription, excerpt, cover, content, author, readingMinutes }) => ({ id, slug, status, keyword, secondary, title, metaTitle, metaDescription, excerpt, cover, content: unlinkBlog(content), author, readingMinutes }));
+const keywords = all("keywords").sort((a, b) => a.priority - b.priority).map(({ id, keyword, cluster, intent, priority, targetUrl, difficulty }) => ({ id, keyword, cluster, intent, priority, targetUrl, difficulty }));
+// Textes provisoires du Hub remplacés pour la version publique
+const FIX = { "Dernières dates de commande pour une livraison avant Noël : à compléter selon le transporteur.": "Pense à commander tôt pour recevoir tes cadeaux avant Noël : la livraison est offerte dès 100 € d'achat." };
+const fix = (v) => JSON.parse(JSON.stringify(v), (_, x) => (typeof x === "string" && FIX[x] ? FIX[x] : x));
+const emails = fix(all("emails")).filter((e) => mediaOk(e)).map(({ id, name, status, subject, preheader, blocks, campaignId }) => ({ id, name, status, subject, preheader, blocks, campaignId }));
+
+const out = { exportedAt: new Date().toISOString().slice(0, 10), strategy, personas, objectives, roadmap, campaigns, posts, ads, articles, keywords, emails };
 const txt = JSON.stringify(out);
 if (/lorem|à compléter|password/i.test(txt)) console.warn("Attention : texte interdit trouvé dans l'export");
 fs.writeFileSync("src/data/hub-public.json", JSON.stringify(out, null, 1));
-console.log(`Export : ${strategy.length} sections, ${personas.length} personas, ${objectives.length} objectifs, ${roadmap.length} mois, ${campaigns.length} campagnes, ${posts.length} publications, ${ads.length} publicités — ${(txt.length / 1024).toFixed(0)} Ko`);
+console.log(`Export : ${strategy.length} sections, ${personas.length} personas, ${objectives.length} objectifs, ${roadmap.length} mois, ${campaigns.length} campagnes, ${posts.length} publications, ${ads.length} publicités, ${articles.length} articles, ${keywords.length} mots-clés, ${emails.length} e-mails — ${(txt.length / 1024).toFixed(0)} Ko`);

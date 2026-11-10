@@ -75,7 +75,8 @@ async function beforeAfter({ file, w, h, ...text }) {
 }
 
 const SQ = { w: 1080, h: 1350 }; // Instagram 4:5
-const VT = { w: 1080, h: 1920 }; // TikTok / YouTube Shorts 9:16
+const VT = { w: 1080, h: 1920 }; // TikTok 9:16
+const PIN = { w: 1000, h: 1500 }; // Pinterest 2:3
 const sign = "skinclean · projet étudiant, démo";
 
 await product({ file: "post-1.webp", ...SQ, bg: C.sage, items: ["clear-skin-serum-niacinamide"], scale: 0.5, tag: "Instagram", lines: ["La bonne routine,", "sans empiler", "les produits."], size: 92, color: C.forest, y0: 250, sub: "Skin Diag : 10 questions, 2 minutes.", subColor: C.sageDeep, footer: sign, footerColor: C.sageDeep });
@@ -84,7 +85,7 @@ await beforeAfter({ file: "post-3.webp", ...SQ, tag: "Instagram", lines: ["30 jo
 await picture({ file: "post-4.webp", ...VT, src: photo("12322647"), tag: "TikTok", lines: ["POV : j'ai fait", "mon Skin Diag", "en 2 minutes"], size: 104, color: C.ivory, y0: 320, sub: "Et j'ai enfin une routine qui tient.", subColor: C.sage, footer: sign, footerColor: C.sage });
 await picture({ file: "post-5.webp", ...VT, src: photo("5927790"), tag: "TikTok", lines: ["3 erreurs qui", "donnent des", "boutons"], size: 112, color: C.ivory, y0: 320, bullets: ["Changer de sérum chaque semaine", "Frotter pour nettoyer", "Oublier le SPF"], bulletColor: C.ivory, footer: sign, footerColor: C.sage });
 await product({ file: "post-6.webp", ...VT, bg: C.sand, items: ["dew-drop-toner-hydratant", "aqua-plump-serum-acide-hyaluronique", "cloud-cream-creme-hydratante"], scale: 0.46, bottom: 0.1, tag: "TikTok", lines: ["Unboxing :", "le trio offert", "à ta 1re commande"], size: 104, color: C.forest, y0: 320, sub: "Dew Drop · Aqua Plump · Cloud Cream", subColor: C.sageDeep, footer: sign, footerColor: C.sageDeep });
-await picture({ file: "post-7.webp", ...VT, src: photo("8996171"), tag: "YouTube Shorts", lines: ["Routine du soir", "peau mixte", "en 60 secondes"], size: 104, color: C.ivory, y0: 320, bullets: ["Melt Away pour démaquiller", "Cloud Gel pour nettoyer", "Clear Skin, puis Cloud Cream"], bulletColor: C.ivory, footer: sign, footerColor: C.sage });
-await tips({ file: "post-8.webp", ...VT, bg: C.cream, tag: "YouTube Shorts", tagBg: C.forest, tagColor: C.ivory, lines: ["Lire une liste", "INCI en", "30 secondes"], size: 112, color: C.forest, y0: 360, bullets: ["Les ingrédients sont classés par dose", "Les 5 premiers = l'essentiel", "Parfum : « parfum » ou « aroma »", "On cherche l'actif annoncé"], bulletColor: C.forest, footer: sign, footerColor: C.sageDeep });
-await product({ file: "post-9.webp", ...VT, bg: C.sage, items: ["dew-drop-toner-hydratant"], scale: 0.5, tag: "YouTube Shorts", tagBg: C.forest, tagColor: C.ivory, lines: ["La méthode", "« 7 skin »", "avec Dew Drop"], size: 104, color: C.forest, y0: 340, sub: "3 couches fines, une peau gorgée d'eau.", subColor: C.sageDeep, footer: sign, footerColor: C.sageDeep });
+await picture({ file: "post-7.webp", ...PIN, src: photo("8996171"), tag: "Pinterest", lines: ["Routine du soir", "peau mixte", "en 3 gestes"], size: 96, color: C.ivory, y0: 280, bullets: ["Melt Away pour démaquiller", "Cloud Gel pour nettoyer", "Clear Skin, puis Cloud Cream"], bulletColor: C.ivory, footer: sign, footerColor: C.sage });
+await product({ file: "post-8.webp", ...PIN, bg: C.cream, items: ["clear-skin-serum-niacinamide"], scale: 0.3, bottom: 0.1, tag: "Pinterest", tagBg: C.forest, tagColor: C.ivory, lines: ["Lire une liste", "INCI en", "30 secondes"], size: 104, color: C.forest, y0: 300, bullets: ["Les ingrédients sont classés par dose", "Les 5 premiers = l'essentiel", "Parfum : « parfum » ou « aroma »", "On cherche l'actif annoncé"], bulletColor: C.forest, footer: sign, footerColor: C.sageDeep });
+await product({ file: "post-9.webp", ...PIN, bg: C.sage, items: ["dew-drop-toner-hydratant"], scale: 0.46, tag: "Pinterest", tagBg: C.forest, tagColor: C.ivory, lines: ["La méthode", "« 7 skin »", "avec Dew Drop"], size: 96, color: C.forest, y0: 280, sub: "3 couches fines, une peau gorgée d'eau.", subColor: C.sageDeep, footer: sign, footerColor: C.sageDeep });
 console.log("9 visuels générés dans", OUT);

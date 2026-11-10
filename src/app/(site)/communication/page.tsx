@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { PageHero } from "@/components/catalog/PageHero";
 import { brandPlatform, calendar, channels, firstTen, kpis, partnerships, posts } from "@/data/communication";
 import { sources, src } from "@/data/strategy";
 import { hubData, hubSection } from "@/data/hub-public";
-import { AdsGrid, BlockGrid, CampaignStrip, FeedStudio, PillarBars } from "@/components/strategy/HubSections";
-import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
+import { AdsGrid, BlockGrid, CampaignStrip, PillarBars } from "@/components/strategy/HubSections";
+import { FeedLibrary, NewsletterShelf, PlanPosts, Retroplanning, SeoStudio } from "@/components/strategy/HubStudio";
+import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "Communication : comment vendre",
-  description: "Le plan de communication de SKINCLEAN : plateforme de marque, canaux, 9 posts prêts à publier sur TikTok, Instagram et YouTube Shorts, calendrier sur 4 semaines, partenariats, 10 premiers clients et indicateurs.",
+  description: "Le plan de communication de SKINCLEAN : plateforme de marque, canaux, 9 posts prêts à publier sur Instagram, TikTok et Pinterest, calendrier sur 4 semaines, partenariats, 10 premiers clients et indicateurs.",
 };
 
 const sections = [
@@ -21,7 +21,7 @@ const sections = [
   { id: "bibliotheque", label: "Publications prêtes" },
   { id: "campagnes", label: "Campagnes" },
   { id: "calendrier", label: "Calendrier" },
-  { id: "dispositif", label: "Contenu, influence, pub" },
+  { id: "dispositif", label: "Influence, SEO, pub" },
   { id: "partenariats", label: "Partenariats" },
   { id: "clients", label: "10 premiers clients" },
   { id: "indicateurs", label: "Indicateurs" },
@@ -41,10 +41,8 @@ const H2 = ({ id, kicker, children, intro }: { id: string; kicker: string; child
   </Reveal>
 );
 
-const goalColor: Record<string, string> = { Notoriété: "bg-sage", Considération: "bg-sage-soft", Conversion: "bg-forest text-ivory", Fidélisation: "bg-ivory border border-line" };
 
 export default function CommunicationPage() {
-  const byNetwork = ["Instagram", "TikTok", "YouTube Shorts"] as const;
   return (
     <>
       <PageHero eyebrow="Espace communication · comment le vendre" title="Le plan de communication" intro={brandPlatform.promise} bg="#EFEEEA" crumbs={[{ href: "/communication", label: "Communication" }]}>
@@ -103,47 +101,14 @@ export default function CommunicationPage() {
 
         {/* Posts */}
         <section aria-labelledby="posts">
-          <H2 id="posts" kicker="4 · Posts prêts à publier">9 posts sur 3 réseaux</H2>
-          <div className="space-y-14">
-            {byNetwork.map((net) => (
-              <div key={net}>
-                <p className="mb-4 font-display text-2xl">{net}</p>
-                <Stagger className="grid gap-6 md:grid-cols-3">
-                  {posts.filter((p) => p.network === net).map((p) => (
-                    <StaggerItem key={p.id} className="h-full"><article className="group flex h-full flex-col border border-line bg-ivory transition duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-20px_rgba(31,51,41,0.35)]">
-                      <div className={`relative overflow-hidden bg-sky ${net === "Instagram" ? "aspect-[4/5]" : "aspect-[9/16] max-h-[520px]"}`}>
-                        <Image src={p.image} alt={p.alt} fill sizes="(max-width: 768px) 92vw, 30vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
-                        <a href={p.image} download className="absolute bottom-3 right-3 bg-ivory/90 px-2.5 py-1 text-[0.7rem] font-medium backdrop-blur hover:bg-ivory">Télécharger le visuel</a>
-                      </div>
-                      <div className="flex flex-1 flex-col p-5">
-                        <div className="flex flex-wrap items-center gap-2 text-[0.7rem]">
-                          <span className="chip bg-cream">Post {p.id}</span>
-                          <span className={`chip ${goalColor[p.goal]}`}>{p.goal}</span>
-                        </div>
-                        <p className="mt-3 font-display text-xl leading-tight">{p.title}</p>
-                        <dl className="mt-3 grid grid-cols-[5rem_1fr] gap-x-3 gap-y-1 text-xs">
-                          <dt className="text-forest-soft">Format</dt><dd>{p.format}</dd>
-                          <dt className="text-forest-soft">Date</dt><dd><time dateTime={p.dateISO}>{p.date}</time></dd>
-                          <dt className="text-forest-soft">Objectif</dt><dd>{p.goal}</dd>
-                        </dl>
-                        <details className="group mt-4 border-t border-line pt-3">
-                          <summary className="cursor-pointer list-none text-sm font-medium [&::-webkit-details-marker]:hidden">Texte complet <span className="text-forest-soft group-open:hidden">+</span><span className="hidden text-forest-soft group-open:inline">−</span></summary>
-                          <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-forest-soft">{p.text}</p>
-                          <p className="mt-3 text-xs text-sage-deep">{p.hashtags}</p>
-                        </details>
-                      </div>
-                    </article></StaggerItem>
-                  ))}
-                </Stagger>
-              </div>
-            ))}
-          </div>
+          <H2 id="posts" kicker="4 · Posts prêts à publier" intro="Clique sur un visuel pour voir le post tel qu'il apparaîtra sur le réseau, avec sa légende complète, puis le valider.">9 posts sur 3 réseaux</H2>
+          <PlanPosts posts={posts} />
         </section>
 
         {/* Bibliothèque du Marketing Hub */}
         <section aria-labelledby="bibliotheque">
-          <H2 id="bibliotheque" kicker="5 · Publications prêtes" intro={<>{hubData.posts.length} publications TikTok et Instagram créées et validées dans le Marketing Hub, avec leur légende et leurs hashtags. Clique sur une vignette pour la voir telle qu&apos;elle apparaîtra sur le réseau ; les carrousels se feuillettent avec les flèches.</>}>La bibliothèque de contenus</H2>
-          <FeedStudio />
+          <H2 id="bibliotheque" kicker="5 · Publications prêtes" intro={<>{hubData.posts.length} publications TikTok, Instagram, Pinterest, Facebook et Stories créées dans le Marketing Hub. Clique sur une vignette : l&apos;aperçu s&apos;ouvre comme sur le réseau, avec la légende, les hashtags et le bouton de validation. Les carrousels se feuillettent avec les flèches.</>}>La bibliothèque de contenus</H2>
+          <FeedLibrary />
           <p className="mt-6 text-xs text-forest-soft">Aperçus sans aucun compteur inventé (ni likes, ni vues). « Publié sur le compte de test » : publication faite sur le compte d&apos;essai du Hub, pas sur un vrai compte. Sauf notre vidéo, les vidéos sont des vidéos de démonstration libres de droits (Pexels), à remplacer par nos tournages.</p>
         </section>
 
@@ -151,6 +116,9 @@ export default function CommunicationPage() {
         <section aria-labelledby="campagnes">
           <H2 id="campagnes" kicker="6 · Campagnes" intro="Les douze campagnes préparées dans le Marketing Hub. Fais défiler pour toutes les voir.">Une campagne, un message</H2>
           <CampaignStrip />
+          <p className="mb-2 mt-14 font-display text-3xl">Rétroplanning</p>
+          <p className="mb-6 max-w-3xl text-sm text-forest-soft">Pour chaque campagne : la préparation à rebours depuis la date de lancement, puis chaque action jour par jour.</p>
+          <Retroplanning />
         </section>
 
         {/* Calendrier */}
@@ -175,7 +143,7 @@ export default function CommunicationPage() {
 
         {/* Dispositif (Marketing Hub) */}
         <section aria-labelledby="dispositif">
-          <H2 id="dispositif" kicker="8 · Le dispositif" intro="Comment les contenus sont produits, puis comment la marque se fait connaître : organique, influence, publicité et relations presse.">Contenu, influence, notoriété, publicité</H2>
+          <H2 id="dispositif" kicker="8 · Le dispositif" intro="Comment les contenus sont produits, puis comment la marque se fait connaître : organique, influence, référencement, newsletters, publicité et relations presse.">Contenu, influence, SEO, newsletters, publicité</H2>
           <div className="space-y-12">
             {["contenu", "notoriete", "influence", "acquisition"].map((id) => (
               <div key={id}>
@@ -184,8 +152,18 @@ export default function CommunicationPage() {
                 <BlockGrid blocks={hubSection(id).blocks} cols={id === "contenu" ? 3 : 2} />
               </div>
             ))}
+            <div id="seo" className="scroll-mt-[calc(8rem+var(--demo-h))]">
+              <p className="mb-1 font-display text-2xl">Référencement naturel (SEO)</p>
+              <p className="mb-6 text-sm text-forest-soft">Être trouvé sur Google quand la cible cherche une solution à son problème de peau. Clique sur un article pour le lire, voir son aperçu dans Google et le valider.</p>
+              <SeoStudio />
+            </div>
+            <div id="newsletters" className="scroll-mt-[calc(8rem+var(--demo-h))]">
+              <p className="mb-1 font-display text-2xl">Les newsletters</p>
+              <p className="mb-6 text-sm text-forest-soft">{hubData.emails.length} e-mails écrits dans le Marketing Hub, de la bienvenue au programme de fidélité. Clique pour voir l&apos;e-mail tel qu&apos;il arrivera dans la boîte de réception.</p>
+              <NewsletterShelf />
+            </div>
             <div>
-              <p className="mb-1 font-display text-2xl">Les publicités préparées</p>
+              <p className="mb-1 font-display text-2xl">Publicité payante (SEA) : les annonces préparées</p>
               <p className="mb-4 text-sm text-forest-soft">Annonces écrites dans le Marketing Hub. Aucune n&apos;a été diffusée et aucun budget n&apos;a été dépensé : chaque dépense doit d&apos;abord être validée.</p>
               <AdsGrid />
             </div>

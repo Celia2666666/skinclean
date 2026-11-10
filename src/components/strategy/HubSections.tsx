@@ -1,9 +1,8 @@
 "use client";
 import { AnimatePresence, animate, motion, useInView, useReducedMotion, useScroll, useSpring } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import type { Post } from "@/lib/hub/types";
-import { PostPreview } from "@/components/hub/PostPreview";
 import { VisualThumb } from "@/components/hub/design/DesignPreview";
 import { hubData as hub, type HubBlock as Block, type HubSection } from "@/data/hub-public";
 
@@ -246,72 +245,6 @@ export function PersonaDeck() {
           </dl>
         </motion.article>
       </AnimatePresence>
-    </div>
-  );
-}
-
-const NET: Record<string, string> = { tiktok: "TikTok", instagram: "Instagram" };
-const FORMAT: Record<string, string> = { video: "Vidéo", reel: "Reel", post: "Post", carrousel: "Carrousel" };
-const STATUS: Record<string, string> = { valide: "Validé, prêt à publier", publie_test: "Publié sur le compte de test" };
-
-/** Les publications prêtes du Hub dans un téléphone : on choisit une vignette, l'aperçu change en glissant. */
-export function FeedStudio() {
-  const posts = hub.posts as unknown as Post[];
-  const [net, setNet] = useState<"all" | "tiktok" | "instagram">("all");
-  const shown = useMemo(() => posts.filter((p) => net === "all" || p.platform === net), [posts, net]);
-  const [id, setId] = useState(posts[0].id);
-  const current = shown.find((p) => p.id === id) ?? shown[0];
-  const phone = useRef<HTMLDivElement>(null);
-  const own = current.visual?.kind === "video" && current.visual.src?.includes("tiktok-routine");
-  return (
-    <div className="grid items-start gap-8 lg:grid-cols-[380px_1fr]">
-      <div ref={phone} className="scroll-mt-[calc(5rem+var(--demo-h))] lg:sticky lg:top-[calc(6rem+var(--demo-h))]">
-        <div className="relative mx-auto w-full max-w-[380px]">
-          <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[40px] bg-[radial-gradient(closest-side,#D8DFD4,transparent)]" />
-          <AnimatePresence mode="wait">
-            <motion.div key={current.id} initial={{ opacity: 0, y: 30, rotate: -2, scale: 0.96 }} animate={{ opacity: 1, y: 0, rotate: 0, scale: 1 }} exit={{ opacity: 0, y: -20, rotate: 2, scale: 0.96 }} transition={{ duration: 0.45, ease: EASE }}>
-              <PostPreview post={current} />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-        <div className="mx-auto mt-4 max-w-[380px] text-sm">
-          <p className="font-display text-xl leading-tight">{current.title}</p>
-          <p className="mt-2 flex flex-wrap gap-1.5 text-[0.7rem]">
-            <span className="chip bg-forest text-ivory">{NET[current.platform]}</span>
-            <span className="chip bg-cream">{FORMAT[current.format] ?? current.format}</span>
-            <span className="chip bg-cream">Objectif : {current.objective}</span>
-            {current.pillar && <span className="chip bg-cream">{current.pillar}</span>}
-          </p>
-          <p className="mt-2 text-xs text-forest-soft">{STATUS[current.status] ?? current.status}{own ? " · vidéo tournée par l'équipe SKINCLEAN" : current.visual?.kind === "video" ? " · vidéo de démonstration libre de droits (Pexels)" : ""}</p>
-        </div>
-      </div>
-
-      <div>
-        <div className="flex flex-wrap items-center gap-2">
-          {(["all", "tiktok", "instagram"] as const).map((n) => (
-            <button key={n} type="button" onClick={() => setNet(n)} aria-pressed={net === n} className="relative rounded-full px-4 py-2 text-sm">
-              {net === n && <motion.span layoutId="feed-pill" className="absolute inset-0 rounded-full bg-forest" transition={{ type: "spring", stiffness: 380, damping: 32 }} />}
-              <span className={clsx("relative", net === n ? "text-ivory" : "text-forest")}>{n === "all" ? "Tout" : NET[n]} · {posts.filter((p) => n === "all" || p.platform === n).length}</span>
-            </button>
-          ))}
-        </div>
-        <motion.ul layout className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-4 xl:grid-cols-5">
-          <AnimatePresence>
-            {shown.map((p, i) => (
-              <motion.li key={p.id} layout initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.85 }} transition={{ duration: 0.35, delay: Math.min(i, 12) * 0.02 }}>
-                <button type="button" onClick={() => { setId(p.id); if (window.innerWidth < 1024) phone.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }} aria-label={`Voir ${p.title}`}
-                  className={clsx("group relative block w-full overflow-hidden bg-sage-soft ring-offset-2 transition", p.id === current.id ? "ring-2 ring-forest" : "hover:-translate-y-1")}>
-                  <span className="block aspect-[4/5] overflow-hidden">
-                    <VisualThumb visual={p.visual} width={180} fill className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                  </span>
-                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2 pt-6 text-left text-[0.65rem] font-medium leading-tight text-white">{NET[p.platform]} · {FORMAT[p.format] ?? p.format}</span>
-                  {p.visual?.kind === "video" && p.visual.src?.includes("tiktok-routine") && <span className="absolute left-1.5 top-1.5 rounded-full bg-[#FE2C55] px-2 py-0.5 text-[0.6rem] font-semibold text-white">Notre vidéo</span>}
-                </button>
-              </motion.li>
-            ))}
-          </AnimatePresence>
-        </motion.ul>
-      </div>
     </div>
   );
 }
