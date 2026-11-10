@@ -43,8 +43,8 @@ const HASHTAGS = { post_0011: ["#toner", "#hydratation"] };
 const DROP = new Set(["post_0010", "post_0031"]); // doublons des mythes vitamine C et concentration
 for (const p of posts) {
   const v = VIDEO[p.id];
-  if (v === "poster" && p.visual?.poster) p.visual = { kind: "design", design: p.visual.poster };
-  else if (v) p.visual = { ...p.visual, src: `/media/videos/demo/${v}.mp4` };
+  if (v === "poster") { if (p.visual?.kind === "video" && p.visual.poster) p.visual = { kind: "design", design: p.visual.poster }; }
+  else if (v && p.visual?.kind === "video") p.visual = { ...p.visual, src: `/media/videos/demo/${v}.mp4` };
   if (HASHTAGS[p.id]) p.hashtags = HASHTAGS[p.id];
 }
 for (let i = posts.length - 1; i >= 0; i--) if (DROP.has(posts[i].id) || posts[i].visual?.src?.includes("7467138")) posts.splice(i, 1);

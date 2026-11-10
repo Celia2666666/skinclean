@@ -359,7 +359,7 @@
     {
      "kind": "proposition",
      "title": "Validation",
-     "text": "Tout contenu passe par le statut « À valider » avant publication ; le client valide en un clic depuis l'accueil du Hub."
+     "text": "Tout contenu passe par le statut « À valider » avant publication ; le client valide en un clic depuis l'accueil de l'Admin."
     }
    ]
   },
@@ -1771,1729 +1771,6 @@
      "hour": "19:00",
      "title": "J30 : mon bilan honnête",
      "idea": "Bilan."
-    }
-   ]
-  },
-  {
-   "id": "camp-skin-diag",
-   "name": "Découverte du Skin Diag",
-   "status": "planifiee",
-   "color": "#4A6354",
-   "objective": "Faire réaliser le Skin Diag gratuit et capter des inscriptions (routine reçue par e-mail).",
-   "target": "18-30 ans hésitant sur leur routine — Léa et Inès en priorité",
-   "concept": "« 2 minutes pour enfin comprendre ta peau » : le diagnostic comme jeu, la routine comme récompense.",
-   "message": "Fais ton Skin Diag gratuit et reçois ta routine personnalisée par e-mail.",
-   "channels": [
-    "TikTok",
-    "Instagram",
-    "Stories",
-    "Meta Ads",
-    "TikTok Ads",
-    "Newsletter"
-   ],
-   "budget": 1900,
-   "kpis": [
-    {
-     "label": "Skin Diag complétés",
-     "target": "2 000"
-    },
-    {
-     "label": "Inscriptions",
-     "target": "800"
-    },
-    {
-     "label": "CTR publicités",
-     "target": "≥ 1,2 %"
-    }
-   ],
-   "startDate": "2026-11-11",
-   "durationDays": 21,
-   "plan": [
-    {
-     "day": 0,
-     "platform": "tiktok",
-     "format": "video",
-     "hour": "18:00",
-     "title": "Je fais le Skin Diag en direct",
-     "idea": "Écran partagé : réponses + résultat.",
-     "cta": "Fais ton Skin Diag",
-     "content": {
-      "caption": "Je fais le Skin Diag SKINCLEAN en direct 👀\n\n2 minutes, quelques questions sur ma peau… et ma routine matin et soir arrive. Résultat : peau mixte, légèrement déshydratée. Et toi ?\n\nLe Skin Diag est gratuit, lien en bio.",
-      "hashtags": [
-       "#skindiag",
-       "#typedepeau",
-       "#skincaretok",
-       "#skinclean"
-      ],
-      "script": {
-       "hook": "Je teste un diagnostic de peau en 2 minutes",
-       "duration": "25 s",
-       "sound": "Son tendance",
-       "scenes": [
-        {
-         "t": "0–3 s",
-         "shot": "Face caméra, téléphone en main.",
-         "onScreen": "Je fais le Skin Diag en direct"
-        },
-        {
-         "t": "3–15 s",
-         "shot": "Écran partagé : les questions du Skin Diag.",
-         "onScreen": "Ma peau tiraille ? Un peu…"
-        },
-        {
-         "t": "15–22 s",
-         "shot": "Révélation du résultat.",
-         "onScreen": "Peau mixte, un peu déshydratée"
-        },
-        {
-         "t": "22–25 s",
-         "shot": "Application du soin conseillé.",
-         "onScreen": "À ton tour : lien en bio"
-        }
-       ]
-      },
-      "visual": {
-       "kind": "video",
-       "src": "/media/videos/demo/pexels-7467138.mp4",
-       "poster": {
-        "w": 1080,
-        "h": 1920,
-        "pages": [
-         {
-          "bg": {
-           "type": "color",
-           "color": "#D8DFD4"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx5s",
-            "type": "logo",
-            "x": 356.4,
-            "y": 249.60000000000002,
-            "w": 367.20000000000005,
-            "variant": "wordmark",
-            "tint": "dark"
-           },
-           {
-            "id": "lmw6m7rmx5t",
-            "type": "shape",
-            "x": 86.4,
-            "y": 448.20685714285713,
-            "w": 907.2,
-            "h": 422.4,
-            "color": "#FFFFFF",
-            "radius": 40,
-            "opacity": 0.95
-           },
-           {
-            "id": "lmw6m7rmx5u",
-            "type": "text",
-            "x": 162,
-            "y": 448.20685714285713,
-            "w": 756,
-            "text": "Je fais le Skin Diag en direct",
-            "size": 77.75999999999999,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "center",
-            "font": "display",
-            "lineHeight": 1.12,
-            "maxH": 422.4,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx5v",
-            "type": "image",
-            "x": 237.6,
-            "y": 947.406857142857,
-            "w": 604.8000000000001,
-            "h": 626.9931428571429,
-            "src": "/media/packshots/dew-drop-toner-hydratant.png",
-            "fit": "contain"
-           }
-          ]
-         }
-        ]
-       },
-       "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-      }
-     }
-    },
-    {
-     "day": 1,
-     "platform": "story",
-     "format": "story",
-     "hour": "12:00",
-     "title": "Story : ton résultat Skin Diag ?",
-     "idea": "Sondage + lien vers le diag.",
-     "cta": "Fais le Skin Diag",
-     "content": {
-      "caption": "Sticker sondage natif sur la zone prévue, puis story suivante avec le sticker lien vers skinclean.fr/skin-diag.",
-      "hashtags": [],
-      "visual": {
-       "kind": "design",
-       "design": {
-        "w": 1080,
-        "h": 1920,
-        "pages": [
-         {
-          "bg": {
-           "type": "color",
-           "color": "#EDF0EA"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx5w",
-            "type": "logo",
-            "x": 388.79999999999995,
-            "y": 136.07999999999998,
-            "w": 302.40000000000003,
-            "variant": "wordmark",
-            "tint": "dark"
-           },
-           {
-            "id": "lmw6m7rmx5x",
-            "type": "text",
-            "x": 97.2,
-            "y": 288,
-            "w": 885.6,
-            "text": "SKIN DIAG",
-            "size": 32.4,
-            "weight": 600,
-            "color": "#4A6354",
-            "align": "center",
-            "font": "body",
-            "lineHeight": 1.08,
-            "letterSpacing": 3,
-            "maxH": 54,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx5y",
-            "type": "text",
-            "x": 97.2,
-            "y": 364.8,
-            "w": 885.6,
-            "text": "Ton résultat Skin Diag ?",
-            "size": 91.80000000000001,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "center",
-            "font": "display",
-            "lineHeight": 1.08,
-            "maxH": 403.2,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx5z",
-            "type": "image",
-            "x": 216,
-            "y": 806.4,
-            "w": 648,
-            "h": 576,
-            "src": "/media/packshots/dew-drop-toner-hydratant.png",
-            "fit": "contain"
-           },
-           {
-            "id": "lmw6m7rmx60",
-            "type": "shape",
-            "x": 97.2,
-            "y": 1440,
-            "w": 885.6,
-            "h": 302.40000000000003,
-            "color": "#FFFFFF",
-            "radius": 32,
-            "opacity": 0.95
-           },
-           {
-            "id": "lmw6m7rmx61",
-            "type": "text",
-            "x": 97.2,
-            "y": 1458.144,
-            "w": 885.6,
-            "text": "Zone du sticker sondage",
-            "size": 28.08,
-            "weight": 500,
-            "color": "#5C6862",
-            "align": "center",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 78.62400000000001,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx62",
-            "type": "text",
-            "x": 140.4,
-            "y": 1548.864,
-            "w": 799.2,
-            "text": "Peau mixte   ·   Sèche ou sensible",
-            "size": 54,
-            "weight": 600,
-            "color": "#1F3329",
-            "align": "center",
-            "font": "display",
-            "lineHeight": 1.08,
-            "maxH": 157.24800000000002,
-            "valign": "middle"
-           }
-          ]
-         }
-        ]
-       }
-      }
-     }
-    },
-    {
-     "day": 2,
-     "platform": "instagram",
-     "format": "carrousel",
-     "hour": "12:30",
-     "title": "Comment fonctionne le Skin Diag",
-     "idea": "5 slides : questions, moteur, routine, e-mail, suivi.",
-     "cta": "Enregistre le post",
-     "content": {
-      "caption": "Comment fonctionne le Skin Diag ? 🔍\n\n1. Tu réponds à quelques questions sur ta peau\n2. On analyse ton type de peau et tes priorités\n3. Tu reçois ta routine du matin et du soir\n4. On te l'envoie par e-mail\n5. Tu suis ta peau au fil des semaines\n\nC'est gratuit et ça prend 2 minutes : lien en bio.",
-      "hashtags": [
-       "#skindiag",
-       "#routinepersonnalisee",
-       "#skincare",
-       "#skinclean"
-      ],
-      "slides": [
-       "Tu réponds à quelques questions",
-       "On analyse ta peau",
-       "Tu reçois ta routine",
-       "Par e-mail",
-       "Tu suis ta peau"
-      ],
-      "visual": {
-       "kind": "design",
-       "design": {
-        "w": 1080,
-        "h": 1350,
-        "pages": [
-         {
-          "bg": {
-           "type": "color",
-           "color": "#EDF0EA"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx63",
-            "type": "logo",
-            "x": 97.2,
-            "y": 97.2,
-            "w": 237.6,
-            "variant": "wordmark",
-            "tint": "dark"
-           },
-           {
-            "id": "lmw6m7rmx64",
-            "type": "text",
-            "x": 97.2,
-            "y": 232.16914285714284,
-            "w": 885.6,
-            "text": "2 MINUTES CHRONO",
-            "size": 28.08,
-            "weight": 600,
-            "color": "#4A6354",
-            "align": "left",
-            "font": "body",
-            "lineHeight": 1.08,
-            "letterSpacing": 3,
-            "maxH": 48.6,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx65",
-            "type": "text",
-            "x": 97.2,
-            "y": 296.96914285714286,
-            "w": 885.6,
-            "text": "Comment fonctionne le Skin Diag",
-            "size": 102.6,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1,
-            "upper": true,
-            "maxH": 351,
-            "valign": "top"
-           },
-           {
-            "id": "lmw6m7rmx66",
-            "type": "image",
-            "x": 496.8,
-            "y": 688.4691428571429,
-            "w": 496.8,
-            "h": 564.3308571428571,
-            "src": "/media/packshots/dew-drop-toner-hydratant.png",
-            "fit": "contain"
-           },
-           {
-            "id": "lmw6m7rmx67",
-            "type": "text",
-            "x": 97.2,
-            "y": 1188,
-            "w": 388.8,
-            "text": "Swipe →",
-            "size": 34.56,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 64.8,
-            "valign": "middle"
-           }
-          ]
-         },
-         {
-          "bg": {
-           "type": "color",
-           "color": "#EFEEEA"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx68",
-            "type": "text",
-            "x": 97.2,
-            "y": 97.2,
-            "w": 432,
-            "text": "01",
-            "size": 151.20000000000002,
-            "weight": 400,
-            "color": "#5E7A68",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1,
-            "maxH": 172.8
-           },
-           {
-            "id": "lmw6m7rmx69",
-            "type": "text",
-            "x": 97.2,
-            "y": 189.00000000000003,
-            "w": 885.6,
-            "text": "Tu réponds à quelques questions sur ta peau",
-            "size": 62.64,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1.16,
-            "maxH": 283.5,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx6a",
-            "type": "shape",
-            "x": 358.4295421714286,
-            "y": 499.5,
-            "w": 363.1409156571428,
-            "h": 527.1400388571428,
-            "color": "#EBDDD5",
-            "radius": 181.5704578285714
-           },
-           {
-            "id": "lmw6m7rmx6b",
-            "type": "shape",
-            "x": 314.85263229257146,
-            "y": 1003.2115926857142,
-            "w": 450.29473541485703,
-            "h": 58.571115428571424,
-            "color": "#D9C3B6",
-            "radius": 29.285557714285712
-           },
-           {
-            "id": "lmw6m7rmx6c",
-            "type": "image",
-            "x": 365.6923604845715,
-            "y": 558.0711154285714,
-            "w": 348.61527903085704,
-            "h": 468.5689234285714,
-            "src": "/media/packshots/cloud-gel-nettoyant-doux.png",
-            "fit": "contain",
-            "shadow": true
-           },
-           {
-            "id": "lmw6m7rmx6d",
-            "type": "shape",
-            "x": 263.1183634285715,
-            "y": 1105.1785799999998,
-            "w": 553.763273142857,
-            "h": 59.90227714285712,
-            "color": "#1F3329",
-            "radius": 29.95113857142856
-           },
-           {
-            "id": "lmw6m7rmx6e",
-            "type": "text",
-            "x": 263.1183634285715,
-            "y": 1105.1785799999998,
-            "w": 553.763273142857,
-            "text": "Cloud Gel · nettoyant doux",
-            "size": 25.15895639999999,
-            "weight": 600,
-            "color": "#FFFFFF",
-            "align": "center",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 59.90227714285712,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx6f",
-            "type": "logo",
-            "x": 97.2,
-            "y": 1198.830857142857,
-            "w": 237.6,
-            "variant": "wordmark",
-            "tint": "dark"
-           },
-           {
-            "id": "lmw6m7rmx6g",
-            "type": "text",
-            "x": 712.8,
-            "y": 1198.830857142857,
-            "w": 270,
-            "text": "2 / 7",
-            "size": 28.08,
-            "weight": 500,
-            "color": "#5C6862",
-            "align": "right",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 53.969142857142856,
-            "valign": "middle"
-           }
-          ]
-         },
-         {
-          "bg": {
-           "type": "color",
-           "color": "#FAF9F6"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx6h",
-            "type": "text",
-            "x": 97.2,
-            "y": 97.2,
-            "w": 432,
-            "text": "02",
-            "size": 151.20000000000002,
-            "weight": 400,
-            "color": "#5E7A68",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1,
-            "maxH": 172.8
-           },
-           {
-            "id": "lmw6m7rmx6i",
-            "type": "text",
-            "x": 97.2,
-            "y": 189.00000000000003,
-            "w": 885.6,
-            "text": "On analyse ton type de peau et tes priorités",
-            "size": 62.64,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1.16,
-            "maxH": 283.5,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx6j",
-            "type": "shape",
-            "x": 257.921508096,
-            "y": 492.7057506102857,
-            "w": 564.156983808,
-            "h": 564.156983808,
-            "color": "rgba(0,0,0,0)",
-            "radius": 282.078491904,
-            "stroke": "#5E7A68",
-            "opacity": 0.35
-           },
-           {
-            "id": "lmw6m7rmx6k",
-            "type": "shape",
-            "x": 288.1442036571429,
-            "y": 522.9284461714285,
-            "w": 503.7115926857142,
-            "h": 503.7115926857142,
-            "color": "#D8DFD4",
-            "radius": 251.8557963428571
-           },
-           {
-            "id": "lmw6m7rmx6l",
-            "type": "shape",
-            "x": 691.1134778057143,
-            "y": 522.9284461714285,
-            "w": 80.59385482971427,
-            "h": 80.59385482971427,
-            "color": "#FFFFFF",
-            "radius": 40.29692741485714,
-            "opacity": 0.85
-           },
-           {
-            "id": "lmw6m7rmx6m",
-            "type": "image",
-            "x": 358.6638266331429,
-            "y": 553.1511417325714,
-            "w": 362.6723467337142,
-            "h": 453.3404334171428,
-            "src": "/media/packshots/dew-drop-toner-hydratant.png",
-            "fit": "contain",
-            "shadow": true
-           },
-           {
-            "id": "lmw6m7rmx6n",
-            "type": "shape",
-            "x": 263.1183634285715,
-            "y": 1105.1785799999998,
-            "w": 553.763273142857,
-            "h": 59.90227714285712,
-            "color": "#1F3329",
-            "radius": 29.95113857142856
-           },
-           {
-            "id": "lmw6m7rmx6o",
-            "type": "text",
-            "x": 263.1183634285715,
-            "y": 1105.1785799999998,
-            "w": 553.763273142857,
-            "text": "Dew Drop · toner hydratant",
-            "size": 25.15895639999999,
-            "weight": 600,
-            "color": "#FFFFFF",
-            "align": "center",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 59.90227714285712,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx6p",
-            "type": "logo",
-            "x": 97.2,
-            "y": 1198.830857142857,
-            "w": 237.6,
-            "variant": "wordmark",
-            "tint": "dark"
-           },
-           {
-            "id": "lmw6m7rmx6q",
-            "type": "text",
-            "x": 712.8,
-            "y": 1198.830857142857,
-            "w": 270,
-            "text": "3 / 7",
-            "size": 28.08,
-            "weight": 500,
-            "color": "#5C6862",
-            "align": "right",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 53.969142857142856,
-            "valign": "middle"
-           }
-          ]
-         },
-         {
-          "bg": {
-           "type": "color",
-           "color": "#EFEEEA"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx6r",
-            "type": "text",
-            "x": 97.2,
-            "y": 97.2,
-            "w": 432,
-            "text": "03",
-            "size": 151.20000000000002,
-            "weight": 400,
-            "color": "#5E7A68",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1,
-            "maxH": 172.8
-           },
-           {
-            "id": "lmw6m7rmx6s",
-            "type": "text",
-            "x": 97.2,
-            "y": 189.00000000000003,
-            "w": 885.6,
-            "text": "Tu reçois ta routine du matin et du soir",
-            "size": 62.64,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1.16,
-            "maxH": 283.5,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx6t",
-            "type": "shape",
-            "x": 132.624,
-            "y": 546.3568923428571,
-            "w": 814.7520000000001,
-            "h": 421.7120310857142,
-            "color": "#F1E9D2",
-            "radius": 44.28,
-            "opacity": 0.7
-           },
-           {
-            "id": "lmw6m7rmx6u",
-            "type": "shape",
-            "x": 276.4299805714286,
-            "y": 979.7831465142856,
-            "w": 527.1400388571428,
-            "h": 58.571115428571424,
-            "color": "#DDCFA8",
-            "radius": 17.571334628571424
-           },
-           {
-            "id": "lmw6m7rmx6v",
-            "type": "shape",
-            "x": 350.2295860114286,
-            "y": 932.9262541714286,
-            "w": 379.54082797714284,
-            "h": 58.571115428571424,
-            "color": "#FFFFFF",
-            "radius": 17.571334628571424
-           },
-           {
-            "id": "lmw6m7rmx6w",
-            "type": "image",
-            "x": 360.77238678857145,
-            "y": 511.2142230857143,
-            "w": 358.45522642285715,
-            "h": 433.4262541714285,
-            "src": "/media/packshots/clear-skin-serum-niacinamide.png",
-            "fit": "contain",
-            "shadow": true
-           },
-           {
-            "id": "lmw6m7rmx6x",
-            "type": "shape",
-            "x": 220.52118857142864,
-            "y": 1105.1785799999998,
-            "w": 638.9576228571427,
-            "h": 59.90227714285712,
-            "color": "#1F3329",
-            "radius": 29.95113857142856
-           },
-           {
-            "id": "lmw6m7rmx6y",
-            "type": "text",
-            "x": 220.52118857142864,
-            "y": 1105.1785799999998,
-            "w": 638.9576228571427,
-            "text": "Clear Skin · sérum niacinamide",
-            "size": 25.15895639999999,
-            "weight": 600,
-            "color": "#FFFFFF",
-            "align": "center",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 59.90227714285712,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx6z",
-            "type": "logo",
-            "x": 97.2,
-            "y": 1198.830857142857,
-            "w": 237.6,
-            "variant": "wordmark",
-            "tint": "dark"
-           },
-           {
-            "id": "lmw6m7rmx70",
-            "type": "text",
-            "x": 712.8,
-            "y": 1198.830857142857,
-            "w": 270,
-            "text": "4 / 7",
-            "size": 28.08,
-            "weight": 500,
-            "color": "#5C6862",
-            "align": "right",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 53.969142857142856,
-            "valign": "middle"
-           }
-          ]
-         },
-         {
-          "bg": {
-           "type": "color",
-           "color": "#FAF9F6"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx71",
-            "type": "text",
-            "x": 97.2,
-            "y": 97.2,
-            "w": 432,
-            "text": "04",
-            "size": 151.20000000000002,
-            "weight": 400,
-            "color": "#5E7A68",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1,
-            "maxH": 172.8
-           },
-           {
-            "id": "lmw6m7rmx72",
-            "type": "text",
-            "x": 97.2,
-            "y": 189.00000000000003,
-            "w": 885.6,
-            "text": "On te l'envoie par e-mail, pour la garder",
-            "size": 62.64,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1.16,
-            "maxH": 283.5,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx73",
-            "type": "shape",
-            "x": 358.4295421714286,
-            "y": 499.5,
-            "w": 363.1409156571428,
-            "h": 527.1400388571428,
-            "color": "#EDF0EA",
-            "radius": 181.5704578285714
-           },
-           {
-            "id": "lmw6m7rmx74",
-            "type": "shape",
-            "x": 314.85263229257146,
-            "y": 1003.2115926857142,
-            "w": 450.29473541485703,
-            "h": 58.571115428571424,
-            "color": "#C9D3C4",
-            "radius": 29.285557714285712
-           },
-           {
-            "id": "lmw6m7rmx75",
-            "type": "image",
-            "x": 365.6923604845715,
-            "y": 558.0711154285714,
-            "w": 348.61527903085704,
-            "h": 468.5689234285714,
-            "src": "/media/packshots/calm-down-serum-centella.png",
-            "fit": "contain",
-            "shadow": true
-           },
-           {
-            "id": "lmw6m7rmx76",
-            "type": "shape",
-            "x": 263.1183634285715,
-            "y": 1105.1785799999998,
-            "w": 553.763273142857,
-            "h": 59.90227714285712,
-            "color": "#1F3329",
-            "radius": 29.95113857142856
-           },
-           {
-            "id": "lmw6m7rmx77",
-            "type": "text",
-            "x": 263.1183634285715,
-            "y": 1105.1785799999998,
-            "w": 553.763273142857,
-            "text": "Calm Down · sérum apaisant",
-            "size": 25.15895639999999,
-            "weight": 600,
-            "color": "#FFFFFF",
-            "align": "center",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 59.90227714285712,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx78",
-            "type": "logo",
-            "x": 97.2,
-            "y": 1198.830857142857,
-            "w": 237.6,
-            "variant": "wordmark",
-            "tint": "dark"
-           },
-           {
-            "id": "lmw6m7rmx79",
-            "type": "text",
-            "x": 712.8,
-            "y": 1198.830857142857,
-            "w": 270,
-            "text": "5 / 7",
-            "size": 28.08,
-            "weight": 500,
-            "color": "#5C6862",
-            "align": "right",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 53.969142857142856,
-            "valign": "middle"
-           }
-          ]
-         },
-         {
-          "bg": {
-           "type": "color",
-           "color": "#EFEEEA"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx7a",
-            "type": "text",
-            "x": 97.2,
-            "y": 97.2,
-            "w": 432,
-            "text": "05",
-            "size": 151.20000000000002,
-            "weight": 400,
-            "color": "#5E7A68",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1,
-            "maxH": 172.8
-           },
-           {
-            "id": "lmw6m7rmx7b",
-            "type": "text",
-            "x": 97.2,
-            "y": 189.00000000000003,
-            "w": 885.6,
-            "text": "Tu suis l'évolution de ta peau",
-            "size": 62.64,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1.16,
-            "maxH": 283.5,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx7c",
-            "type": "shape",
-            "x": 257.921508096,
-            "y": 492.7057506102857,
-            "w": 564.156983808,
-            "h": 564.156983808,
-            "color": "rgba(0,0,0,0)",
-            "radius": 282.078491904,
-            "stroke": "#5E7A68",
-            "opacity": 0.35
-           },
-           {
-            "id": "lmw6m7rmx7d",
-            "type": "shape",
-            "x": 288.1442036571429,
-            "y": 522.9284461714285,
-            "w": 503.7115926857142,
-            "h": 503.7115926857142,
-            "color": "#EBDDD5",
-            "radius": 251.8557963428571
-           },
-           {
-            "id": "lmw6m7rmx7e",
-            "type": "shape",
-            "x": 691.1134778057143,
-            "y": 522.9284461714285,
-            "w": 80.59385482971427,
-            "h": 80.59385482971427,
-            "color": "#FFFFFF",
-            "radius": 40.29692741485714,
-            "opacity": 0.85
-           },
-           {
-            "id": "lmw6m7rmx7f",
-            "type": "image",
-            "x": 358.6638266331429,
-            "y": 553.1511417325714,
-            "w": 362.6723467337142,
-            "h": 453.3404334171428,
-            "src": "/media/packshots/cloud-cream-creme-hydratante.png",
-            "fit": "contain",
-            "shadow": true
-           },
-           {
-            "id": "lmw6m7rmx7g",
-            "type": "shape",
-            "x": 220.52118857142864,
-            "y": 1105.1785799999998,
-            "w": 638.9576228571427,
-            "h": 59.90227714285712,
-            "color": "#1F3329",
-            "radius": 29.95113857142856
-           },
-           {
-            "id": "lmw6m7rmx7h",
-            "type": "text",
-            "x": 220.52118857142864,
-            "y": 1105.1785799999998,
-            "w": 638.9576228571427,
-            "text": "Cloud Cream · crème hydratante",
-            "size": 25.15895639999999,
-            "weight": 600,
-            "color": "#FFFFFF",
-            "align": "center",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 59.90227714285712,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx7i",
-            "type": "logo",
-            "x": 97.2,
-            "y": 1198.830857142857,
-            "w": 237.6,
-            "variant": "wordmark",
-            "tint": "dark"
-           },
-           {
-            "id": "lmw6m7rmx7j",
-            "type": "text",
-            "x": 712.8,
-            "y": 1198.830857142857,
-            "w": 270,
-            "text": "6 / 7",
-            "size": 28.08,
-            "weight": 500,
-            "color": "#5C6862",
-            "align": "right",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 53.969142857142856,
-            "valign": "middle"
-           }
-          ]
-         },
-         {
-          "bg": {
-           "type": "color",
-           "color": "#1F3329"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx7k",
-            "type": "text",
-            "x": 97.2,
-            "y": 351,
-            "w": 885.6,
-            "text": "Fais ton Skin Diag gratuit",
-            "size": 81,
-            "weight": 500,
-            "color": "#FFFFFF",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1.05,
-            "upper": true,
-            "maxH": 405,
-            "valign": "bottom"
-           },
-           {
-            "id": "lmw6m7rmx7l",
-            "type": "text",
-            "x": 97.2,
-            "y": 810,
-            "w": 885.6,
-            "text": "skinclean.fr",
-            "size": 37.800000000000004,
-            "weight": 500,
-            "color": "#D8DFD4",
-            "align": "left",
-            "font": "body",
-            "lineHeight": 1.08,
-            "maxH": 64.8
-           },
-           {
-            "id": "lmw6m7rmx7m",
-            "type": "logo",
-            "x": 97.2,
-            "y": 1189.0182857142856,
-            "w": 280.8,
-            "variant": "wordmark",
-            "tint": "light"
-           }
-          ]
-         }
-        ]
-       }
-      }
-     }
-    },
-    {
-     "day": 4,
-     "platform": "tiktok",
-     "format": "video",
-     "hour": "18:00",
-     "title": "3 profils, 3 routines",
-     "idea": "Même question, 3 résultats différents.",
-     "cta": "Fais ton Skin Diag",
-     "content": {
-      "caption": "Même diagnostic, 3 peaux, 3 routines différentes 👇\n\nPeau mixte : nettoyant doux + niacinamide\nPeau sèche : toner hydratant + crème riche\nPeau sensible : centella + SPF minéral\n\nPas de routine universelle : la tienne t'attend dans le Skin Diag.",
-      "hashtags": [
-       "#skindiag",
-       "#peaumixte",
-       "#peausensible",
-       "#skincaretok"
-      ],
-      "script": {
-       "hook": "On a fait le Skin Diag à 3 : résultats très différents",
-       "duration": "20 s",
-       "sound": "Son tendance",
-       "scenes": [
-        {
-         "t": "0–3 s",
-         "shot": "Trois mains tiennent trois téléphones.",
-         "onScreen": "1 diagnostic, 3 peaux"
-        },
-        {
-         "t": "3–9 s",
-         "shot": "Peau mixte, application d'un sérum.",
-         "onScreen": "Mixte : niacinamide"
-        },
-        {
-         "t": "9–15 s",
-         "shot": "Peau sèche, application d'une crème.",
-         "onScreen": "Sèche : crème riche"
-        },
-        {
-         "t": "15–20 s",
-         "shot": "Peau sensible, geste doux.",
-         "onScreen": "Sensible : centella"
-        }
-       ]
-      },
-      "visual": {
-       "kind": "video",
-       "src": "/media/videos/demo/pexels-5927936.mp4",
-       "poster": {
-        "w": 1080,
-        "h": 1920,
-        "pages": [
-         {
-          "bg": {
-           "type": "color",
-           "color": "#D8DFD4"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx7n",
-            "type": "logo",
-            "x": 356.4,
-            "y": 249.60000000000002,
-            "w": 367.20000000000005,
-            "variant": "wordmark",
-            "tint": "dark"
-           },
-           {
-            "id": "lmw6m7rmx7o",
-            "type": "shape",
-            "x": 86.4,
-            "y": 448.20685714285713,
-            "w": 907.2,
-            "h": 422.4,
-            "color": "#FFFFFF",
-            "radius": 40,
-            "opacity": 0.95
-           },
-           {
-            "id": "lmw6m7rmx7p",
-            "type": "text",
-            "x": 162,
-            "y": 448.20685714285713,
-            "w": 756,
-            "text": "3 profils, 3 routines",
-            "size": 77.75999999999999,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "center",
-            "font": "display",
-            "lineHeight": 1.12,
-            "maxH": 422.4,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx7q",
-            "type": "image",
-            "x": 237.6,
-            "y": 947.406857142857,
-            "w": 604.8000000000001,
-            "h": 626.9931428571429,
-            "src": "/media/packshots/calm-down-serum-centella.png",
-            "fit": "contain"
-           }
-          ]
-         }
-        ]
-       },
-       "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-      }
-     }
-    },
-    {
-     "day": 5,
-     "platform": "pinterest",
-     "format": "epingle",
-     "hour": "20:30",
-     "title": "Trouve ta routine en 2 minutes",
-     "idea": "Épingle infographie du parcours.",
-     "cta": "Faire le Skin Diag",
-     "content": {
-      "caption": "Trouve ta routine skincare en 2 minutes avec le Skin Diag SKINCLEAN : quelques questions, ton type de peau, ta routine matin et soir. Gratuit.",
-      "hashtags": [
-       "#routineskincare",
-       "#typedepeau",
-       "#skincaretips"
-      ],
-      "visual": {
-       "kind": "design",
-       "design": {
-        "w": 1000,
-        "h": 1500,
-        "pages": [
-         {
-          "bg": {
-           "type": "color",
-           "color": "#EDF0EA"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx7r",
-            "type": "text",
-            "x": 80,
-            "y": 80,
-            "w": 840,
-            "text": "SKIN DIAG",
-            "size": 30,
-            "weight": 600,
-            "color": "#4A6354",
-            "align": "left",
-            "font": "body",
-            "lineHeight": 1.08,
-            "letterSpacing": 3,
-            "maxH": 50,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx7s",
-            "type": "text",
-            "x": 80,
-            "y": 145,
-            "w": 840,
-            "text": "Trouve ta routine en 2 minutes",
-            "size": 75,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1.02,
-            "upper": true,
-            "maxH": 210.00000000000003,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx7t",
-            "type": "shape",
-            "x": 80,
-            "y": 400,
-            "w": 840,
-            "h": 212.11071428571427,
-            "color": "#FAF9F6",
-            "radius": 15
-           },
-           {
-            "id": "lmw6m7rmx7u",
-            "type": "image",
-            "x": 105,
-            "y": 416.96885714285713,
-            "w": 178.17299999999997,
-            "h": 178.17299999999997,
-            "src": "/media/packshots/cloud-gel-nettoyant-doux.png",
-            "fit": "contain"
-           },
-           {
-            "id": "lmw6m7rmx7v",
-            "type": "text",
-            "x": 318.173,
-            "y": 400,
-            "w": 571.827,
-            "text": "1. Réponds à quelques questions",
-            "size": 42,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "body",
-            "lineHeight": 1.2,
-            "maxH": 212.11071428571427,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx7w",
-            "type": "shape",
-            "x": 80,
-            "y": 632.1107142857143,
-            "w": 840,
-            "h": 212.11071428571427,
-            "color": "#FFFFFF",
-            "radius": 15
-           },
-           {
-            "id": "lmw6m7rmx7x",
-            "type": "image",
-            "x": 105,
-            "y": 649.0795714285714,
-            "w": 178.17299999999997,
-            "h": 178.17299999999997,
-            "src": "/media/packshots/dew-drop-toner-hydratant.png",
-            "fit": "contain"
-           },
-           {
-            "id": "lmw6m7rmx7y",
-            "type": "text",
-            "x": 318.173,
-            "y": 632.1107142857143,
-            "w": 571.827,
-            "text": "2. Découvre ton type de peau",
-            "size": 42,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "body",
-            "lineHeight": 1.2,
-            "maxH": 212.11071428571427,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx7z",
-            "type": "shape",
-            "x": 80,
-            "y": 864.2214285714285,
-            "w": 840,
-            "h": 212.11071428571427,
-            "color": "#FAF9F6",
-            "radius": 15
-           },
-           {
-            "id": "lmw6m7rmx80",
-            "type": "image",
-            "x": 105,
-            "y": 881.1902857142857,
-            "w": 178.17299999999997,
-            "h": 178.17299999999997,
-            "src": "/media/packshots/clear-skin-serum-niacinamide.png",
-            "fit": "contain"
-           },
-           {
-            "id": "lmw6m7rmx81",
-            "type": "text",
-            "x": 318.173,
-            "y": 864.2214285714285,
-            "w": 571.827,
-            "text": "3. Reçois ta routine matin et soir",
-            "size": 42,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "body",
-            "lineHeight": 1.2,
-            "maxH": 212.11071428571427,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx82",
-            "type": "shape",
-            "x": 80,
-            "y": 1096.3321428571428,
-            "w": 840,
-            "h": 212.11071428571427,
-            "color": "#FFFFFF",
-            "radius": 15
-           },
-           {
-            "id": "lmw6m7rmx83",
-            "type": "image",
-            "x": 105,
-            "y": 1113.301,
-            "w": 178.17299999999997,
-            "h": 178.17299999999997,
-            "src": "/media/packshots/cloud-cream-creme-hydratante.png",
-            "fit": "contain"
-           },
-           {
-            "id": "lmw6m7rmx84",
-            "type": "text",
-            "x": 318.173,
-            "y": 1096.3321428571428,
-            "w": 571.827,
-            "text": "4. Suis ta peau semaine après semaine",
-            "size": 42,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "body",
-            "lineHeight": 1.2,
-            "maxH": 212.11071428571427,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx85",
-            "type": "logo",
-            "x": 80,
-            "y": 1360.942857142857,
-            "w": 260,
-            "variant": "wordmark",
-            "tint": "dark"
-           }
-          ]
-         }
-        ]
-       }
-      }
-     }
-    },
-    {
-     "day": 7,
-     "platform": "newsletter",
-     "format": "newsletter",
-     "hour": "10:00",
-     "title": "As-tu fait ton Skin Diag ?",
-     "idea": "Relance pédagogique.",
-     "cta": "Faire mon Skin Diag",
-     "content": {
-      "caption": "Objet : 2 minutes pour enfin comprendre ta peau\nPréheader : Ton Skin Diag gratuit t'attend, avec ta routine personnalisée.\nRelance pédagogique : comment fonctionne le diagnostic et ce qu'il t'apporte.",
-      "hashtags": [],
-      "visual": {
-       "kind": "design",
-       "design": {
-        "w": 1200,
-        "h": 600,
-        "pages": [
-         {
-          "bg": {
-           "type": "color",
-           "color": "#EFEEEA"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx86",
-            "type": "text",
-            "x": 72,
-            "y": 72,
-            "w": 624,
-            "text": "2 MINUTES",
-            "size": 25.200000000000003,
-            "weight": 600,
-            "color": "#4A6354",
-            "align": "left",
-            "font": "body",
-            "lineHeight": 1.08,
-            "letterSpacing": 3,
-            "maxH": 42.00000000000001,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx87",
-            "type": "text",
-            "x": 72,
-            "y": 126,
-            "w": 624,
-            "text": "As-tu fait ton Skin Diag ?",
-            "size": 78,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1.02,
-            "upper": true,
-            "maxH": 294,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx88",
-            "type": "shape",
-            "x": 72,
-            "y": 450,
-            "w": 300,
-            "h": 78,
-            "color": "#1F3329",
-            "radius": 39
-           },
-           {
-            "id": "lmw6m7rmx89",
-            "type": "text",
-            "x": 72,
-            "y": 450,
-            "w": 300,
-            "text": "DÉCOUVRIR",
-            "size": 24,
-            "weight": 600,
-            "color": "#FFFFFF",
-            "align": "center",
-            "font": "body",
-            "lineHeight": 1.08,
-            "letterSpacing": 2,
-            "maxH": 78,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx8a",
-            "type": "image",
-            "x": 720,
-            "y": 60,
-            "w": 312,
-            "h": 480,
-            "src": "/media/packshots/dew-drop-toner-hydratant.png",
-            "fit": "contain"
-           },
-           {
-            "id": "lmw6m7rmx8b",
-            "type": "logo",
-            "x": 984,
-            "y": 72,
-            "w": 144,
-            "variant": "wordmark",
-            "tint": "dark"
-           }
-          ]
-         }
-        ]
-       }
-      }
-     }
-    },
-    {
-     "day": 9,
-     "platform": "instagram",
-     "format": "reel",
-     "hour": "18:30",
-     "title": "Ce que ton Skin Diag sait de ta peau",
-     "idea": "Reel explicatif.",
-     "cta": "Fais ton Skin Diag",
-     "content": {
-      "caption": "Ce que ton Skin Diag sait (vraiment) de ta peau 👇\n\nTon type de peau, ses besoins du moment, ta sensibilité, et le temps que tu veux passer sur ta routine. Rien de plus : pas besoin de photo, pas de compte obligatoire.\n\nEnregistre ce Reel et fais-le ce soir 🌙",
-      "hashtags": [
-       "#skindiag",
-       "#reelskincare",
-       "#skinclean"
-      ],
-      "script": {
-       "hook": "Ce que ton Skin Diag sait de ta peau",
-       "duration": "15 s",
-       "sound": "Son doux",
-       "scenes": [
-        {
-         "t": "0–3 s",
-         "shot": "Regard face caméra.",
-         "onScreen": "Ce que ton Skin Diag sait de ta peau"
-        },
-        {
-         "t": "3–10 s",
-         "shot": "Gestes de soin, routine du soir.",
-         "onScreen": "Ton type de peau · tes besoins · ta sensibilité"
-        },
-        {
-         "t": "10–15 s",
-         "shot": "Sourire.",
-         "onScreen": "Sans photo, sans compte : skinclean.fr"
-        }
-       ]
-      },
-      "visual": {
-       "kind": "video",
-       "src": "/media/videos/demo/pexels-6925816.mp4",
-       "poster": {
-        "w": 1080,
-        "h": 1920,
-        "pages": [
-         {
-          "bg": {
-           "type": "color",
-           "color": "#D8DFD4"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx8c",
-            "type": "logo",
-            "x": 356.4,
-            "y": 249.60000000000002,
-            "w": 367.20000000000005,
-            "variant": "wordmark",
-            "tint": "dark"
-           },
-           {
-            "id": "lmw6m7rmx8d",
-            "type": "shape",
-            "x": 86.4,
-            "y": 448.20685714285713,
-            "w": 907.2,
-            "h": 422.4,
-            "color": "#FFFFFF",
-            "radius": 40,
-            "opacity": 0.95
-           },
-           {
-            "id": "lmw6m7rmx8e",
-            "type": "text",
-            "x": 162,
-            "y": 448.20685714285713,
-            "w": 756,
-            "text": "Ce que ton Skin Diag sait de ta peau",
-            "size": 77.75999999999999,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "center",
-            "font": "display",
-            "lineHeight": 1.12,
-            "maxH": 422.4,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx8f",
-            "type": "image",
-            "x": 237.6,
-            "y": 947.406857142857,
-            "w": 604.8000000000001,
-            "h": 626.9931428571429,
-            "src": "/media/packshots/calm-down-serum-centella.png",
-            "fit": "contain"
-           }
-          ]
-         }
-        ]
-       },
-       "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-      }
-     }
-    },
-    {
-     "day": 12,
-     "platform": "facebook",
-     "format": "post",
-     "hour": "13:00",
-     "title": "Le Skin Diag expliqué aux parents (et aux autres)",
-     "idea": "Post pédagogique.",
-     "cta": "Faire le Skin Diag",
-     "content": {
-      "caption": "Le Skin Diag expliqué simplement 👨‍👩‍👧\n\nC'est un questionnaire gratuit de 2 minutes. Il aide à identifier le type de peau (grasse, sèche, mixte, sensible) et propose une routine simple, matin et soir.\n\nPratique pour les ados qui débutent, et pour tous ceux qui ne savent plus quoi choisir. Nos conseils sont cosmétiques et ne remplacent pas l'avis d'un professionnel de santé.",
-      "hashtags": [
-       "#skindiag",
-       "#skincareado",
-       "#skinclean"
-      ],
-      "visual": {
-       "kind": "design",
-       "design": {
-        "w": 1200,
-        "h": 1200,
-        "pages": [
-         {
-          "bg": {
-           "type": "color",
-           "color": "#F1E9D2"
-          },
-          "layers": [
-           {
-            "id": "lmw6m7rmx8g",
-            "type": "text",
-            "x": 96,
-            "y": 96,
-            "w": 1008,
-            "text": "2 MINUTES, GRATUIT",
-            "size": 31.2,
-            "weight": 600,
-            "color": "#4A6354",
-            "align": "left",
-            "font": "body",
-            "lineHeight": 1.08,
-            "letterSpacing": 3,
-            "maxH": 48,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx8h",
-            "type": "text",
-            "x": 96,
-            "y": 174,
-            "w": 1008,
-            "text": "Le Skin Diag, expliqué simplement",
-            "size": 84.00000000000001,
-            "weight": 500,
-            "color": "#1F3329",
-            "align": "left",
-            "font": "display",
-            "lineHeight": 1.08,
-            "upper": true,
-            "maxH": 264,
-            "valign": "top"
-           },
-           {
-            "id": "lmw6m7rmx8i",
-            "type": "image",
-            "x": 96,
-            "y": 462,
-            "w": 1008,
-            "h": 498,
-            "src": "/media/packshots/dew-drop-toner-hydratant.png",
-            "fit": "contain",
-            "shadow": true
-           },
-           {
-            "id": "lmw6m7rmx8j",
-            "type": "text",
-            "x": 96,
-            "y": 996,
-            "w": 624,
-            "text": "Le bon type de peau, la bonne routine",
-            "size": 36,
-            "weight": 400,
-            "color": "#5C6862",
-            "align": "left",
-            "font": "body",
-            "lineHeight": 1.3,
-            "maxH": 108,
-            "valign": "middle"
-           },
-           {
-            "id": "lmw6m7rmx8k",
-            "type": "logo",
-            "x": 816,
-            "y": 1017.2914285714286,
-            "w": 288,
-            "variant": "wordmark",
-            "tint": "dark"
-           }
-          ]
-         }
-        ]
-       }
-      }
-     }
     }
    ]
   },
@@ -7071,6 +5348,1729 @@
      }
     }
    ]
+  },
+  {
+   "id": "camp-skin-diag",
+   "name": "Découverte du Skin Diag",
+   "status": "planifiee",
+   "color": "#4A6354",
+   "objective": "Faire réaliser le Skin Diag gratuit et capter des inscriptions (routine reçue par e-mail).",
+   "target": "18-30 ans hésitant sur leur routine — Léa et Inès en priorité",
+   "concept": "« 2 minutes pour enfin comprendre ta peau » : le diagnostic comme jeu, la routine comme récompense.",
+   "message": "Fais ton Skin Diag gratuit et reçois ta routine personnalisée par e-mail.",
+   "channels": [
+    "TikTok",
+    "Instagram",
+    "Stories",
+    "Meta Ads",
+    "TikTok Ads",
+    "Newsletter"
+   ],
+   "budget": 1900,
+   "kpis": [
+    {
+     "label": "Skin Diag complétés",
+     "target": "2 000"
+    },
+    {
+     "label": "Inscriptions",
+     "target": "800"
+    },
+    {
+     "label": "CTR publicités",
+     "target": "≥ 1,2 %"
+    }
+   ],
+   "startDate": "2026-11-11",
+   "durationDays": 21,
+   "plan": [
+    {
+     "day": 0,
+     "platform": "tiktok",
+     "format": "video",
+     "hour": "18:00",
+     "title": "Je fais le Skin Diag en direct",
+     "idea": "Écran partagé : réponses + résultat.",
+     "cta": "Fais ton Skin Diag",
+     "content": {
+      "caption": "Je fais le Skin Diag SKINCLEAN en direct 👀\n\n2 minutes, quelques questions sur ma peau… et ma routine matin et soir arrive. Résultat : peau mixte, légèrement déshydratée. Et toi ?\n\nLe Skin Diag est gratuit, lien en bio.",
+      "hashtags": [
+       "#skindiag",
+       "#typedepeau",
+       "#skincaretok",
+       "#skinclean"
+      ],
+      "script": {
+       "hook": "Je teste un diagnostic de peau en 2 minutes",
+       "duration": "25 s",
+       "sound": "Son tendance",
+       "scenes": [
+        {
+         "t": "0–3 s",
+         "shot": "Face caméra, téléphone en main.",
+         "onScreen": "Je fais le Skin Diag en direct"
+        },
+        {
+         "t": "3–15 s",
+         "shot": "Écran partagé : les questions du Skin Diag.",
+         "onScreen": "Ma peau tiraille ? Un peu…"
+        },
+        {
+         "t": "15–22 s",
+         "shot": "Révélation du résultat.",
+         "onScreen": "Peau mixte, un peu déshydratée"
+        },
+        {
+         "t": "22–25 s",
+         "shot": "Application du soin conseillé.",
+         "onScreen": "À ton tour : lien en bio"
+        }
+       ]
+      },
+      "visual": {
+       "kind": "video",
+       "src": "/media/videos/demo/pexels-5936529.mp4",
+       "poster": {
+        "w": 1080,
+        "h": 1920,
+        "pages": [
+         {
+          "bg": {
+           "type": "color",
+           "color": "#D8DFD4"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95imy",
+            "type": "logo",
+            "x": 356.4,
+            "y": 249.60000000000002,
+            "w": 367.20000000000005,
+            "variant": "wordmark",
+            "tint": "dark"
+           },
+           {
+            "id": "lmwb7d95imz",
+            "type": "shape",
+            "x": 86.4,
+            "y": 448.20685714285713,
+            "w": 907.2,
+            "h": 422.4,
+            "color": "#FFFFFF",
+            "radius": 40,
+            "opacity": 0.95
+           },
+           {
+            "id": "lmwb7d95in0",
+            "type": "text",
+            "x": 162,
+            "y": 448.20685714285713,
+            "w": 756,
+            "text": "Je fais le Skin Diag en direct",
+            "size": 77.75999999999999,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "center",
+            "font": "display",
+            "lineHeight": 1.12,
+            "maxH": 422.4,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95in1",
+            "type": "image",
+            "x": 237.6,
+            "y": 947.406857142857,
+            "w": 604.8000000000001,
+            "h": 626.9931428571429,
+            "src": "/media/packshots/dew-drop-toner-hydratant.png",
+            "fit": "contain"
+           }
+          ]
+         }
+        ]
+       },
+       "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+      }
+     }
+    },
+    {
+     "day": 1,
+     "platform": "story",
+     "format": "story",
+     "hour": "12:00",
+     "title": "Story : ton résultat Skin Diag ?",
+     "idea": "Sondage + lien vers le diag.",
+     "cta": "Fais le Skin Diag",
+     "content": {
+      "caption": "Sticker sondage natif sur la zone prévue, puis story suivante avec le sticker lien vers skinclean.fr/skin-diag.",
+      "hashtags": [],
+      "visual": {
+       "kind": "design",
+       "design": {
+        "w": 1080,
+        "h": 1920,
+        "pages": [
+         {
+          "bg": {
+           "type": "color",
+           "color": "#EDF0EA"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95in2",
+            "type": "logo",
+            "x": 388.79999999999995,
+            "y": 136.07999999999998,
+            "w": 302.40000000000003,
+            "variant": "wordmark",
+            "tint": "dark"
+           },
+           {
+            "id": "lmwb7d95in3",
+            "type": "text",
+            "x": 97.2,
+            "y": 288,
+            "w": 885.6,
+            "text": "SKIN DIAG",
+            "size": 32.4,
+            "weight": 600,
+            "color": "#4A6354",
+            "align": "center",
+            "font": "body",
+            "lineHeight": 1.08,
+            "letterSpacing": 3,
+            "maxH": 54,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95in4",
+            "type": "text",
+            "x": 97.2,
+            "y": 364.8,
+            "w": 885.6,
+            "text": "Ton résultat Skin Diag ?",
+            "size": 91.80000000000001,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "center",
+            "font": "display",
+            "lineHeight": 1.08,
+            "maxH": 403.2,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95in5",
+            "type": "image",
+            "x": 216,
+            "y": 806.4,
+            "w": 648,
+            "h": 576,
+            "src": "/media/packshots/dew-drop-toner-hydratant.png",
+            "fit": "contain"
+           },
+           {
+            "id": "lmwb7d95in6",
+            "type": "shape",
+            "x": 97.2,
+            "y": 1440,
+            "w": 885.6,
+            "h": 302.40000000000003,
+            "color": "#FFFFFF",
+            "radius": 32,
+            "opacity": 0.95
+           },
+           {
+            "id": "lmwb7d95in7",
+            "type": "text",
+            "x": 97.2,
+            "y": 1458.144,
+            "w": 885.6,
+            "text": "Zone du sticker sondage",
+            "size": 28.08,
+            "weight": 500,
+            "color": "#5C6862",
+            "align": "center",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 78.62400000000001,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95in8",
+            "type": "text",
+            "x": 140.4,
+            "y": 1548.864,
+            "w": 799.2,
+            "text": "Peau mixte   ·   Sèche ou sensible",
+            "size": 54,
+            "weight": 600,
+            "color": "#1F3329",
+            "align": "center",
+            "font": "display",
+            "lineHeight": 1.08,
+            "maxH": 157.24800000000002,
+            "valign": "middle"
+           }
+          ]
+         }
+        ]
+       }
+      }
+     }
+    },
+    {
+     "day": 2,
+     "platform": "instagram",
+     "format": "carrousel",
+     "hour": "12:30",
+     "title": "Comment fonctionne le Skin Diag",
+     "idea": "5 slides : questions, moteur, routine, e-mail, suivi.",
+     "cta": "Enregistre le post",
+     "content": {
+      "caption": "Comment fonctionne le Skin Diag ? 🔍\n\n1. Tu réponds à quelques questions sur ta peau\n2. On analyse ton type de peau et tes priorités\n3. Tu reçois ta routine du matin et du soir\n4. On te l'envoie par e-mail\n5. Tu suis ta peau au fil des semaines\n\nC'est gratuit et ça prend 2 minutes : lien en bio.",
+      "hashtags": [
+       "#skindiag",
+       "#routinepersonnalisee",
+       "#skincare",
+       "#skinclean"
+      ],
+      "slides": [
+       "Tu réponds à quelques questions",
+       "On analyse ta peau",
+       "Tu reçois ta routine",
+       "Par e-mail",
+       "Tu suis ta peau"
+      ],
+      "visual": {
+       "kind": "design",
+       "design": {
+        "w": 1080,
+        "h": 1350,
+        "pages": [
+         {
+          "bg": {
+           "type": "color",
+           "color": "#EDF0EA"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95in9",
+            "type": "logo",
+            "x": 97.2,
+            "y": 97.2,
+            "w": 237.6,
+            "variant": "wordmark",
+            "tint": "dark"
+           },
+           {
+            "id": "lmwb7d95ina",
+            "type": "text",
+            "x": 97.2,
+            "y": 232.16914285714284,
+            "w": 885.6,
+            "text": "2 MINUTES CHRONO",
+            "size": 28.08,
+            "weight": 600,
+            "color": "#4A6354",
+            "align": "left",
+            "font": "body",
+            "lineHeight": 1.08,
+            "letterSpacing": 3,
+            "maxH": 48.6,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95inb",
+            "type": "text",
+            "x": 97.2,
+            "y": 296.96914285714286,
+            "w": 885.6,
+            "text": "Comment fonctionne le Skin Diag",
+            "size": 102.6,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1,
+            "upper": true,
+            "maxH": 351,
+            "valign": "top"
+           },
+           {
+            "id": "lmwb7d95inc",
+            "type": "image",
+            "x": 496.8,
+            "y": 688.4691428571429,
+            "w": 496.8,
+            "h": 564.3308571428571,
+            "src": "/media/packshots/dew-drop-toner-hydratant.png",
+            "fit": "contain"
+           },
+           {
+            "id": "lmwb7d95ind",
+            "type": "text",
+            "x": 97.2,
+            "y": 1188,
+            "w": 388.8,
+            "text": "Swipe →",
+            "size": 34.56,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 64.8,
+            "valign": "middle"
+           }
+          ]
+         },
+         {
+          "bg": {
+           "type": "color",
+           "color": "#EFEEEA"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95ine",
+            "type": "text",
+            "x": 97.2,
+            "y": 97.2,
+            "w": 432,
+            "text": "01",
+            "size": 151.20000000000002,
+            "weight": 400,
+            "color": "#5E7A68",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1,
+            "maxH": 172.8
+           },
+           {
+            "id": "lmwb7d95inf",
+            "type": "text",
+            "x": 97.2,
+            "y": 189.00000000000003,
+            "w": 885.6,
+            "text": "Tu réponds à quelques questions sur ta peau",
+            "size": 62.64,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1.16,
+            "maxH": 283.5,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ing",
+            "type": "shape",
+            "x": 358.4295421714286,
+            "y": 499.5,
+            "w": 363.1409156571428,
+            "h": 527.1400388571428,
+            "color": "#EBDDD5",
+            "radius": 181.5704578285714
+           },
+           {
+            "id": "lmwb7d95inh",
+            "type": "shape",
+            "x": 314.85263229257146,
+            "y": 1003.2115926857142,
+            "w": 450.29473541485703,
+            "h": 58.571115428571424,
+            "color": "#D9C3B6",
+            "radius": 29.285557714285712
+           },
+           {
+            "id": "lmwb7d95ini",
+            "type": "image",
+            "x": 365.6923604845715,
+            "y": 558.0711154285714,
+            "w": 348.61527903085704,
+            "h": 468.5689234285714,
+            "src": "/media/packshots/cloud-gel-nettoyant-doux.png",
+            "fit": "contain",
+            "shadow": true
+           },
+           {
+            "id": "lmwb7d95inj",
+            "type": "shape",
+            "x": 263.1183634285715,
+            "y": 1105.1785799999998,
+            "w": 553.763273142857,
+            "h": 59.90227714285712,
+            "color": "#1F3329",
+            "radius": 29.95113857142856
+           },
+           {
+            "id": "lmwb7d95ink",
+            "type": "text",
+            "x": 263.1183634285715,
+            "y": 1105.1785799999998,
+            "w": 553.763273142857,
+            "text": "Cloud Gel · nettoyant doux",
+            "size": 25.15895639999999,
+            "weight": 600,
+            "color": "#FFFFFF",
+            "align": "center",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 59.90227714285712,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95inl",
+            "type": "logo",
+            "x": 97.2,
+            "y": 1198.830857142857,
+            "w": 237.6,
+            "variant": "wordmark",
+            "tint": "dark"
+           },
+           {
+            "id": "lmwb7d95inm",
+            "type": "text",
+            "x": 712.8,
+            "y": 1198.830857142857,
+            "w": 270,
+            "text": "2 / 7",
+            "size": 28.08,
+            "weight": 500,
+            "color": "#5C6862",
+            "align": "right",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 53.969142857142856,
+            "valign": "middle"
+           }
+          ]
+         },
+         {
+          "bg": {
+           "type": "color",
+           "color": "#FAF9F6"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95inn",
+            "type": "text",
+            "x": 97.2,
+            "y": 97.2,
+            "w": 432,
+            "text": "02",
+            "size": 151.20000000000002,
+            "weight": 400,
+            "color": "#5E7A68",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1,
+            "maxH": 172.8
+           },
+           {
+            "id": "lmwb7d95ino",
+            "type": "text",
+            "x": 97.2,
+            "y": 189.00000000000003,
+            "w": 885.6,
+            "text": "On analyse ton type de peau et tes priorités",
+            "size": 62.64,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1.16,
+            "maxH": 283.5,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95inp",
+            "type": "shape",
+            "x": 257.921508096,
+            "y": 492.7057506102857,
+            "w": 564.156983808,
+            "h": 564.156983808,
+            "color": "rgba(0,0,0,0)",
+            "radius": 282.078491904,
+            "stroke": "#5E7A68",
+            "opacity": 0.35
+           },
+           {
+            "id": "lmwb7d95inq",
+            "type": "shape",
+            "x": 288.1442036571429,
+            "y": 522.9284461714285,
+            "w": 503.7115926857142,
+            "h": 503.7115926857142,
+            "color": "#D8DFD4",
+            "radius": 251.8557963428571
+           },
+           {
+            "id": "lmwb7d95inr",
+            "type": "shape",
+            "x": 691.1134778057143,
+            "y": 522.9284461714285,
+            "w": 80.59385482971427,
+            "h": 80.59385482971427,
+            "color": "#FFFFFF",
+            "radius": 40.29692741485714,
+            "opacity": 0.85
+           },
+           {
+            "id": "lmwb7d95ins",
+            "type": "image",
+            "x": 358.6638266331429,
+            "y": 553.1511417325714,
+            "w": 362.6723467337142,
+            "h": 453.3404334171428,
+            "src": "/media/packshots/dew-drop-toner-hydratant.png",
+            "fit": "contain",
+            "shadow": true
+           },
+           {
+            "id": "lmwb7d95int",
+            "type": "shape",
+            "x": 263.1183634285715,
+            "y": 1105.1785799999998,
+            "w": 553.763273142857,
+            "h": 59.90227714285712,
+            "color": "#1F3329",
+            "radius": 29.95113857142856
+           },
+           {
+            "id": "lmwb7d95inu",
+            "type": "text",
+            "x": 263.1183634285715,
+            "y": 1105.1785799999998,
+            "w": 553.763273142857,
+            "text": "Dew Drop · toner hydratant",
+            "size": 25.15895639999999,
+            "weight": 600,
+            "color": "#FFFFFF",
+            "align": "center",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 59.90227714285712,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95inv",
+            "type": "logo",
+            "x": 97.2,
+            "y": 1198.830857142857,
+            "w": 237.6,
+            "variant": "wordmark",
+            "tint": "dark"
+           },
+           {
+            "id": "lmwb7d95inw",
+            "type": "text",
+            "x": 712.8,
+            "y": 1198.830857142857,
+            "w": 270,
+            "text": "3 / 7",
+            "size": 28.08,
+            "weight": 500,
+            "color": "#5C6862",
+            "align": "right",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 53.969142857142856,
+            "valign": "middle"
+           }
+          ]
+         },
+         {
+          "bg": {
+           "type": "color",
+           "color": "#EFEEEA"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95inx",
+            "type": "text",
+            "x": 97.2,
+            "y": 97.2,
+            "w": 432,
+            "text": "03",
+            "size": 151.20000000000002,
+            "weight": 400,
+            "color": "#5E7A68",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1,
+            "maxH": 172.8
+           },
+           {
+            "id": "lmwb7d95iny",
+            "type": "text",
+            "x": 97.2,
+            "y": 189.00000000000003,
+            "w": 885.6,
+            "text": "Tu reçois ta routine du matin et du soir",
+            "size": 62.64,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1.16,
+            "maxH": 283.5,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95inz",
+            "type": "shape",
+            "x": 132.624,
+            "y": 546.3568923428571,
+            "w": 814.7520000000001,
+            "h": 421.7120310857142,
+            "color": "#F1E9D2",
+            "radius": 44.28,
+            "opacity": 0.7
+           },
+           {
+            "id": "lmwb7d95io0",
+            "type": "shape",
+            "x": 276.4299805714286,
+            "y": 979.7831465142856,
+            "w": 527.1400388571428,
+            "h": 58.571115428571424,
+            "color": "#DDCFA8",
+            "radius": 17.571334628571424
+           },
+           {
+            "id": "lmwb7d95io1",
+            "type": "shape",
+            "x": 350.2295860114286,
+            "y": 932.9262541714286,
+            "w": 379.54082797714284,
+            "h": 58.571115428571424,
+            "color": "#FFFFFF",
+            "radius": 17.571334628571424
+           },
+           {
+            "id": "lmwb7d95io2",
+            "type": "image",
+            "x": 360.77238678857145,
+            "y": 511.2142230857143,
+            "w": 358.45522642285715,
+            "h": 433.4262541714285,
+            "src": "/media/packshots/clear-skin-serum-niacinamide.png",
+            "fit": "contain",
+            "shadow": true
+           },
+           {
+            "id": "lmwb7d95io3",
+            "type": "shape",
+            "x": 220.52118857142864,
+            "y": 1105.1785799999998,
+            "w": 638.9576228571427,
+            "h": 59.90227714285712,
+            "color": "#1F3329",
+            "radius": 29.95113857142856
+           },
+           {
+            "id": "lmwb7d95io4",
+            "type": "text",
+            "x": 220.52118857142864,
+            "y": 1105.1785799999998,
+            "w": 638.9576228571427,
+            "text": "Clear Skin · sérum niacinamide",
+            "size": 25.15895639999999,
+            "weight": 600,
+            "color": "#FFFFFF",
+            "align": "center",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 59.90227714285712,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95io5",
+            "type": "logo",
+            "x": 97.2,
+            "y": 1198.830857142857,
+            "w": 237.6,
+            "variant": "wordmark",
+            "tint": "dark"
+           },
+           {
+            "id": "lmwb7d95io6",
+            "type": "text",
+            "x": 712.8,
+            "y": 1198.830857142857,
+            "w": 270,
+            "text": "4 / 7",
+            "size": 28.08,
+            "weight": 500,
+            "color": "#5C6862",
+            "align": "right",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 53.969142857142856,
+            "valign": "middle"
+           }
+          ]
+         },
+         {
+          "bg": {
+           "type": "color",
+           "color": "#FAF9F6"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95io7",
+            "type": "text",
+            "x": 97.2,
+            "y": 97.2,
+            "w": 432,
+            "text": "04",
+            "size": 151.20000000000002,
+            "weight": 400,
+            "color": "#5E7A68",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1,
+            "maxH": 172.8
+           },
+           {
+            "id": "lmwb7d95io8",
+            "type": "text",
+            "x": 97.2,
+            "y": 189.00000000000003,
+            "w": 885.6,
+            "text": "On te l'envoie par e-mail, pour la garder",
+            "size": 62.64,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1.16,
+            "maxH": 283.5,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95io9",
+            "type": "shape",
+            "x": 358.4295421714286,
+            "y": 499.5,
+            "w": 363.1409156571428,
+            "h": 527.1400388571428,
+            "color": "#EDF0EA",
+            "radius": 181.5704578285714
+           },
+           {
+            "id": "lmwb7d95ioa",
+            "type": "shape",
+            "x": 314.85263229257146,
+            "y": 1003.2115926857142,
+            "w": 450.29473541485703,
+            "h": 58.571115428571424,
+            "color": "#C9D3C4",
+            "radius": 29.285557714285712
+           },
+           {
+            "id": "lmwb7d95iob",
+            "type": "image",
+            "x": 365.6923604845715,
+            "y": 558.0711154285714,
+            "w": 348.61527903085704,
+            "h": 468.5689234285714,
+            "src": "/media/packshots/calm-down-serum-centella.png",
+            "fit": "contain",
+            "shadow": true
+           },
+           {
+            "id": "lmwb7d95ioc",
+            "type": "shape",
+            "x": 263.1183634285715,
+            "y": 1105.1785799999998,
+            "w": 553.763273142857,
+            "h": 59.90227714285712,
+            "color": "#1F3329",
+            "radius": 29.95113857142856
+           },
+           {
+            "id": "lmwb7d95iod",
+            "type": "text",
+            "x": 263.1183634285715,
+            "y": 1105.1785799999998,
+            "w": 553.763273142857,
+            "text": "Calm Down · sérum apaisant",
+            "size": 25.15895639999999,
+            "weight": 600,
+            "color": "#FFFFFF",
+            "align": "center",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 59.90227714285712,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ioe",
+            "type": "logo",
+            "x": 97.2,
+            "y": 1198.830857142857,
+            "w": 237.6,
+            "variant": "wordmark",
+            "tint": "dark"
+           },
+           {
+            "id": "lmwb7d95iof",
+            "type": "text",
+            "x": 712.8,
+            "y": 1198.830857142857,
+            "w": 270,
+            "text": "5 / 7",
+            "size": 28.08,
+            "weight": 500,
+            "color": "#5C6862",
+            "align": "right",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 53.969142857142856,
+            "valign": "middle"
+           }
+          ]
+         },
+         {
+          "bg": {
+           "type": "color",
+           "color": "#EFEEEA"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95iog",
+            "type": "text",
+            "x": 97.2,
+            "y": 97.2,
+            "w": 432,
+            "text": "05",
+            "size": 151.20000000000002,
+            "weight": 400,
+            "color": "#5E7A68",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1,
+            "maxH": 172.8
+           },
+           {
+            "id": "lmwb7d95ioh",
+            "type": "text",
+            "x": 97.2,
+            "y": 189.00000000000003,
+            "w": 885.6,
+            "text": "Tu suis l'évolution de ta peau",
+            "size": 62.64,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1.16,
+            "maxH": 283.5,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ioi",
+            "type": "shape",
+            "x": 257.921508096,
+            "y": 492.7057506102857,
+            "w": 564.156983808,
+            "h": 564.156983808,
+            "color": "rgba(0,0,0,0)",
+            "radius": 282.078491904,
+            "stroke": "#5E7A68",
+            "opacity": 0.35
+           },
+           {
+            "id": "lmwb7d95ioj",
+            "type": "shape",
+            "x": 288.1442036571429,
+            "y": 522.9284461714285,
+            "w": 503.7115926857142,
+            "h": 503.7115926857142,
+            "color": "#EBDDD5",
+            "radius": 251.8557963428571
+           },
+           {
+            "id": "lmwb7d95iok",
+            "type": "shape",
+            "x": 691.1134778057143,
+            "y": 522.9284461714285,
+            "w": 80.59385482971427,
+            "h": 80.59385482971427,
+            "color": "#FFFFFF",
+            "radius": 40.29692741485714,
+            "opacity": 0.85
+           },
+           {
+            "id": "lmwb7d95iol",
+            "type": "image",
+            "x": 358.6638266331429,
+            "y": 553.1511417325714,
+            "w": 362.6723467337142,
+            "h": 453.3404334171428,
+            "src": "/media/packshots/cloud-cream-creme-hydratante.png",
+            "fit": "contain",
+            "shadow": true
+           },
+           {
+            "id": "lmwb7d95iom",
+            "type": "shape",
+            "x": 220.52118857142864,
+            "y": 1105.1785799999998,
+            "w": 638.9576228571427,
+            "h": 59.90227714285712,
+            "color": "#1F3329",
+            "radius": 29.95113857142856
+           },
+           {
+            "id": "lmwb7d95ion",
+            "type": "text",
+            "x": 220.52118857142864,
+            "y": 1105.1785799999998,
+            "w": 638.9576228571427,
+            "text": "Cloud Cream · crème hydratante",
+            "size": 25.15895639999999,
+            "weight": 600,
+            "color": "#FFFFFF",
+            "align": "center",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 59.90227714285712,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ioo",
+            "type": "logo",
+            "x": 97.2,
+            "y": 1198.830857142857,
+            "w": 237.6,
+            "variant": "wordmark",
+            "tint": "dark"
+           },
+           {
+            "id": "lmwb7d95iop",
+            "type": "text",
+            "x": 712.8,
+            "y": 1198.830857142857,
+            "w": 270,
+            "text": "6 / 7",
+            "size": 28.08,
+            "weight": 500,
+            "color": "#5C6862",
+            "align": "right",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 53.969142857142856,
+            "valign": "middle"
+           }
+          ]
+         },
+         {
+          "bg": {
+           "type": "color",
+           "color": "#1F3329"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95ioq",
+            "type": "text",
+            "x": 97.2,
+            "y": 351,
+            "w": 885.6,
+            "text": "Fais ton Skin Diag gratuit",
+            "size": 81,
+            "weight": 500,
+            "color": "#FFFFFF",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1.05,
+            "upper": true,
+            "maxH": 405,
+            "valign": "bottom"
+           },
+           {
+            "id": "lmwb7d95ior",
+            "type": "text",
+            "x": 97.2,
+            "y": 810,
+            "w": 885.6,
+            "text": "skinclean.fr",
+            "size": 37.800000000000004,
+            "weight": 500,
+            "color": "#D8DFD4",
+            "align": "left",
+            "font": "body",
+            "lineHeight": 1.08,
+            "maxH": 64.8
+           },
+           {
+            "id": "lmwb7d95ios",
+            "type": "logo",
+            "x": 97.2,
+            "y": 1189.0182857142856,
+            "w": 280.8,
+            "variant": "wordmark",
+            "tint": "light"
+           }
+          ]
+         }
+        ]
+       }
+      }
+     }
+    },
+    {
+     "day": 4,
+     "platform": "tiktok",
+     "format": "video",
+     "hour": "18:00",
+     "title": "3 profils, 3 routines",
+     "idea": "Même question, 3 résultats différents.",
+     "cta": "Fais ton Skin Diag",
+     "content": {
+      "caption": "Même diagnostic, 3 peaux, 3 routines différentes 👇\n\nPeau mixte : nettoyant doux + niacinamide\nPeau sèche : toner hydratant + crème riche\nPeau sensible : centella + SPF minéral\n\nPas de routine universelle : la tienne t'attend dans le Skin Diag.",
+      "hashtags": [
+       "#skindiag",
+       "#peaumixte",
+       "#peausensible",
+       "#skincaretok"
+      ],
+      "script": {
+       "hook": "On a fait le Skin Diag à 3 : résultats très différents",
+       "duration": "20 s",
+       "sound": "Son tendance",
+       "scenes": [
+        {
+         "t": "0–3 s",
+         "shot": "Trois mains tiennent trois téléphones.",
+         "onScreen": "1 diagnostic, 3 peaux"
+        },
+        {
+         "t": "3–9 s",
+         "shot": "Peau mixte, application d'un sérum.",
+         "onScreen": "Mixte : niacinamide"
+        },
+        {
+         "t": "9–15 s",
+         "shot": "Peau sèche, application d'une crème.",
+         "onScreen": "Sèche : crème riche"
+        },
+        {
+         "t": "15–20 s",
+         "shot": "Peau sensible, geste doux.",
+         "onScreen": "Sensible : centella"
+        }
+       ]
+      },
+      "visual": {
+       "kind": "video",
+       "src": "/media/videos/demo/pexels-5927936.mp4",
+       "poster": {
+        "w": 1080,
+        "h": 1920,
+        "pages": [
+         {
+          "bg": {
+           "type": "color",
+           "color": "#D8DFD4"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95iot",
+            "type": "logo",
+            "x": 356.4,
+            "y": 249.60000000000002,
+            "w": 367.20000000000005,
+            "variant": "wordmark",
+            "tint": "dark"
+           },
+           {
+            "id": "lmwb7d95iou",
+            "type": "shape",
+            "x": 86.4,
+            "y": 448.20685714285713,
+            "w": 907.2,
+            "h": 422.4,
+            "color": "#FFFFFF",
+            "radius": 40,
+            "opacity": 0.95
+           },
+           {
+            "id": "lmwb7d95iov",
+            "type": "text",
+            "x": 162,
+            "y": 448.20685714285713,
+            "w": 756,
+            "text": "3 profils, 3 routines",
+            "size": 77.75999999999999,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "center",
+            "font": "display",
+            "lineHeight": 1.12,
+            "maxH": 422.4,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95iow",
+            "type": "image",
+            "x": 237.6,
+            "y": 947.406857142857,
+            "w": 604.8000000000001,
+            "h": 626.9931428571429,
+            "src": "/media/packshots/calm-down-serum-centella.png",
+            "fit": "contain"
+           }
+          ]
+         }
+        ]
+       },
+       "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+      }
+     }
+    },
+    {
+     "day": 5,
+     "platform": "pinterest",
+     "format": "epingle",
+     "hour": "20:30",
+     "title": "Trouve ta routine en 2 minutes",
+     "idea": "Épingle infographie du parcours.",
+     "cta": "Faire le Skin Diag",
+     "content": {
+      "caption": "Trouve ta routine skincare en 2 minutes avec le Skin Diag SKINCLEAN : quelques questions, ton type de peau, ta routine matin et soir. Gratuit.",
+      "hashtags": [
+       "#routineskincare",
+       "#typedepeau",
+       "#skincaretips"
+      ],
+      "visual": {
+       "kind": "design",
+       "design": {
+        "w": 1000,
+        "h": 1500,
+        "pages": [
+         {
+          "bg": {
+           "type": "color",
+           "color": "#EDF0EA"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95iox",
+            "type": "text",
+            "x": 80,
+            "y": 80,
+            "w": 840,
+            "text": "SKIN DIAG",
+            "size": 30,
+            "weight": 600,
+            "color": "#4A6354",
+            "align": "left",
+            "font": "body",
+            "lineHeight": 1.08,
+            "letterSpacing": 3,
+            "maxH": 50,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ioy",
+            "type": "text",
+            "x": 80,
+            "y": 145,
+            "w": 840,
+            "text": "Trouve ta routine en 2 minutes",
+            "size": 75,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1.02,
+            "upper": true,
+            "maxH": 210.00000000000003,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ioz",
+            "type": "shape",
+            "x": 80,
+            "y": 400,
+            "w": 840,
+            "h": 212.11071428571427,
+            "color": "#FAF9F6",
+            "radius": 15
+           },
+           {
+            "id": "lmwb7d95ip0",
+            "type": "image",
+            "x": 105,
+            "y": 416.96885714285713,
+            "w": 178.17299999999997,
+            "h": 178.17299999999997,
+            "src": "/media/packshots/cloud-gel-nettoyant-doux.png",
+            "fit": "contain"
+           },
+           {
+            "id": "lmwb7d95ip1",
+            "type": "text",
+            "x": 318.173,
+            "y": 400,
+            "w": 571.827,
+            "text": "1. Réponds à quelques questions",
+            "size": 42,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "body",
+            "lineHeight": 1.2,
+            "maxH": 212.11071428571427,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ip2",
+            "type": "shape",
+            "x": 80,
+            "y": 632.1107142857143,
+            "w": 840,
+            "h": 212.11071428571427,
+            "color": "#FFFFFF",
+            "radius": 15
+           },
+           {
+            "id": "lmwb7d95ip3",
+            "type": "image",
+            "x": 105,
+            "y": 649.0795714285714,
+            "w": 178.17299999999997,
+            "h": 178.17299999999997,
+            "src": "/media/packshots/dew-drop-toner-hydratant.png",
+            "fit": "contain"
+           },
+           {
+            "id": "lmwb7d95ip4",
+            "type": "text",
+            "x": 318.173,
+            "y": 632.1107142857143,
+            "w": 571.827,
+            "text": "2. Découvre ton type de peau",
+            "size": 42,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "body",
+            "lineHeight": 1.2,
+            "maxH": 212.11071428571427,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ip5",
+            "type": "shape",
+            "x": 80,
+            "y": 864.2214285714285,
+            "w": 840,
+            "h": 212.11071428571427,
+            "color": "#FAF9F6",
+            "radius": 15
+           },
+           {
+            "id": "lmwb7d95ip6",
+            "type": "image",
+            "x": 105,
+            "y": 881.1902857142857,
+            "w": 178.17299999999997,
+            "h": 178.17299999999997,
+            "src": "/media/packshots/clear-skin-serum-niacinamide.png",
+            "fit": "contain"
+           },
+           {
+            "id": "lmwb7d95ip7",
+            "type": "text",
+            "x": 318.173,
+            "y": 864.2214285714285,
+            "w": 571.827,
+            "text": "3. Reçois ta routine matin et soir",
+            "size": 42,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "body",
+            "lineHeight": 1.2,
+            "maxH": 212.11071428571427,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ip8",
+            "type": "shape",
+            "x": 80,
+            "y": 1096.3321428571428,
+            "w": 840,
+            "h": 212.11071428571427,
+            "color": "#FFFFFF",
+            "radius": 15
+           },
+           {
+            "id": "lmwb7d95ip9",
+            "type": "image",
+            "x": 105,
+            "y": 1113.301,
+            "w": 178.17299999999997,
+            "h": 178.17299999999997,
+            "src": "/media/packshots/cloud-cream-creme-hydratante.png",
+            "fit": "contain"
+           },
+           {
+            "id": "lmwb7d95ipa",
+            "type": "text",
+            "x": 318.173,
+            "y": 1096.3321428571428,
+            "w": 571.827,
+            "text": "4. Suis ta peau semaine après semaine",
+            "size": 42,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "body",
+            "lineHeight": 1.2,
+            "maxH": 212.11071428571427,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ipb",
+            "type": "logo",
+            "x": 80,
+            "y": 1360.942857142857,
+            "w": 260,
+            "variant": "wordmark",
+            "tint": "dark"
+           }
+          ]
+         }
+        ]
+       }
+      }
+     }
+    },
+    {
+     "day": 7,
+     "platform": "newsletter",
+     "format": "newsletter",
+     "hour": "10:00",
+     "title": "As-tu fait ton Skin Diag ?",
+     "idea": "Relance pédagogique.",
+     "cta": "Faire mon Skin Diag",
+     "content": {
+      "caption": "Objet : 2 minutes pour enfin comprendre ta peau\nPréheader : Ton Skin Diag gratuit t'attend, avec ta routine personnalisée.\nRelance pédagogique : comment fonctionne le diagnostic et ce qu'il t'apporte.",
+      "hashtags": [],
+      "visual": {
+       "kind": "design",
+       "design": {
+        "w": 1200,
+        "h": 600,
+        "pages": [
+         {
+          "bg": {
+           "type": "color",
+           "color": "#EFEEEA"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95ipc",
+            "type": "text",
+            "x": 72,
+            "y": 72,
+            "w": 624,
+            "text": "2 MINUTES",
+            "size": 25.200000000000003,
+            "weight": 600,
+            "color": "#4A6354",
+            "align": "left",
+            "font": "body",
+            "lineHeight": 1.08,
+            "letterSpacing": 3,
+            "maxH": 42.00000000000001,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ipd",
+            "type": "text",
+            "x": 72,
+            "y": 126,
+            "w": 624,
+            "text": "As-tu fait ton Skin Diag ?",
+            "size": 78,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1.02,
+            "upper": true,
+            "maxH": 294,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ipe",
+            "type": "shape",
+            "x": 72,
+            "y": 450,
+            "w": 300,
+            "h": 78,
+            "color": "#1F3329",
+            "radius": 39
+           },
+           {
+            "id": "lmwb7d95ipf",
+            "type": "text",
+            "x": 72,
+            "y": 450,
+            "w": 300,
+            "text": "DÉCOUVRIR",
+            "size": 24,
+            "weight": 600,
+            "color": "#FFFFFF",
+            "align": "center",
+            "font": "body",
+            "lineHeight": 1.08,
+            "letterSpacing": 2,
+            "maxH": 78,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ipg",
+            "type": "image",
+            "x": 720,
+            "y": 60,
+            "w": 312,
+            "h": 480,
+            "src": "/media/packshots/dew-drop-toner-hydratant.png",
+            "fit": "contain"
+           },
+           {
+            "id": "lmwb7d95iph",
+            "type": "logo",
+            "x": 984,
+            "y": 72,
+            "w": 144,
+            "variant": "wordmark",
+            "tint": "dark"
+           }
+          ]
+         }
+        ]
+       }
+      }
+     }
+    },
+    {
+     "day": 9,
+     "platform": "instagram",
+     "format": "reel",
+     "hour": "18:30",
+     "title": "Ce que ton Skin Diag sait de ta peau",
+     "idea": "Reel explicatif.",
+     "cta": "Fais ton Skin Diag",
+     "content": {
+      "caption": "Ce que ton Skin Diag sait (vraiment) de ta peau 👇\n\nTon type de peau, ses besoins du moment, ta sensibilité, et le temps que tu veux passer sur ta routine. Rien de plus : pas besoin de photo, pas de compte obligatoire.\n\nEnregistre ce Reel et fais-le ce soir 🌙",
+      "hashtags": [
+       "#skindiag",
+       "#reelskincare",
+       "#skinclean"
+      ],
+      "script": {
+       "hook": "Ce que ton Skin Diag sait de ta peau",
+       "duration": "15 s",
+       "sound": "Son doux",
+       "scenes": [
+        {
+         "t": "0–3 s",
+         "shot": "Regard face caméra.",
+         "onScreen": "Ce que ton Skin Diag sait de ta peau"
+        },
+        {
+         "t": "3–10 s",
+         "shot": "Gestes de soin, routine du soir.",
+         "onScreen": "Ton type de peau · tes besoins · ta sensibilité"
+        },
+        {
+         "t": "10–15 s",
+         "shot": "Sourire.",
+         "onScreen": "Sans photo, sans compte : skinclean.fr"
+        }
+       ]
+      },
+      "visual": {
+       "kind": "video",
+       "src": "/media/videos/demo/pexels-6925816.mp4",
+       "poster": {
+        "w": 1080,
+        "h": 1920,
+        "pages": [
+         {
+          "bg": {
+           "type": "color",
+           "color": "#D8DFD4"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95ipi",
+            "type": "logo",
+            "x": 356.4,
+            "y": 249.60000000000002,
+            "w": 367.20000000000005,
+            "variant": "wordmark",
+            "tint": "dark"
+           },
+           {
+            "id": "lmwb7d95ipj",
+            "type": "shape",
+            "x": 86.4,
+            "y": 448.20685714285713,
+            "w": 907.2,
+            "h": 422.4,
+            "color": "#FFFFFF",
+            "radius": 40,
+            "opacity": 0.95
+           },
+           {
+            "id": "lmwb7d95ipk",
+            "type": "text",
+            "x": 162,
+            "y": 448.20685714285713,
+            "w": 756,
+            "text": "Ce que ton Skin Diag sait de ta peau",
+            "size": 77.75999999999999,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "center",
+            "font": "display",
+            "lineHeight": 1.12,
+            "maxH": 422.4,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ipl",
+            "type": "image",
+            "x": 237.6,
+            "y": 947.406857142857,
+            "w": 604.8000000000001,
+            "h": 626.9931428571429,
+            "src": "/media/packshots/calm-down-serum-centella.png",
+            "fit": "contain"
+           }
+          ]
+         }
+        ]
+       },
+       "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+      }
+     }
+    },
+    {
+     "day": 12,
+     "platform": "facebook",
+     "format": "post",
+     "hour": "13:00",
+     "title": "Le Skin Diag expliqué aux parents (et aux autres)",
+     "idea": "Post pédagogique.",
+     "cta": "Faire le Skin Diag",
+     "content": {
+      "caption": "Le Skin Diag expliqué simplement 👨‍👩‍👧\n\nC'est un questionnaire gratuit de 2 minutes. Il aide à identifier le type de peau (grasse, sèche, mixte, sensible) et propose une routine simple, matin et soir.\n\nPratique pour les ados qui débutent, et pour tous ceux qui ne savent plus quoi choisir. Nos conseils sont cosmétiques et ne remplacent pas l'avis d'un professionnel de santé.",
+      "hashtags": [
+       "#skindiag",
+       "#skincareado",
+       "#skinclean"
+      ],
+      "visual": {
+       "kind": "design",
+       "design": {
+        "w": 1200,
+        "h": 1200,
+        "pages": [
+         {
+          "bg": {
+           "type": "color",
+           "color": "#F1E9D2"
+          },
+          "layers": [
+           {
+            "id": "lmwb7d95ipm",
+            "type": "text",
+            "x": 96,
+            "y": 96,
+            "w": 1008,
+            "text": "2 MINUTES, GRATUIT",
+            "size": 31.2,
+            "weight": 600,
+            "color": "#4A6354",
+            "align": "left",
+            "font": "body",
+            "lineHeight": 1.08,
+            "letterSpacing": 3,
+            "maxH": 48,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ipn",
+            "type": "text",
+            "x": 96,
+            "y": 174,
+            "w": 1008,
+            "text": "Le Skin Diag, expliqué simplement",
+            "size": 84.00000000000001,
+            "weight": 500,
+            "color": "#1F3329",
+            "align": "left",
+            "font": "display",
+            "lineHeight": 1.08,
+            "upper": true,
+            "maxH": 264,
+            "valign": "top"
+           },
+           {
+            "id": "lmwb7d95ipo",
+            "type": "image",
+            "x": 96,
+            "y": 462,
+            "w": 1008,
+            "h": 498,
+            "src": "/media/packshots/dew-drop-toner-hydratant.png",
+            "fit": "contain",
+            "shadow": true
+           },
+           {
+            "id": "lmwb7d95ipp",
+            "type": "text",
+            "x": 96,
+            "y": 996,
+            "w": 624,
+            "text": "Le bon type de peau, la bonne routine",
+            "size": 36,
+            "weight": 400,
+            "color": "#5C6862",
+            "align": "left",
+            "font": "body",
+            "lineHeight": 1.3,
+            "maxH": 108,
+            "valign": "middle"
+           },
+           {
+            "id": "lmwb7d95ipq",
+            "type": "logo",
+            "x": 816,
+            "y": 1017.2914285714286,
+            "w": 288,
+            "variant": "wordmark",
+            "tint": "dark"
+           }
+          ]
+         }
+        ]
+       }
+      }
+     }
+    }
+   ]
   }
  ],
  "posts": [
@@ -7144,7 +7144,8 @@
        ]
       }
      ]
-    }
+    },
+    "note": "Vidéo générée par IA (Hailuo) — à remplacer par un tournage SKINCLEAN."
    },
    "caption": "Mon geste préféré le matin : 2 gouttes de sérum Clear Skin, je tapote, puis la crème. 5 secondes, et ma peau est prête pour la journée ✨\n\nNiacinamide 10 % + zinc : pores moins visibles et brillances régulées, jour après jour (résultats variables selon les peaux).\n\nTu veux ta routine idéale ? Fais le Skin Diag, lien en bio.",
    "hashtags": [
@@ -10308,181 +10309,6 @@
    "productIds": []
   },
   {
-   "id": "lib_005",
-   "title": "Reel — Le secret d'un teint lumineux le matin tient en 4 gestes.",
-   "date": "",
-   "platform": "instagram",
-   "format": "reel",
-   "objective": "Engagement",
-   "pillar": "Routines",
-   "campaignId": "camp-glow",
-   "visual": {
-    "kind": "video",
-    "src": "/media/videos/demo/pexels-8131891.mp4",
-    "poster": {
-     "w": 1080,
-     "h": 1920,
-     "pages": [
-      {
-       "bg": {
-        "type": "color",
-        "color": "#D8DFD4"
-       },
-       "layers": [
-        {
-         "id": "lmvv1cdrn1xa",
-         "type": "logo",
-         "x": 356.4,
-         "y": 249.60000000000002,
-         "w": 367.20000000000005,
-         "variant": "wordmark",
-         "tint": "dark"
-        },
-        {
-         "id": "lmvv1cdrn1xb",
-         "type": "shape",
-         "x": 86.4,
-         "y": 448.20685714285713,
-         "w": 907.2,
-         "h": 422.4,
-         "color": "#FFFFFF",
-         "radius": 40,
-         "opacity": 0.95
-        },
-        {
-         "id": "lmvv1cdrn1xc",
-         "type": "text",
-         "x": 162,
-         "y": 448.20685714285713,
-         "w": 756,
-         "text": "Le secret d'un teint lumineux le matin tient en 4 gestes.",
-         "size": 77.75999999999999,
-         "weight": 500,
-         "color": "#1F3329",
-         "align": "center",
-         "font": "display",
-         "lineHeight": 1.12,
-         "maxH": 422.4,
-         "valign": "middle"
-        },
-        {
-         "id": "lmvv1cdrn1xd",
-         "type": "image",
-         "x": 237.6,
-         "y": 947.406857142857,
-         "w": 604.8000000000001,
-         "h": 626.9931428571429,
-         "src": "/media/packshots/glow-shot-serum-vitamine-c.png",
-         "fit": "contain"
-        }
-       ]
-      }
-     ]
-    },
-    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-   },
-   "caption": "Le secret d'un teint lumineux le matin tient en 4 gestes.\n\nDans cette vidéo : Glow Shot en action et nos conseils pour l'intégrer à ta routine.\n\n→ Applique la vitamine C le matin, sur peau propre et sèche\n→ 3 gouttes suffisent pour tout le visage\n→ Termine toujours par un SPF : il protège ton glow\n\nFais ton Skin Diag gratuit (lien en bio).",
-   "hashtags": [
-    "#routineglow",
-    "#vitaminec",
-    "#glowskin",
-    "#teintlumineux",
-    "#skinclean",
-    "#yourskinyourglow"
-   ],
-   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
-   "status": "valide",
-   "comments": [],
-   "productIds": []
-  },
-  {
-   "id": "lib_006",
-   "title": "Reel — Ta peau est déshydratée même si elle brille ? C'est possible.",
-   "date": "",
-   "platform": "instagram",
-   "format": "reel",
-   "objective": "Engagement",
-   "pillar": "Routines",
-   "visual": {
-    "kind": "video",
-    "src": "/media/videos/demo/pexels-8131887.mp4",
-    "poster": {
-     "w": 1080,
-     "h": 1920,
-     "pages": [
-      {
-       "bg": {
-        "type": "color",
-        "color": "#D8DFD4"
-       },
-       "layers": [
-        {
-         "id": "lmvv1cdrn1xe",
-         "type": "logo",
-         "x": 356.4,
-         "y": 249.60000000000002,
-         "w": 367.20000000000005,
-         "variant": "wordmark",
-         "tint": "dark"
-        },
-        {
-         "id": "lmvv1cdrn1xf",
-         "type": "shape",
-         "x": 86.4,
-         "y": 448.20685714285713,
-         "w": 907.2,
-         "h": 422.4,
-         "color": "#FFFFFF",
-         "radius": 40,
-         "opacity": 0.95
-        },
-        {
-         "id": "lmvv1cdrn1xg",
-         "type": "text",
-         "x": 162,
-         "y": 448.20685714285713,
-         "w": 756,
-         "text": "Ta peau est déshydratée même si elle brille ? C'est possible.",
-         "size": 77.75999999999999,
-         "weight": 500,
-         "color": "#1F3329",
-         "align": "center",
-         "font": "display",
-         "lineHeight": 1.12,
-         "maxH": 422.4,
-         "valign": "middle"
-        },
-        {
-         "id": "lmvv1cdrn1xh",
-         "type": "image",
-         "x": 237.6,
-         "y": 947.406857142857,
-         "w": 604.8000000000001,
-         "h": 626.9931428571429,
-         "src": "/media/packshots/aqua-plump-serum-acide-hyaluronique.png",
-         "fit": "contain"
-        }
-       ]
-      }
-     ]
-    },
-    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-   },
-   "caption": "Ta peau est déshydratée même si elle brille ? C'est possible.\n\nDans cette vidéo : Aqua Plump en action et nos conseils pour l'intégrer à ta routine.\n\n→ Applique l'acide hyaluronique sur peau encore humide\n→ Scelle toujours avec une crème\n→ Superpose : toner, sérum, crème\n\nFais ton Skin Diag gratuit (lien en bio).",
-   "hashtags": [
-    "#hydratation",
-    "#acidehyaluronique",
-    "#peaudeshydratee",
-    "#glassskin",
-    "#skinclean",
-    "#yourskinyourglow"
-   ],
-   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
-   "status": "valide",
-   "comments": [],
-   "productIds": []
-  },
-  {
    "id": "lib_007",
    "title": "Reel — Ton nettoyant ne retire pas ton SPF. Voilà pourquoi.",
    "date": "",
@@ -10570,84 +10396,6 @@
    "productIds": []
   },
   {
-   "id": "lib_025",
-   "title": "Skin Journal — Jour 1",
-   "date": "",
-   "platform": "instagram",
-   "format": "reel",
-   "objective": "Inscriptions",
-   "pillar": "Communauté",
-   "campaignId": "camp-skin-journal",
-   "visual": {
-    "kind": "video",
-    "src": "/media/videos/demo/pexels-8371244.mp4",
-    "poster": {
-     "w": 1080,
-     "h": 1920,
-     "pages": [
-      {
-       "bg": {
-        "type": "color",
-        "color": "#D8DFD4"
-       },
-       "layers": [
-        {
-         "id": "lmvv1cdrn227",
-         "type": "logo",
-         "x": 356.4,
-         "y": 249.60000000000002,
-         "w": 367.20000000000005,
-         "variant": "wordmark",
-         "tint": "dark"
-        },
-        {
-         "id": "lmvv1cdrn228",
-         "type": "shape",
-         "x": 86.4,
-         "y": 448.20685714285713,
-         "w": 907.2,
-         "h": 422.4,
-         "color": "#FFFFFF",
-         "radius": 40,
-         "opacity": 0.95
-        },
-        {
-         "id": "lmvv1cdrn229",
-         "type": "text",
-         "x": 162,
-         "y": 448.20685714285713,
-         "w": 756,
-         "text": "Jour 1. Pas de filtre. On se retrouve dans 30 jours.",
-         "size": 77.75999999999999,
-         "weight": 500,
-         "color": "#1F3329",
-         "align": "center",
-         "font": "display",
-         "lineHeight": 1.12,
-         "maxH": 422.4,
-         "valign": "middle"
-        }
-       ]
-      }
-     ]
-    },
-    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-   },
-   "caption": "Jour 1. Pas de filtre. On se retrouve dans 30 jours.\n\nRejoins le défi 30 jours avec le Skin Journal.",
-   "hashtags": [
-    "#skinjournal",
-    "#30jourschallenge",
-    "#vraiepeau",
-    "#skincarejourney",
-    "#skinclean",
-    "#yourskinyourglow"
-   ],
-   "cta": "Commencer",
-   "status": "valide",
-   "comments": [],
-   "productIds": []
-  },
-  {
    "id": "lib_030",
    "title": "Ta peau rougit pour un rien ? Commence par retirer des produits.",
    "date": "",
@@ -10725,175 +10473,6 @@
     "#peausensible",
     "#rougeurs",
     "#centella",
-    "#skincaretok"
-   ],
-   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
-   "status": "valide",
-   "comments": [],
-   "productIds": []
-  },
-  {
-   "id": "lib_032",
-   "title": "Le bouton de la veille d'un rendez-vous : le plan d'urgence.",
-   "date": "",
-   "platform": "tiktok",
-   "format": "video",
-   "objective": "Notoriété",
-   "pillar": "Produits",
-   "campaignId": "camp-anti-imperfections",
-   "visual": {
-    "kind": "design",
-    "design": {
-     "w": 1080,
-     "h": 1920,
-     "pages": [
-      {
-       "bg": {
-        "type": "color",
-        "color": "#D8DFD4"
-       },
-       "layers": [
-        {
-         "id": "lmvv1cdrn22y",
-         "type": "logo",
-         "x": 356.4,
-         "y": 249.60000000000002,
-         "w": 367.20000000000005,
-         "variant": "wordmark",
-         "tint": "dark"
-        },
-        {
-         "id": "lmvv1cdrn22z",
-         "type": "shape",
-         "x": 86.4,
-         "y": 448.20685714285713,
-         "w": 907.2,
-         "h": 422.4,
-         "color": "#FFFFFF",
-         "radius": 40,
-         "opacity": 0.95
-        },
-        {
-         "id": "lmvv1cdrn230",
-         "type": "text",
-         "x": 162,
-         "y": 448.20685714285713,
-         "w": 756,
-         "text": "Le bouton de la veille d'un rendez-vous : le plan d'urgence.",
-         "size": 77.75999999999999,
-         "weight": 500,
-         "color": "#1F3329",
-         "align": "center",
-         "font": "display",
-         "lineHeight": 1.12,
-         "maxH": 422.4,
-         "valign": "middle"
-        },
-        {
-         "id": "lmvv1cdrn231",
-         "type": "image",
-         "x": 237.6,
-         "y": 947.406857142857,
-         "w": 604.8000000000001,
-         "h": 626.9931428571429,
-         "src": "/media/packshots/spot-hero-patchs-anti-imperfections.png",
-         "fit": "contain"
-        }
-       ]
-      }
-     ]
-    }
-   },
-   "caption": "Le bouton de la veille d'un rendez-vous : le plan d'urgence. #imperfections #patchbouton\n\nSpot Hero Day · Patchs invisibles de jour. Fais ton Skin Diag gratuit (lien en bio).",
-   "hashtags": [
-    "#imperfections",
-    "#patchbouton",
-    "#acne",
-    "#skincaretok"
-   ],
-   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
-   "status": "valide",
-   "comments": [],
-   "productIds": []
-  },
-  {
-   "id": "lib_036",
-   "title": "Il fait gris, donc pas de SPF ? Mauvaise idée.",
-   "date": "",
-   "platform": "tiktok",
-   "format": "video",
-   "objective": "Notoriété",
-   "pillar": "Skin School",
-   "visual": {
-    "kind": "video",
-    "src": "/media/videos/demo/pexels-5927790.mp4",
-    "poster": {
-     "w": 1080,
-     "h": 1920,
-     "pages": [
-      {
-       "bg": {
-        "type": "color",
-        "color": "#D8DFD4"
-       },
-       "layers": [
-        {
-         "id": "lmvv1cdrn23e",
-         "type": "logo",
-         "x": 356.4,
-         "y": 249.60000000000002,
-         "w": 367.20000000000005,
-         "variant": "wordmark",
-         "tint": "dark"
-        },
-        {
-         "id": "lmvv1cdrn23f",
-         "type": "shape",
-         "x": 86.4,
-         "y": 448.20685714285713,
-         "w": 907.2,
-         "h": 422.4,
-         "color": "#FFFFFF",
-         "radius": 40,
-         "opacity": 0.95
-        },
-        {
-         "id": "lmvv1cdrn23g",
-         "type": "text",
-         "x": 162,
-         "y": 448.20685714285713,
-         "w": 756,
-         "text": "Il fait gris, donc pas de SPF ? Mauvaise idée.",
-         "size": 77.75999999999999,
-         "weight": 500,
-         "color": "#1F3329",
-         "align": "center",
-         "font": "display",
-         "lineHeight": 1.12,
-         "maxH": 422.4,
-         "valign": "middle"
-        },
-        {
-         "id": "lmvv1cdrn23h",
-         "type": "image",
-         "x": 237.6,
-         "y": 947.406857142857,
-         "w": 604.8000000000001,
-         "h": 626.9931428571429,
-         "src": "/media/packshots/daily-shield-spf50.png",
-         "fit": "contain"
-        }
-       ]
-      }
-     ]
-    },
-    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-   },
-   "caption": "Il fait gris, donc pas de SPF ? Mauvaise idée. #spf #protectionsolaire\n\nDaily Shield SPF 50 · Fluide invisible SPF 50. Fais ton Skin Diag gratuit (lien en bio).",
-   "hashtags": [
-    "#spf",
-    "#protectionsolaire",
-    "#spfeveryday",
     "#skincaretok"
    ],
    "cta": "Fais ton Skin Diag gratuit (lien en bio)",
@@ -17391,17 +16970,17 @@
    "productIds": []
   },
   {
-   "id": "lib_033",
-   "title": "Mythe : Le dentifrice sèche les boutons",
+   "id": "lib_031",
+   "title": "Mythe : Naturel = forcément doux",
    "date": "",
    "platform": "tiktok",
    "format": "video",
    "objective": "Notoriété",
-   "pillar": "Produits",
-   "campaignId": "camp-anti-imperfections",
+   "pillar": "Skin School",
    "visual": {
-    "kind": "design",
-    "design": {
+    "kind": "video",
+    "src": "/media/videos/demo/pexels-6619500.mp4",
+    "poster": {
      "w": 1080,
      "h": 1920,
      "pages": [
@@ -17412,7 +16991,7 @@
        },
        "layers": [
         {
-         "id": "lmvv1cdrn232",
+         "id": "lmvv1cdrn22u",
          "type": "logo",
          "x": 356.4,
          "y": 249.60000000000002,
@@ -17421,7 +17000,7 @@
          "tint": "dark"
         },
         {
-         "id": "lmvv1cdrn233",
+         "id": "lmvv1cdrn22v",
          "type": "shape",
          "x": 86.4,
          "y": 448.20685714285713,
@@ -17432,12 +17011,12 @@
          "opacity": 0.95
         },
         {
-         "id": "lmvv1cdrn234",
+         "id": "lmvv1cdrn22w",
          "type": "text",
          "x": 162,
          "y": 448.20685714285713,
          "w": 756,
-         "text": "« Le dentifrice sèche les boutons »",
+         "text": "« Naturel = forcément doux »",
          "size": 77.75999999999999,
          "weight": 500,
          "color": "#1F3329",
@@ -17448,25 +17027,111 @@
          "valign": "middle"
         },
         {
-         "id": "lmvv1cdrn235",
+         "id": "lmvv1cdrn22x",
          "type": "image",
          "x": 237.6,
          "y": 947.406857142857,
          "w": 604.8000000000001,
          "h": 626.9931428571429,
-         "src": "/media/packshots/spot-hero-patchs-anti-imperfections.png",
+         "src": "/media/packshots/calm-down-serum-centella.png",
          "fit": "contain"
         }
        ]
       }
      ]
-    }
+    },
+    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
    },
-   "caption": "« Le dentifrice sèche les boutons » #imperfections #patchbouton\n\nSpot Hero Day · Patchs invisibles de jour. Fais ton Skin Diag gratuit (lien en bio).",
+   "caption": "« Naturel = forcément doux » #peausensible #rougeurs\n\nCalm Down · Sérum apaisant centella. Fais ton Skin Diag gratuit (lien en bio).",
    "hashtags": [
+    "#peausensible",
+    "#rougeurs",
+    "#centella",
+    "#skincaretok"
+   ],
+   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
+   "status": "valide",
+   "comments": [],
+   "productIds": []
+  },
+  {
+   "id": "lib_026",
+   "title": "La niacinamide ne fait pas de miracle. Mais elle fait ça.",
+   "date": "",
+   "platform": "tiktok",
+   "format": "video",
+   "objective": "Notoriété",
+   "pillar": "Skin School",
+   "visual": {
+    "kind": "video",
+    "src": "/media/videos/demo/pexels-6446058.mp4",
+    "poster": {
+     "w": 1080,
+     "h": 1920,
+     "pages": [
+      {
+       "bg": {
+        "type": "color",
+        "color": "#D8DFD4"
+       },
+       "layers": [
+        {
+         "id": "lmvv1cdrn22a",
+         "type": "logo",
+         "x": 356.4,
+         "y": 249.60000000000002,
+         "w": 367.20000000000005,
+         "variant": "wordmark",
+         "tint": "dark"
+        },
+        {
+         "id": "lmvv1cdrn22b",
+         "type": "shape",
+         "x": 86.4,
+         "y": 448.20685714285713,
+         "w": 907.2,
+         "h": 422.4,
+         "color": "#FFFFFF",
+         "radius": 40,
+         "opacity": 0.95
+        },
+        {
+         "id": "lmvv1cdrn22c",
+         "type": "text",
+         "x": 162,
+         "y": 448.20685714285713,
+         "w": 756,
+         "text": "La niacinamide ne fait pas de miracle. Mais elle fait ça.",
+         "size": 77.75999999999999,
+         "weight": 500,
+         "color": "#1F3329",
+         "align": "center",
+         "font": "display",
+         "lineHeight": 1.12,
+         "maxH": 422.4,
+         "valign": "middle"
+        },
+        {
+         "id": "lmvv1cdrn22d",
+         "type": "image",
+         "x": 237.6,
+         "y": 947.406857142857,
+         "w": 604.8000000000001,
+         "h": 626.9931428571429,
+         "src": "/media/packshots/clear-skin-serum-niacinamide.png",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+   },
+   "caption": "La niacinamide ne fait pas de miracle. Mais elle fait ça. #niacinamide #peaugrasse\n\nClear Skin · Sérum niacinamide 10 % + zinc. Fais ton Skin Diag gratuit (lien en bio).",
+   "hashtags": [
+    "#niacinamide",
+    "#peaugrasse",
     "#imperfections",
-    "#patchbouton",
-    "#acne",
     "#skincaretok"
    ],
    "cta": "Fais ton Skin Diag gratuit (lien en bio)",
@@ -17552,6 +17217,429 @@
     "#niacinamide",
     "#peaugrasse",
     "#imperfections",
+    "#skincaretok"
+   ],
+   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
+   "status": "valide",
+   "comments": [],
+   "productIds": []
+  },
+  {
+   "id": "lib_035",
+   "title": "Mythe : Le double nettoyage assèche",
+   "date": "",
+   "platform": "tiktok",
+   "format": "video",
+   "objective": "Engagement",
+   "pillar": "Routines",
+   "visual": {
+    "kind": "video",
+    "src": "/media/videos/demo/pexels-6810938.mp4",
+    "poster": {
+     "w": 1080,
+     "h": 1920,
+     "pages": [
+      {
+       "bg": {
+        "type": "color",
+        "color": "#D8DFD4"
+       },
+       "layers": [
+        {
+         "id": "lmvv1cdrn23a",
+         "type": "logo",
+         "x": 356.4,
+         "y": 249.60000000000002,
+         "w": 367.20000000000005,
+         "variant": "wordmark",
+         "tint": "dark"
+        },
+        {
+         "id": "lmvv1cdrn23b",
+         "type": "shape",
+         "x": 86.4,
+         "y": 448.20685714285713,
+         "w": 907.2,
+         "h": 422.4,
+         "color": "#FFFFFF",
+         "radius": 40,
+         "opacity": 0.95
+        },
+        {
+         "id": "lmvv1cdrn23c",
+         "type": "text",
+         "x": 162,
+         "y": 448.20685714285713,
+         "w": 756,
+         "text": "« Le double nettoyage assèche »",
+         "size": 77.75999999999999,
+         "weight": 500,
+         "color": "#1F3329",
+         "align": "center",
+         "font": "display",
+         "lineHeight": 1.12,
+         "maxH": 422.4,
+         "valign": "middle"
+        },
+        {
+         "id": "lmvv1cdrn23d",
+         "type": "image",
+         "x": 237.6,
+         "y": 947.406857142857,
+         "w": 604.8000000000001,
+         "h": 626.9931428571429,
+         "src": "/media/packshots/melt-away-baume-demaquillant.png",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+   },
+   "caption": "« Le double nettoyage assèche » #doublenettoyage #demaquillage\n\nMelt Away · Baume démaquillant fondant. Fais ton Skin Diag gratuit (lien en bio).",
+   "hashtags": [
+    "#doublenettoyage",
+    "#demaquillage",
+    "#cleansingbalm",
+    "#skincaretok"
+   ],
+   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
+   "status": "valide",
+   "comments": [],
+   "productIds": []
+  },
+  {
+   "id": "lib_005",
+   "title": "Reel — Le secret d'un teint lumineux le matin tient en 4 gestes.",
+   "date": "",
+   "platform": "instagram",
+   "format": "reel",
+   "objective": "Engagement",
+   "pillar": "Routines",
+   "campaignId": "camp-glow",
+   "visual": {
+    "kind": "video",
+    "src": "/media/videos/demo/pexels-8131891.mp4",
+    "poster": {
+     "w": 1080,
+     "h": 1920,
+     "pages": [
+      {
+       "bg": {
+        "type": "color",
+        "color": "#D8DFD4"
+       },
+       "layers": [
+        {
+         "id": "lmvv1cdrn1xa",
+         "type": "logo",
+         "x": 356.4,
+         "y": 249.60000000000002,
+         "w": 367.20000000000005,
+         "variant": "wordmark",
+         "tint": "dark"
+        },
+        {
+         "id": "lmvv1cdrn1xb",
+         "type": "shape",
+         "x": 86.4,
+         "y": 448.20685714285713,
+         "w": 907.2,
+         "h": 422.4,
+         "color": "#FFFFFF",
+         "radius": 40,
+         "opacity": 0.95
+        },
+        {
+         "id": "lmvv1cdrn1xc",
+         "type": "text",
+         "x": 162,
+         "y": 448.20685714285713,
+         "w": 756,
+         "text": "Le secret d'un teint lumineux le matin tient en 4 gestes.",
+         "size": 77.75999999999999,
+         "weight": 500,
+         "color": "#1F3329",
+         "align": "center",
+         "font": "display",
+         "lineHeight": 1.12,
+         "maxH": 422.4,
+         "valign": "middle"
+        },
+        {
+         "id": "lmvv1cdrn1xd",
+         "type": "image",
+         "x": 237.6,
+         "y": 947.406857142857,
+         "w": 604.8000000000001,
+         "h": 626.9931428571429,
+         "src": "/media/packshots/glow-shot-serum-vitamine-c.png",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+   },
+   "caption": "Le secret d'un teint lumineux le matin tient en 4 gestes.\n\nDans cette vidéo : Glow Shot en action et nos conseils pour l'intégrer à ta routine.\n\n→ Applique la vitamine C le matin, sur peau propre et sèche\n→ 3 gouttes suffisent pour tout le visage\n→ Termine toujours par un SPF : il protège ton glow\n\nFais ton Skin Diag gratuit (lien en bio).",
+   "hashtags": [
+    "#routineglow",
+    "#vitaminec",
+    "#glowskin",
+    "#teintlumineux",
+    "#skinclean",
+    "#yourskinyourglow"
+   ],
+   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
+   "status": "valide",
+   "comments": [],
+   "productIds": []
+  },
+  {
+   "id": "lib_006",
+   "title": "Reel — Ta peau est déshydratée même si elle brille ? C'est possible.",
+   "date": "",
+   "platform": "instagram",
+   "format": "reel",
+   "objective": "Engagement",
+   "pillar": "Routines",
+   "visual": {
+    "kind": "video",
+    "src": "/media/videos/demo/pexels-8131887.mp4",
+    "poster": {
+     "w": 1080,
+     "h": 1920,
+     "pages": [
+      {
+       "bg": {
+        "type": "color",
+        "color": "#D8DFD4"
+       },
+       "layers": [
+        {
+         "id": "lmvv1cdrn1xe",
+         "type": "logo",
+         "x": 356.4,
+         "y": 249.60000000000002,
+         "w": 367.20000000000005,
+         "variant": "wordmark",
+         "tint": "dark"
+        },
+        {
+         "id": "lmvv1cdrn1xf",
+         "type": "shape",
+         "x": 86.4,
+         "y": 448.20685714285713,
+         "w": 907.2,
+         "h": 422.4,
+         "color": "#FFFFFF",
+         "radius": 40,
+         "opacity": 0.95
+        },
+        {
+         "id": "lmvv1cdrn1xg",
+         "type": "text",
+         "x": 162,
+         "y": 448.20685714285713,
+         "w": 756,
+         "text": "Ta peau est déshydratée même si elle brille ? C'est possible.",
+         "size": 77.75999999999999,
+         "weight": 500,
+         "color": "#1F3329",
+         "align": "center",
+         "font": "display",
+         "lineHeight": 1.12,
+         "maxH": 422.4,
+         "valign": "middle"
+        },
+        {
+         "id": "lmvv1cdrn1xh",
+         "type": "image",
+         "x": 237.6,
+         "y": 947.406857142857,
+         "w": 604.8000000000001,
+         "h": 626.9931428571429,
+         "src": "/media/packshots/aqua-plump-serum-acide-hyaluronique.png",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+   },
+   "caption": "Ta peau est déshydratée même si elle brille ? C'est possible.\n\nDans cette vidéo : Aqua Plump en action et nos conseils pour l'intégrer à ta routine.\n\n→ Applique l'acide hyaluronique sur peau encore humide\n→ Scelle toujours avec une crème\n→ Superpose : toner, sérum, crème\n\nFais ton Skin Diag gratuit (lien en bio).",
+   "hashtags": [
+    "#hydratation",
+    "#acidehyaluronique",
+    "#peaudeshydratee",
+    "#glassskin",
+    "#skinclean",
+    "#yourskinyourglow"
+   ],
+   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
+   "status": "valide",
+   "comments": [],
+   "productIds": []
+  },
+  {
+   "id": "lib_025",
+   "title": "Skin Journal — Jour 1",
+   "date": "",
+   "platform": "instagram",
+   "format": "reel",
+   "objective": "Inscriptions",
+   "pillar": "Communauté",
+   "campaignId": "camp-skin-journal",
+   "visual": {
+    "kind": "video",
+    "src": "/media/videos/demo/pexels-8371244.mp4",
+    "poster": {
+     "w": 1080,
+     "h": 1920,
+     "pages": [
+      {
+       "bg": {
+        "type": "color",
+        "color": "#D8DFD4"
+       },
+       "layers": [
+        {
+         "id": "lmvv1cdrn227",
+         "type": "logo",
+         "x": 356.4,
+         "y": 249.60000000000002,
+         "w": 367.20000000000005,
+         "variant": "wordmark",
+         "tint": "dark"
+        },
+        {
+         "id": "lmvv1cdrn228",
+         "type": "shape",
+         "x": 86.4,
+         "y": 448.20685714285713,
+         "w": 907.2,
+         "h": 422.4,
+         "color": "#FFFFFF",
+         "radius": 40,
+         "opacity": 0.95
+        },
+        {
+         "id": "lmvv1cdrn229",
+         "type": "text",
+         "x": 162,
+         "y": 448.20685714285713,
+         "w": 756,
+         "text": "Jour 1. Pas de filtre. On se retrouve dans 30 jours.",
+         "size": 77.75999999999999,
+         "weight": 500,
+         "color": "#1F3329",
+         "align": "center",
+         "font": "display",
+         "lineHeight": 1.12,
+         "maxH": 422.4,
+         "valign": "middle"
+        }
+       ]
+      }
+     ]
+    },
+    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+   },
+   "caption": "Jour 1. Pas de filtre. On se retrouve dans 30 jours.\n\nRejoins le défi 30 jours avec le Skin Journal.",
+   "hashtags": [
+    "#skinjournal",
+    "#30jourschallenge",
+    "#vraiepeau",
+    "#skincarejourney",
+    "#skinclean",
+    "#yourskinyourglow"
+   ],
+   "cta": "Commencer",
+   "status": "valide",
+   "comments": [],
+   "productIds": []
+  },
+  {
+   "id": "lib_036",
+   "title": "Il fait gris, donc pas de SPF ? Mauvaise idée.",
+   "date": "",
+   "platform": "tiktok",
+   "format": "video",
+   "objective": "Notoriété",
+   "pillar": "Skin School",
+   "visual": {
+    "kind": "video",
+    "src": "/media/videos/demo/pexels-5927790.mp4",
+    "poster": {
+     "w": 1080,
+     "h": 1920,
+     "pages": [
+      {
+       "bg": {
+        "type": "color",
+        "color": "#D8DFD4"
+       },
+       "layers": [
+        {
+         "id": "lmvv1cdrn23e",
+         "type": "logo",
+         "x": 356.4,
+         "y": 249.60000000000002,
+         "w": 367.20000000000005,
+         "variant": "wordmark",
+         "tint": "dark"
+        },
+        {
+         "id": "lmvv1cdrn23f",
+         "type": "shape",
+         "x": 86.4,
+         "y": 448.20685714285713,
+         "w": 907.2,
+         "h": 422.4,
+         "color": "#FFFFFF",
+         "radius": 40,
+         "opacity": 0.95
+        },
+        {
+         "id": "lmvv1cdrn23g",
+         "type": "text",
+         "x": 162,
+         "y": 448.20685714285713,
+         "w": 756,
+         "text": "Il fait gris, donc pas de SPF ? Mauvaise idée.",
+         "size": 77.75999999999999,
+         "weight": 500,
+         "color": "#1F3329",
+         "align": "center",
+         "font": "display",
+         "lineHeight": 1.12,
+         "maxH": 422.4,
+         "valign": "middle"
+        },
+        {
+         "id": "lmvv1cdrn23h",
+         "type": "image",
+         "x": 237.6,
+         "y": 947.406857142857,
+         "w": 604.8000000000001,
+         "h": 626.9931428571429,
+         "src": "/media/packshots/daily-shield-spf50.png",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+   },
+   "caption": "Il fait gris, donc pas de SPF ? Mauvaise idée. #spf #protectionsolaire\n\nDaily Shield SPF 50 · Fluide invisible SPF 50. Fais ton Skin Diag gratuit (lien en bio).",
+   "hashtags": [
+    "#spf",
+    "#protectionsolaire",
+    "#spfeveryday",
     "#skincaretok"
    ],
    "cta": "Fais ton Skin Diag gratuit (lien en bio)",
@@ -17646,91 +17734,6 @@
    "productIds": []
   },
   {
-   "id": "lib_035",
-   "title": "Mythe : Le double nettoyage assèche",
-   "date": "",
-   "platform": "tiktok",
-   "format": "video",
-   "objective": "Engagement",
-   "pillar": "Routines",
-   "visual": {
-    "kind": "video",
-    "src": "/media/videos/demo/pexels-6810938.mp4",
-    "poster": {
-     "w": 1080,
-     "h": 1920,
-     "pages": [
-      {
-       "bg": {
-        "type": "color",
-        "color": "#D8DFD4"
-       },
-       "layers": [
-        {
-         "id": "lmvv1cdrn23a",
-         "type": "logo",
-         "x": 356.4,
-         "y": 249.60000000000002,
-         "w": 367.20000000000005,
-         "variant": "wordmark",
-         "tint": "dark"
-        },
-        {
-         "id": "lmvv1cdrn23b",
-         "type": "shape",
-         "x": 86.4,
-         "y": 448.20685714285713,
-         "w": 907.2,
-         "h": 422.4,
-         "color": "#FFFFFF",
-         "radius": 40,
-         "opacity": 0.95
-        },
-        {
-         "id": "lmvv1cdrn23c",
-         "type": "text",
-         "x": 162,
-         "y": 448.20685714285713,
-         "w": 756,
-         "text": "« Le double nettoyage assèche »",
-         "size": 77.75999999999999,
-         "weight": 500,
-         "color": "#1F3329",
-         "align": "center",
-         "font": "display",
-         "lineHeight": 1.12,
-         "maxH": 422.4,
-         "valign": "middle"
-        },
-        {
-         "id": "lmvv1cdrn23d",
-         "type": "image",
-         "x": 237.6,
-         "y": 947.406857142857,
-         "w": 604.8000000000001,
-         "h": 626.9931428571429,
-         "src": "/media/packshots/melt-away-baume-demaquillant.png",
-         "fit": "contain"
-        }
-       ]
-      }
-     ]
-    },
-    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-   },
-   "caption": "« Le double nettoyage assèche » #doublenettoyage #demaquillage\n\nMelt Away · Baume démaquillant fondant. Fais ton Skin Diag gratuit (lien en bio).",
-   "hashtags": [
-    "#doublenettoyage",
-    "#demaquillage",
-    "#cleansingbalm",
-    "#skincaretok"
-   ],
-   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
-   "status": "valide",
-   "comments": [],
-   "productIds": []
-  },
-  {
    "id": "lib_037",
    "title": "Mythe : En hiver, le soleil ne compte pas",
    "date": "",
@@ -17808,6 +17811,174 @@
     "#spf",
     "#protectionsolaire",
     "#spfeveryday",
+    "#skincaretok"
+   ],
+   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
+   "status": "valide",
+   "comments": [],
+   "productIds": []
+  },
+  {
+   "id": "lib_032",
+   "title": "Le bouton de la veille d'un rendez-vous : le plan d'urgence.",
+   "date": "",
+   "platform": "tiktok",
+   "format": "video",
+   "objective": "Notoriété",
+   "pillar": "Produits",
+   "campaignId": "camp-anti-imperfections",
+   "visual": {
+    "kind": "design",
+    "design": {
+     "w": 1080,
+     "h": 1920,
+     "pages": [
+      {
+       "bg": {
+        "type": "color",
+        "color": "#D8DFD4"
+       },
+       "layers": [
+        {
+         "id": "lmvv1cdrn22y",
+         "type": "logo",
+         "x": 356.4,
+         "y": 249.60000000000002,
+         "w": 367.20000000000005,
+         "variant": "wordmark",
+         "tint": "dark"
+        },
+        {
+         "id": "lmvv1cdrn22z",
+         "type": "shape",
+         "x": 86.4,
+         "y": 448.20685714285713,
+         "w": 907.2,
+         "h": 422.4,
+         "color": "#FFFFFF",
+         "radius": 40,
+         "opacity": 0.95
+        },
+        {
+         "id": "lmvv1cdrn230",
+         "type": "text",
+         "x": 162,
+         "y": 448.20685714285713,
+         "w": 756,
+         "text": "Le bouton de la veille d'un rendez-vous : le plan d'urgence.",
+         "size": 77.75999999999999,
+         "weight": 500,
+         "color": "#1F3329",
+         "align": "center",
+         "font": "display",
+         "lineHeight": 1.12,
+         "maxH": 422.4,
+         "valign": "middle"
+        },
+        {
+         "id": "lmvv1cdrn231",
+         "type": "image",
+         "x": 237.6,
+         "y": 947.406857142857,
+         "w": 604.8000000000001,
+         "h": 626.9931428571429,
+         "src": "/media/packshots/spot-hero-patchs-anti-imperfections.png",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    }
+   },
+   "caption": "Le bouton de la veille d'un rendez-vous : le plan d'urgence. #imperfections #patchbouton\n\nSpot Hero Day · Patchs invisibles de jour. Fais ton Skin Diag gratuit (lien en bio).",
+   "hashtags": [
+    "#imperfections",
+    "#patchbouton",
+    "#acne",
+    "#skincaretok"
+   ],
+   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
+   "status": "valide",
+   "comments": [],
+   "productIds": []
+  },
+  {
+   "id": "lib_033",
+   "title": "Mythe : Le dentifrice sèche les boutons",
+   "date": "",
+   "platform": "tiktok",
+   "format": "video",
+   "objective": "Notoriété",
+   "pillar": "Produits",
+   "campaignId": "camp-anti-imperfections",
+   "visual": {
+    "kind": "design",
+    "design": {
+     "w": 1080,
+     "h": 1920,
+     "pages": [
+      {
+       "bg": {
+        "type": "color",
+        "color": "#D8DFD4"
+       },
+       "layers": [
+        {
+         "id": "lmvv1cdrn232",
+         "type": "logo",
+         "x": 356.4,
+         "y": 249.60000000000002,
+         "w": 367.20000000000005,
+         "variant": "wordmark",
+         "tint": "dark"
+        },
+        {
+         "id": "lmvv1cdrn233",
+         "type": "shape",
+         "x": 86.4,
+         "y": 448.20685714285713,
+         "w": 907.2,
+         "h": 422.4,
+         "color": "#FFFFFF",
+         "radius": 40,
+         "opacity": 0.95
+        },
+        {
+         "id": "lmvv1cdrn234",
+         "type": "text",
+         "x": 162,
+         "y": 448.20685714285713,
+         "w": 756,
+         "text": "« Le dentifrice sèche les boutons »",
+         "size": 77.75999999999999,
+         "weight": 500,
+         "color": "#1F3329",
+         "align": "center",
+         "font": "display",
+         "lineHeight": 1.12,
+         "maxH": 422.4,
+         "valign": "middle"
+        },
+        {
+         "id": "lmvv1cdrn235",
+         "type": "image",
+         "x": 237.6,
+         "y": 947.406857142857,
+         "w": 604.8000000000001,
+         "h": 626.9931428571429,
+         "src": "/media/packshots/spot-hero-patchs-anti-imperfections.png",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    }
+   },
+   "caption": "« Le dentifrice sèche les boutons » #imperfections #patchbouton\n\nSpot Hero Day · Patchs invisibles de jour. Fais ton Skin Diag gratuit (lien en bio).",
+   "hashtags": [
+    "#imperfections",
+    "#patchbouton",
+    "#acne",
     "#skincaretok"
    ],
    "cta": "Fais ton Skin Diag gratuit (lien en bio)",
@@ -20711,263 +20882,6 @@
    "productIds": []
   },
   {
-   "id": "post_0011",
-   "title": "ASMR texture Dew Drop",
-   "date": "2026-11-01T19:00",
-   "platform": "tiktok",
-   "format": "video",
-   "objective": "Engagement",
-   "pillar": "Routines",
-   "campaignId": "camp-glow",
-   "visual": {
-    "kind": "video",
-    "src": "/media/videos/demo/pexels-12322647.mp4",
-    "poster": {
-     "w": 1080,
-     "h": 1920,
-     "pages": [
-      {
-       "bg": {
-        "type": "color",
-        "color": "#D8DFD4"
-       },
-       "layers": [
-        {
-         "id": "lmvv1cdr64m",
-         "type": "logo",
-         "x": 356.4,
-         "y": 249.60000000000002,
-         "w": 367.20000000000005,
-         "variant": "wordmark",
-         "tint": "dark"
-        },
-        {
-         "id": "lmvv1cdr64n",
-         "type": "shape",
-         "x": 86.4,
-         "y": 448.20685714285713,
-         "w": 907.2,
-         "h": 422.4,
-         "color": "#FFFFFF",
-         "radius": 40,
-         "opacity": 0.95
-        },
-        {
-         "id": "lmvv1cdr64o",
-         "type": "text",
-         "x": 162,
-         "y": 448.20685714285713,
-         "w": 756,
-         "text": "ASMR : la texture de Dew Drop",
-         "size": 77.75999999999999,
-         "weight": 500,
-         "color": "#1F3329",
-         "align": "center",
-         "font": "display",
-         "lineHeight": 1.12,
-         "maxH": 422.4,
-         "valign": "middle"
-        },
-        {
-         "id": "lmvv1cdr64p",
-         "type": "image",
-         "x": 237.6,
-         "y": 947.406857142857,
-         "w": 604.8000000000001,
-         "h": 626.9931428571429,
-         "src": "/media/packshots/dew-drop-toner-hydratant.png",
-         "fit": "contain"
-        }
-       ]
-      }
-     ]
-    },
-    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-   },
-   "caption": "ASMR : la texture de Dew Drop #routineglow #vitaminec\n\nDew Drop · Toner hydratant. Fais ton Skin Diag gratuit (lien en bio).",
-   "hashtags": [
-    "#toner",
-    "#hydratation"
-   ],
-   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
-   "status": "a_valider",
-   "comments": [],
-   "productIds": []
-  },
-  {
-   "id": "post_0021",
-   "title": "Reel — La niacinamide ne fait pas de miracle. Mais elle fait ça.",
-   "date": "2026-11-04T18:00",
-   "platform": "instagram",
-   "format": "reel",
-   "objective": "Notoriété",
-   "pillar": "Skin School",
-   "visual": {
-    "kind": "video",
-    "src": "/media/videos/demo/pexels-6801664.mp4",
-    "poster": {
-     "w": 1080,
-     "h": 1920,
-     "pages": [
-      {
-       "bg": {
-        "type": "color",
-        "color": "#D8DFD4"
-       },
-       "layers": [
-        {
-         "id": "lmvv1cdr67c",
-         "type": "logo",
-         "x": 356.4,
-         "y": 249.60000000000002,
-         "w": 367.20000000000005,
-         "variant": "wordmark",
-         "tint": "dark"
-        },
-        {
-         "id": "lmvv1cdr67d",
-         "type": "shape",
-         "x": 86.4,
-         "y": 448.20685714285713,
-         "w": 907.2,
-         "h": 422.4,
-         "color": "#FFFFFF",
-         "radius": 40,
-         "opacity": 0.95
-        },
-        {
-         "id": "lmvv1cdr67e",
-         "type": "text",
-         "x": 162,
-         "y": 448.20685714285713,
-         "w": 756,
-         "text": "La niacinamide ne fait pas de miracle. Mais elle fait ça.",
-         "size": 77.75999999999999,
-         "weight": 500,
-         "color": "#1F3329",
-         "align": "center",
-         "font": "display",
-         "lineHeight": 1.12,
-         "maxH": 422.4,
-         "valign": "middle"
-        },
-        {
-         "id": "lmvv1cdr67f",
-         "type": "image",
-         "x": 237.6,
-         "y": 947.406857142857,
-         "w": 604.8000000000001,
-         "h": 626.9931428571429,
-         "src": "/media/packshots/clear-skin-serum-niacinamide.png",
-         "fit": "contain"
-        }
-       ]
-      }
-     ]
-    },
-    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-   },
-   "caption": "La niacinamide ne fait pas de miracle. Mais elle fait ça.\n\nDans cette vidéo : Clear Skin en action et nos conseils pour l'intégrer à ta routine.\n\n→ Matin et/ou soir, après le nettoyage\n→ Compatible avec la plupart des actifs, y compris l'acide hyaluronique\n→ Les résultats s'observent sur plusieurs semaines d'utilisation régulière\n\nFais ton Skin Diag gratuit (lien en bio).",
-   "hashtags": [
-    "#niacinamide",
-    "#peaugrasse",
-    "#imperfections",
-    "#skincaretips",
-    "#skinclean",
-    "#yourskinyourglow"
-   ],
-   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
-   "status": "a_valider",
-   "comments": [],
-   "productIds": []
-  },
-  {
-   "id": "post_0030",
-   "title": "Tuto Matte Balance",
-   "date": "2026-11-05T19:00",
-   "platform": "tiktok",
-   "format": "video",
-   "objective": "Notoriété",
-   "pillar": "Skin School",
-   "visual": {
-    "kind": "video",
-    "src": "/media/videos/demo/pexels-5468875.mp4",
-    "poster": {
-     "w": 1080,
-     "h": 1920,
-     "pages": [
-      {
-       "bg": {
-        "type": "color",
-        "color": "#D8DFD4"
-       },
-       "layers": [
-        {
-         "id": "lmvv1cdr78n",
-         "type": "logo",
-         "x": 356.4,
-         "y": 249.60000000000002,
-         "w": 367.20000000000005,
-         "variant": "wordmark",
-         "tint": "dark"
-        },
-        {
-         "id": "lmvv1cdr78o",
-         "type": "shape",
-         "x": 86.4,
-         "y": 448.20685714285713,
-         "w": 907.2,
-         "h": 422.4,
-         "color": "#FFFFFF",
-         "radius": 40,
-         "opacity": 0.95
-        },
-        {
-         "id": "lmvv1cdr78p",
-         "type": "text",
-         "x": 162,
-         "y": 448.20685714285713,
-         "w": 756,
-         "text": "Comment bien utiliser Matte Balance (la plupart des gens se trompent)",
-         "size": 77.75999999999999,
-         "weight": 500,
-         "color": "#1F3329",
-         "align": "center",
-         "font": "display",
-         "lineHeight": 1.12,
-         "maxH": 422.4,
-         "valign": "middle"
-        },
-        {
-         "id": "lmvv1cdr78q",
-         "type": "image",
-         "x": 237.6,
-         "y": 947.406857142857,
-         "w": 604.8000000000001,
-         "h": 626.9931428571429,
-         "src": "/media/packshots/matte-balance-gel-creme.png",
-         "fit": "contain"
-        }
-       ]
-      }
-     ]
-    },
-    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-   },
-   "caption": "Comment bien utiliser Matte Balance (la plupart des gens se trompent) #niacinamide #peaugrasse\n\nMatte Balance · Gel-crème matifiant. Fais ton Skin Diag gratuit (lien en bio).",
-   "hashtags": [
-    "#niacinamide",
-    "#peaugrasse",
-    "#imperfections",
-    "#skincaretok",
-    "#skinclean"
-   ],
-   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
-   "status": "a_valider",
-   "comments": [],
-   "productIds": []
-  },
-  {
    "id": "post_0032",
    "title": "ASMR texture Matte Balance",
    "date": "2026-11-08T19:00",
@@ -21851,6 +21765,176 @@
    "status": "a_valider",
    "comments": [],
    "productIds": []
+  },
+  {
+   "id": "post_0011",
+   "title": "ASMR texture Dew Drop",
+   "date": "2026-11-01T19:00",
+   "platform": "tiktok",
+   "format": "video",
+   "objective": "Engagement",
+   "pillar": "Routines",
+   "campaignId": "camp-glow",
+   "visual": {
+    "kind": "video",
+    "src": "/media/videos/demo/pexels-12322647.mp4",
+    "poster": {
+     "w": 1080,
+     "h": 1920,
+     "pages": [
+      {
+       "bg": {
+        "type": "color",
+        "color": "#D8DFD4"
+       },
+       "layers": [
+        {
+         "id": "lmvv1cdr64m",
+         "type": "logo",
+         "x": 356.4,
+         "y": 249.60000000000002,
+         "w": 367.20000000000005,
+         "variant": "wordmark",
+         "tint": "dark"
+        },
+        {
+         "id": "lmvv1cdr64n",
+         "type": "shape",
+         "x": 86.4,
+         "y": 448.20685714285713,
+         "w": 907.2,
+         "h": 422.4,
+         "color": "#FFFFFF",
+         "radius": 40,
+         "opacity": 0.95
+        },
+        {
+         "id": "lmvv1cdr64o",
+         "type": "text",
+         "x": 162,
+         "y": 448.20685714285713,
+         "w": 756,
+         "text": "ASMR : la texture de Dew Drop",
+         "size": 77.75999999999999,
+         "weight": 500,
+         "color": "#1F3329",
+         "align": "center",
+         "font": "display",
+         "lineHeight": 1.12,
+         "maxH": 422.4,
+         "valign": "middle"
+        },
+        {
+         "id": "lmvv1cdr64p",
+         "type": "image",
+         "x": 237.6,
+         "y": 947.406857142857,
+         "w": 604.8000000000001,
+         "h": 626.9931428571429,
+         "src": "/media/packshots/dew-drop-toner-hydratant.png",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+   },
+   "caption": "ASMR : la texture de Dew Drop #routineglow #vitaminec\n\nDew Drop · Toner hydratant. Fais ton Skin Diag gratuit (lien en bio).",
+   "hashtags": [
+    "#toner",
+    "#hydratation"
+   ],
+   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
+   "status": "a_valider",
+   "comments": [],
+   "productIds": []
+  },
+  {
+   "id": "post_0030",
+   "title": "Tuto Matte Balance",
+   "date": "2026-11-05T19:00",
+   "platform": "tiktok",
+   "format": "video",
+   "objective": "Notoriété",
+   "pillar": "Skin School",
+   "visual": {
+    "kind": "video",
+    "src": "/media/videos/demo/pexels-5468875.mp4",
+    "poster": {
+     "w": 1080,
+     "h": 1920,
+     "pages": [
+      {
+       "bg": {
+        "type": "color",
+        "color": "#D8DFD4"
+       },
+       "layers": [
+        {
+         "id": "lmvv1cdr78n",
+         "type": "logo",
+         "x": 356.4,
+         "y": 249.60000000000002,
+         "w": 367.20000000000005,
+         "variant": "wordmark",
+         "tint": "dark"
+        },
+        {
+         "id": "lmvv1cdr78o",
+         "type": "shape",
+         "x": 86.4,
+         "y": 448.20685714285713,
+         "w": 907.2,
+         "h": 422.4,
+         "color": "#FFFFFF",
+         "radius": 40,
+         "opacity": 0.95
+        },
+        {
+         "id": "lmvv1cdr78p",
+         "type": "text",
+         "x": 162,
+         "y": 448.20685714285713,
+         "w": 756,
+         "text": "Comment bien utiliser Matte Balance (la plupart des gens se trompent)",
+         "size": 77.75999999999999,
+         "weight": 500,
+         "color": "#1F3329",
+         "align": "center",
+         "font": "display",
+         "lineHeight": 1.12,
+         "maxH": 422.4,
+         "valign": "middle"
+        },
+        {
+         "id": "lmvv1cdr78q",
+         "type": "image",
+         "x": 237.6,
+         "y": 947.406857142857,
+         "w": 604.8000000000001,
+         "h": 626.9931428571429,
+         "src": "/media/packshots/matte-balance-gel-creme.png",
+         "fit": "contain"
+        }
+       ]
+      }
+     ]
+    },
+    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+   },
+   "caption": "Comment bien utiliser Matte Balance (la plupart des gens se trompent) #niacinamide #peaugrasse\n\nMatte Balance · Gel-crème matifiant. Fais ton Skin Diag gratuit (lien en bio).",
+   "hashtags": [
+    "#niacinamide",
+    "#peaugrasse",
+    "#imperfections",
+    "#skincaretok",
+    "#skinclean"
+   ],
+   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
+   "status": "a_valider",
+   "comments": [],
+   "productIds": []
   }
  ],
  "ads": [
@@ -22159,186 +22243,6 @@
    "budget": null
   },
   {
-   "id": "ad-tiktok-diag",
-   "name": "TikTok — Skin Diag",
-   "platform": "tiktok_ads",
-   "status": "brouillon",
-   "objective": "Vues vidéo + trafic Skin Diag",
-   "audience": {
-    "locations": "France",
-    "age": "18-24",
-    "gender": "Tous",
-    "interests": [
-     "Beauty & Personal Care",
-     "Skincare"
-    ]
-   },
-   "creatives": [
-    {
-     "id": "t1",
-     "headline": "J'ai enfin compris pourquoi ma peau brille",
-     "text": "Le Skin Diag SKINCLEAN : 2 minutes, une routine faite pour toi. #skincaretok",
-     "cta": "En savoir plus",
-     "visual": {
-      "kind": "video",
-      "src": "/media/videos/demo/pexels-8131891.mp4",
-      "poster": {
-       "w": 1080,
-       "h": 1920,
-       "pages": [
-        {
-         "bg": {
-          "type": "color",
-          "color": "#D8DFD4"
-         },
-         "layers": [
-          {
-           "id": "lmvv1cdr326",
-           "type": "logo",
-           "x": 356.4,
-           "y": 249.60000000000002,
-           "w": 367.20000000000005,
-           "variant": "wordmark",
-           "tint": "dark"
-          },
-          {
-           "id": "lmvv1cdr327",
-           "type": "shape",
-           "x": 86.4,
-           "y": 448.20685714285713,
-           "w": 907.2,
-           "h": 422.4,
-           "color": "#FFFFFF",
-           "radius": 40,
-           "opacity": 0.95
-          },
-          {
-           "id": "lmvv1cdr328",
-           "type": "text",
-           "x": 162,
-           "y": 448.20685714285713,
-           "w": 756,
-           "text": "J'ai enfin compris ma peau",
-           "size": 77.75999999999999,
-           "weight": 500,
-           "color": "#1F3329",
-           "align": "center",
-           "font": "display",
-           "lineHeight": 1.12,
-           "maxH": 422.4,
-           "valign": "middle"
-          },
-          {
-           "id": "lmvv1cdr329",
-           "type": "image",
-           "x": 237.6,
-           "y": 947.406857142857,
-           "w": 604.8000000000001,
-           "h": 626.9931428571429,
-           "src": "/media/packshots/clear-skin-serum-niacinamide.png",
-           "fit": "contain"
-          }
-         ]
-        }
-       ]
-      },
-      "note": "Vidéo de démonstration — à remplacer par une création UGC."
-     }
-    }
-   ],
-   "budget": null
-  },
-  {
-   "id": "ad-tiktok-niacinamide",
-   "name": "TikTok — Clear Skin niacinamide",
-   "platform": "tiktok_ads",
-   "status": "brouillon",
-   "objective": "Vues vidéo",
-   "audience": {
-    "locations": "France",
-    "age": "16-24",
-    "gender": "Tous",
-    "interests": [
-     "Skincare",
-     "Acne"
-    ]
-   },
-   "creatives": [
-    {
-     "id": "t2",
-     "headline": "La niacinamide ne fait pas de miracle. Mais elle fait ça.",
-     "text": "Clear Skin — niacinamide 10 % + zinc. Résultats variables selon les peaux.",
-     "cta": "Découvrir",
-     "visual": {
-      "kind": "video",
-      "src": "/media/videos/demo/pexels-8131891.mp4",
-      "poster": {
-       "w": 1080,
-       "h": 1920,
-       "pages": [
-        {
-         "bg": {
-          "type": "color",
-          "color": "#D8DFD4"
-         },
-         "layers": [
-          {
-           "id": "lmvv1cdr32a",
-           "type": "logo",
-           "x": 356.4,
-           "y": 249.60000000000002,
-           "w": 367.20000000000005,
-           "variant": "wordmark",
-           "tint": "dark"
-          },
-          {
-           "id": "lmvv1cdr32b",
-           "type": "shape",
-           "x": 86.4,
-           "y": 448.20685714285713,
-           "w": 907.2,
-           "h": 422.4,
-           "color": "#FFFFFF",
-           "radius": 40,
-           "opacity": 0.95
-          },
-          {
-           "id": "lmvv1cdr32c",
-           "type": "text",
-           "x": 162,
-           "y": 448.20685714285713,
-           "w": 756,
-           "text": "La niacinamide sans blabla",
-           "size": 77.75999999999999,
-           "weight": 500,
-           "color": "#1F3329",
-           "align": "center",
-           "font": "display",
-           "lineHeight": 1.12,
-           "maxH": 422.4,
-           "valign": "middle"
-          },
-          {
-           "id": "lmvv1cdr32d",
-           "type": "image",
-           "x": 237.6,
-           "y": 947.406857142857,
-           "w": 604.8000000000001,
-           "h": 626.9931428571429,
-           "src": "/media/packshots/clear-skin-serum-niacinamide.png",
-           "fit": "contain"
-          }
-         ]
-        }
-       ]
-      },
-      "note": "Vidéo de démonstration — à remplacer."
-     }
-    }
-   ],
-   "budget": null
-  },
-  {
    "id": "ad-meta-black-friday",
    "name": "Meta — Glow Friday kits",
    "platform": "meta_ads",
@@ -22472,6 +22376,186 @@
      "text": "Des soins aux formules lisibles et une routine personnalisée en 2 minutes. -20 % sur ta 1ʳᵉ commande avec la newsletter.",
      "description": "Livraison 48-72 h. Programme de fidélité SKINCLEAN Club.",
      "cta": "Découvrir"
+    }
+   ],
+   "budget": null
+  },
+  {
+   "id": "ad-tiktok-diag",
+   "name": "TikTok — Skin Diag",
+   "platform": "tiktok_ads",
+   "status": "brouillon",
+   "objective": "Vues vidéo + trafic Skin Diag",
+   "audience": {
+    "locations": "France",
+    "age": "18-24",
+    "gender": "Tous",
+    "interests": [
+     "Beauty & Personal Care",
+     "Skincare"
+    ]
+   },
+   "creatives": [
+    {
+     "id": "t1",
+     "headline": "J'ai enfin compris pourquoi ma peau brille",
+     "text": "Le Skin Diag SKINCLEAN : 2 minutes, une routine faite pour toi. #skincaretok",
+     "cta": "En savoir plus",
+     "visual": {
+      "kind": "video",
+      "src": "/media/videos/demo/pexels-5936529.mp4",
+      "poster": {
+       "w": 1080,
+       "h": 1920,
+       "pages": [
+        {
+         "bg": {
+          "type": "color",
+          "color": "#D8DFD4"
+         },
+         "layers": [
+          {
+           "id": "lmvv1cdr326",
+           "type": "logo",
+           "x": 356.4,
+           "y": 249.60000000000002,
+           "w": 367.20000000000005,
+           "variant": "wordmark",
+           "tint": "dark"
+          },
+          {
+           "id": "lmvv1cdr327",
+           "type": "shape",
+           "x": 86.4,
+           "y": 448.20685714285713,
+           "w": 907.2,
+           "h": 422.4,
+           "color": "#FFFFFF",
+           "radius": 40,
+           "opacity": 0.95
+          },
+          {
+           "id": "lmvv1cdr328",
+           "type": "text",
+           "x": 162,
+           "y": 448.20685714285713,
+           "w": 756,
+           "text": "J'ai enfin compris ma peau",
+           "size": 77.75999999999999,
+           "weight": 500,
+           "color": "#1F3329",
+           "align": "center",
+           "font": "display",
+           "lineHeight": 1.12,
+           "maxH": 422.4,
+           "valign": "middle"
+          },
+          {
+           "id": "lmvv1cdr329",
+           "type": "image",
+           "x": 237.6,
+           "y": 947.406857142857,
+           "w": 604.8000000000001,
+           "h": 626.9931428571429,
+           "src": "/media/packshots/clear-skin-serum-niacinamide.png",
+           "fit": "contain"
+          }
+         ]
+        }
+       ]
+      },
+      "note": "Vidéo de démonstration — à remplacer par une création UGC."
+     }
+    }
+   ],
+   "budget": null
+  },
+  {
+   "id": "ad-tiktok-niacinamide",
+   "name": "TikTok — Clear Skin niacinamide",
+   "platform": "tiktok_ads",
+   "status": "brouillon",
+   "objective": "Vues vidéo",
+   "audience": {
+    "locations": "France",
+    "age": "16-24",
+    "gender": "Tous",
+    "interests": [
+     "Skincare",
+     "Acne"
+    ]
+   },
+   "creatives": [
+    {
+     "id": "t2",
+     "headline": "La niacinamide ne fait pas de miracle. Mais elle fait ça.",
+     "text": "Clear Skin — niacinamide 10 % + zinc. Résultats variables selon les peaux.",
+     "cta": "Découvrir",
+     "visual": {
+      "kind": "video",
+      "src": "/media/videos/demo/pexels-6446058.mp4",
+      "poster": {
+       "w": 1080,
+       "h": 1920,
+       "pages": [
+        {
+         "bg": {
+          "type": "color",
+          "color": "#D8DFD4"
+         },
+         "layers": [
+          {
+           "id": "lmvv1cdr32a",
+           "type": "logo",
+           "x": 356.4,
+           "y": 249.60000000000002,
+           "w": 367.20000000000005,
+           "variant": "wordmark",
+           "tint": "dark"
+          },
+          {
+           "id": "lmvv1cdr32b",
+           "type": "shape",
+           "x": 86.4,
+           "y": 448.20685714285713,
+           "w": 907.2,
+           "h": 422.4,
+           "color": "#FFFFFF",
+           "radius": 40,
+           "opacity": 0.95
+          },
+          {
+           "id": "lmvv1cdr32c",
+           "type": "text",
+           "x": 162,
+           "y": 448.20685714285713,
+           "w": 756,
+           "text": "La niacinamide sans blabla",
+           "size": 77.75999999999999,
+           "weight": 500,
+           "color": "#1F3329",
+           "align": "center",
+           "font": "display",
+           "lineHeight": 1.12,
+           "maxH": 422.4,
+           "valign": "middle"
+          },
+          {
+           "id": "lmvv1cdr32d",
+           "type": "image",
+           "x": 237.6,
+           "y": 947.406857142857,
+           "w": 604.8000000000001,
+           "h": 626.9931428571429,
+           "src": "/media/packshots/clear-skin-serum-niacinamide.png",
+           "fit": "contain"
+          }
+         ]
+        }
+       ]
+      },
+      "note": "Vidéo de démonstration — à remplacer."
+     }
     }
    ],
    "budget": null

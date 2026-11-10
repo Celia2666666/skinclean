@@ -522,20 +522,43 @@ function allEvents(): CalEvent[] {
   return ev;
 }
 
+const weekOf = (d: string) => { const x = new Date(`${d}T12:00`); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return ymd(x); };
+const dayLabel = (d: string) => new Date(`${d}T12:00`).toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
+
+/** Pastille d'action du calendrier. */
+function EventChip({ e, onOpen, big }: { e: CalEvent; onOpen: (e: CalEvent) => void; big?: boolean }) {
+  const color = PLAT_COLOR[e.kind] ?? "#1F3329";
+  if (big) return (
+    <motion.button type="button" onClick={() => onOpen(e)} whileHover={{ x: 4 }} className="group flex w-full items-center gap-3 border border-line bg-ivory p-3 text-left transition hover:border-forest">
+      <span className="h-10 w-1.5 shrink-0 rounded-full" style={{ background: color }} />
+      <span className="min-w-0 flex-1"><span className="block text-[0.65rem] font-medium uppercase tracking-[0.08em]" style={{ color }}>{e.kind === "prep" ? "Préparation" : NET[e.kind] ?? e.kind}{e.campaign && e.campaign !== "plan" ? ` · ${campName(e.campaign)}` : e.plan ? ` · post ${e.plan.id}` : ""}</span><span className="block truncate font-medium">{e.title}</span></span>
+      <span className="text-sm text-forest-soft transition group-hover:translate-x-1">Ouvrir →</span>
+    </motion.button>
+  );
+  return (
+    <button type="button" onClick={(ev) => { ev.stopPropagation(); onOpen(e); }} className="block w-full truncate rounded px-1 py-0.5 text-left text-[0.6rem] font-medium leading-tight text-white transition hover:brightness-110 md:px-1.5 md:text-[0.68rem]" style={{ background: color }} title={e.title}>
+      <span className="hidden md:inline">{NET[e.kind] ? `${NET[e.kind]} · ` : ""}</span>{e.title}
+    </button>
+  );
+}
+
 export function EditorialCalendar() {
   const events = useMemo(() => allEvents(), []);
   const camps = [{ id: "", name: "Tout" }, { id: "plan", name: "Plan des 4 semaines" }, ...hub.campaigns.filter((c) => c.plan.length).map((c) => ({ id: c.id, name: c.name }))];
   const [camp, setCamp] = useState("plan");
+  const [view, setView] = useState<"agenda" | "mois">("agenda");
   const [month, setMonth] = useState("2026-11");
   const [dir, setDir] = useState(1);
   const [open, setOpen] = useState<CalEvent | null>(null);
+  const [day, setDay] = useState<string | null>(null);
   const [planOpen, setPlanOpen] = useState<Post | null>(null);
+  const [postOpen, setPostOpen] = useState<Post | null>(null);
   const edits = useEdits();
   const c = hub.campaigns.find((x) => x.id === camp);
   const list = useMemo(() => {
     const base = events.filter((e) => !camp || e.campaign === camp);
     if (c?.startDate) for (const p of PREP) base.push({ date: addDays(c.startDate, p.d), title: p.t, kind: "prep", campaign: c.id, detail: `J${p.d} avant le lancement de « ${c.name} »` });
-    return base;
+    return base.sort((x, y) => x.date.localeCompare(y.date));
   }, [events, camp, c]);
   const choose = (id: string) => {
     setCamp(id);
@@ -543,6 +566,7 @@ export function EditorialCalendar() {
     if (first) { const m = (id && id !== "plan" ? addDays(first, -21) : first).slice(0, 7); setDir(m >= month ? 1 : -1); setMonth(m); }
   };
   const step = (n: number) => { const d = new Date(`${month}-01T12:00`); d.setMonth(d.getMonth() + n); setDir(n); setMonth(ymd(d).slice(0, 7)); };
+  const openEvent = (e: CalEvent) => { setDay(null); if (e.plan) setPlanOpen(withEdits(toHubPost(e.plan), edits)); else setOpen(e); };
   const first = new Date(`${month}-01T12:00`);
   const startOffset = (first.getDay() + 6) % 7;
   const daysInMonth = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
@@ -550,8 +574,16 @@ export function EditorialCalendar() {
   const byDay = new Map<string, CalEvent[]>();
   for (const e of list) byDay.set(e.date, [...(byDay.get(e.date) ?? []), e]);
   const label = first.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
-  const inMonth = list.filter((e) => e.date.startsWith(month)).length;
+  const inMonth = list.filter((e) => e.date.startsWith(month));
+  const weeks = useMemo(() => {
+    const m = new Map<string, [string, CalEvent[]][]>();
+    for (const [d, evs] of [...byDay.entries()].filter(([d]) => d.startsWith(month)).sort()) m.set(weekOf(d), [...(m.get(weekOf(d)) ?? []), [d, evs]]);
+    return [...m.entries()];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [list, month]);
   const today = ymd(new Date());
+  const oc = open?.campaign && open.campaign !== "plan" ? hub.campaigns.find((x) => x.id === open.campaign) : undefined;
+  const related = oc ? (hub.posts as unknown as Post[]).filter((p) => p.campaignId === oc.id) : [];
 
   return (
     <div>
@@ -565,50 +597,125 @@ export function EditorialCalendar() {
       </div>
 
       <div className="mt-6 border border-line bg-ivory">
-        <div className="flex items-center justify-between gap-3 border-b border-line p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line p-4">
           <button type="button" onClick={() => step(-1)} aria-label="Mois précédent" className="grid h-9 w-9 place-items-center rounded-full border border-line hover:bg-sage-soft">←</button>
-          <div className="text-center"><AnimatePresence mode="wait"><motion.p key={month} initial={{ opacity: 0, y: dir * 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -dir * 10 }} className="font-display text-2xl capitalize">{label}</motion.p></AnimatePresence><p className="text-xs text-forest-soft">{inMonth} action{inMonth > 1 ? "s" : ""} ce mois-ci{c ? ` · lancement de « ${c.name} » le ${new Date(`${c.startDate}T12:00`).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}` : ""}</p></div>
-          <button type="button" onClick={() => step(1)} aria-label="Mois suivant" className="grid h-9 w-9 place-items-center rounded-full border border-line hover:bg-sage-soft">→</button>
+          <div className="text-center"><AnimatePresence mode="wait"><motion.p key={month} initial={{ opacity: 0, y: dir * 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -dir * 10 }} className="font-display text-2xl capitalize">{label}</motion.p></AnimatePresence><p className="text-xs text-forest-soft">{inMonth.length} action{inMonth.length > 1 ? "s" : ""} ce mois-ci{c ? ` · lancement de « ${c.name} » le ${new Date(`${c.startDate}T12:00`).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}` : ""}</p></div>
+          <div className="flex items-center gap-2">
+            <div className="flex rounded-full border border-line p-0.5 text-xs">
+              {(["agenda", "mois"] as const).map((v) => <button key={v} type="button" onClick={() => setView(v)} aria-pressed={view === v} className={clsx("rounded-full px-3 py-1.5", view === v ? "bg-forest text-ivory" : "")}>{v === "agenda" ? "Agenda" : "Mois"}</button>)}
+            </div>
+            <button type="button" onClick={() => step(1)} aria-label="Mois suivant" className="grid h-9 w-9 place-items-center rounded-full border border-line hover:bg-sage-soft">→</button>
+          </div>
         </div>
-        <div className="grid grid-cols-7 border-b border-line text-center text-[0.65rem] font-medium uppercase tracking-[0.08em] text-forest-soft">{DAYS.map((d) => <span key={d} className="py-2">{d}</span>)}</div>
+
         <AnimatePresence mode="wait" custom={dir}>
-          <motion.div key={month} initial={{ opacity: 0, x: dir * 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -dir * 40 }} transition={{ duration: 0.3, ease: EASE }} className="grid grid-cols-7">
-            {cells.map((d, i) => {
-              const evs = byDay.get(d) ?? [];
-              const out = !d.startsWith(month);
-              return (
-                <div key={d} className={clsx("min-h-[4.5rem] border-b border-r border-line p-1 md:min-h-[7.5rem] md:p-1.5", out && "bg-cream/60", (i + 1) % 7 === 0 && "border-r-0")}>
-                  <span className={clsx("text-[0.7rem] tabular-nums", out ? "text-forest-soft/50" : "text-forest-soft", d === today && "rounded-full bg-forest px-1.5 text-ivory")}>{Number(d.slice(8))}</span>
-                  <div className="mt-1 space-y-1">
-                    {evs.slice(0, 3).map((e, k) => (
-                      <motion.button key={k} type="button" onClick={() => (e.plan ? setPlanOpen(withEdits(toHubPost(e.plan), edits)) : setOpen(e))} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.15 + (i % 7) * 0.02 + k * 0.04 }}
-                        className="block w-full truncate rounded px-1 py-0.5 text-left text-[0.6rem] font-medium leading-tight text-white transition hover:brightness-110 md:px-1.5 md:text-[0.68rem]" style={{ background: PLAT_COLOR[e.kind] ?? "#1F3329" }} title={e.title}>
-                        <span className="hidden md:inline">{NET[e.kind] ? `${NET[e.kind]} · ` : ""}</span>{e.title}
-                      </motion.button>
-                    ))}
-                    {evs.length > 3 && <button type="button" onClick={() => setOpen({ ...evs[3], title: `${evs.length - 3} autres actions ce jour-là`, detail: evs.slice(3).map((x) => `${NET[x.kind] ?? "Préparation"} : ${x.title}`).join("\n") })} className="text-[0.6rem] text-forest-soft underline">+{evs.length - 3}</button>}
-                  </div>
-                </div>
-              );
-            })}
-          </motion.div>
+          {view === "agenda" ? (
+            <motion.div key={`a-${month}-${camp}`} initial={{ opacity: 0, x: dir * 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -dir * 40 }} transition={{ duration: 0.3, ease: EASE }} className="p-4 md:p-6">
+              {weeks.length === 0 ? (
+                <p className="py-10 text-center text-sm text-forest-soft">Aucune action ce mois-ci pour cette sélection. Utilise les flèches pour changer de mois.</p>
+              ) : (
+                <ol className="space-y-6">
+                  {weeks.map(([w, days], wi) => (
+                    <motion.li key={w} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: wi * 0.06 }}>
+                      <p className="mb-2 text-[0.7rem] font-medium uppercase tracking-[0.08em] text-sage-deep">Semaine du {new Date(`${w}T12:00`).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}</p>
+                      <div className="space-y-2">
+                        {days.map(([d, evs]) => (
+                          <div key={d} className="grid gap-2 md:grid-cols-[7rem_1fr]">
+                            <p className={clsx("pt-2 text-sm font-medium capitalize", d === today && "text-[#2E5E3E]")}>{dayLabel(d)}</p>
+                            <div className="space-y-2">{evs.map((e, k) => <EventChip key={k} e={e} onOpen={openEvent} big />)}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.li>
+                  ))}
+                </ol>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div key={`m-${month}`} initial={{ opacity: 0, x: dir * 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -dir * 40 }} transition={{ duration: 0.3, ease: EASE }}>
+              <div className="grid grid-cols-7 border-b border-line text-center text-[0.65rem] font-medium uppercase tracking-[0.08em] text-forest-soft">{DAYS.map((d) => <span key={d} className="py-2">{d}</span>)}</div>
+              <div className="grid grid-cols-7">
+                {cells.map((d, i) => {
+                  const evs = byDay.get(d) ?? [];
+                  const out = !d.startsWith(month);
+                  return (
+                    <div key={d} role={evs.length ? "button" : undefined} tabIndex={evs.length ? 0 : undefined} onClick={() => evs.length && setDay(d)} onKeyDown={(k) => k.key === "Enter" && evs.length && setDay(d)}
+                      className={clsx("min-h-[4.5rem] border-b border-r border-line p-1 transition md:min-h-[7.5rem] md:p-1.5", out ? "bg-cream/60" : evs.length ? "cursor-pointer bg-sage-soft/50 hover:bg-sage-soft" : "bg-ivory", (i + 1) % 7 === 0 && "border-r-0")}>
+                      <span className={clsx("text-[0.7rem] tabular-nums", out ? "text-forest-soft/40" : evs.length ? "font-semibold text-forest" : "text-forest-soft/60", d === today && "rounded-full bg-forest px-1.5 text-ivory")}>{Number(d.slice(8))}</span>
+                      <div className="mt-1 space-y-1">
+                        {evs.slice(0, 3).map((e, k) => <EventChip key={k} e={e} onOpen={openEvent} />)}
+                        {evs.length > 3 && <span className="text-[0.6rem] font-medium text-forest">+{evs.length - 3} autres</span>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
       <div className="mt-3 flex flex-wrap gap-3 text-[0.7rem] text-forest-soft">
         {["instagram", "tiktok", "pinterest", "facebook", "story", "newsletter", "blog", "prep"].map((k) => <span key={k} className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm" style={{ background: PLAT_COLOR[k] }} />{k === "prep" ? "Préparation (rétroplanning)" : NET[k]}</span>)}
       </div>
 
-      <Sheet open={!!open} onClose={() => setOpen(null)} label={open?.title ?? "Action"}>
+      {/* Un jour : toutes ses actions */}
+      <Sheet open={!!day} onClose={() => setDay(null)} label="Actions du jour">
+        {day && (
+          <div className="p-6 md:p-10">
+            <p className="eyebrow text-sage-deep">Calendrier</p>
+            <p className="mt-2 font-display text-3xl capitalize">{frDateTime(day)}</p>
+            <div className="mt-6 space-y-2">{(byDay.get(day) ?? []).map((e, k) => <EventChip key={k} e={e} onOpen={openEvent} big />)}</div>
+          </div>
+        )}
+      </Sheet>
+
+      {/* Une action : sa campagne, ses publications liées */}
+      <Sheet open={!!open} onClose={() => setOpen(null)} label={open?.title ?? "Action"} wide={!!oc}>
         {open && (
           <div className="p-6 md:p-10">
             <span className="rounded-full px-3 py-1 text-xs font-medium text-white" style={{ background: PLAT_COLOR[open.kind] ?? "#1F3329" }}>{open.kind === "prep" ? "Préparation" : NET[open.kind] ?? open.kind}</span>
             <p className="mt-4 font-display text-3xl">{open.title}</p>
-            <p className="mt-2 text-sm text-forest-soft">{frDateTime(open.date)}{open.campaign && open.campaign !== "plan" ? ` · campagne « ${campName(open.campaign)} »` : ""}</p>
+            <p className="mt-2 text-sm capitalize text-forest-soft">{frDateTime(open.date)}</p>
             {open.detail && <p className="mt-4 whitespace-pre-line text-sm">{open.detail}</p>}
+            {oc && (
+              <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-8 overflow-hidden border border-line bg-ivory">
+                <div className="h-2" style={{ background: oc.color }} />
+                <div className="grid gap-6 p-6 md:grid-cols-[1.2fr_1fr]">
+                  <div>
+                    <p className="eyebrow text-sage-deep">La campagne</p>
+                    <p className="mt-1 font-display text-2xl">{oc.name}</p>
+                    <p className="mt-2 text-sm italic text-forest-soft">{oc.concept}</p>
+                    <p className="mt-3 text-sm">{oc.objective}</p>
+                    <p className="mt-3 text-xs text-forest-soft"><b className="font-medium text-forest">Cible :</b> {oc.target} · <b className="font-medium text-forest">Budget :</b> {oc.budget.toLocaleString("fr-FR")} €</p>
+                    <ul className="mt-4 space-y-1 border-t border-line pt-3 text-xs">{oc.kpis.map((k) => <li key={k.label} className="flex justify-between gap-3"><span className="text-forest-soft">{k.label}</span><b className="font-medium">{k.target}</b></li>)}</ul>
+                    <a href={`/hub/campagnes/${oc.id}`} className="btn btn-primary mt-5 !px-4 !py-2 text-xs">Ouvrir la campagne dans l&apos;Admin →</a>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-[0.08em] text-forest-soft">Toutes ses actions</p>
+                    <ol className="mt-2 max-h-64 space-y-1 overflow-y-auto pr-1 text-xs">
+                      {oc.plan.map((a, k) => <li key={k} className={clsx("flex gap-2 rounded px-2 py-1.5", a.title === open.title ? "bg-forest text-ivory" : "bg-cream")}><span className="w-14 shrink-0 tabular-nums">{oc.startDate ? dayLabel(addDays(oc.startDate, a.day)).replace(".", "") : `J+${a.day}`}</span><span className="flex-1">{a.title}</span><span className="shrink-0 opacity-70">{NET[a.platform] ?? a.platform}</span></li>)}
+                    </ol>
+                  </div>
+                </div>
+                {related.length > 0 && (
+                  <div className="border-t border-line p-6">
+                    <p className="text-xs font-medium uppercase tracking-[0.08em] text-forest-soft">Publications prêtes pour cette campagne</p>
+                    <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5">
+                      {related.map((p) => (
+                        <button key={p.id} type="button" onClick={() => { setOpen(null); setPostOpen(withEdits(p, edits)); }} className="group text-left">
+                          <span className="relative block aspect-[4/5] overflow-hidden bg-sage-soft"><VisualThumb visual={p.visual} width={160} fill className="h-full w-full object-cover transition group-hover:scale-105" /></span>
+                          <span className="mt-1 line-clamp-2 block text-[0.65rem] leading-tight">{p.title}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
           </div>
         )}
       </Sheet>
-      <PostSheet post={planOpen} onClose={() => setPlanOpen(null)} />
+      <PostSheet post={planOpen ?? postOpen} onClose={() => { setPlanOpen(null); setPostOpen(null); }} />
     </div>
   );
 }

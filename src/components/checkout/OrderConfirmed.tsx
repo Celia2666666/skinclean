@@ -39,7 +39,7 @@ export function OrderConfirmed({ mode, sessionId, orderId, email }: { mode: "str
       <motion.div initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 200, damping: 12 }} className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-sage text-forest"><CheckIcon size={40} /></motion.div>
       <h1 className="mt-6 font-display text-5xl">{mode === "test" ? "Merci, ta commande est enregistrée !" : "Merci, ta commande est confirmée !"}</h1>
       {mode === "test" ? (
-        <p className="mt-4 rounded-[2px] bg-sage-soft p-4 text-sm"><b>Paiement simulé</b> (projet étudiant INSEEC) : aucune somme n&apos;a été débitée et la commande ne sera pas expédiée. Elle apparaît dans ton compte client et dans le CRM de l&apos;entreprise.</p>
+        <p className="mt-4 rounded-[2px] bg-sage-soft p-4 text-sm"><b>Paiement simulé</b> (projet étudiant INSEEC) : aucune somme n&apos;a été débitée et la commande ne sera pas expédiée. Elle apparaît dans ton compte client et dans le <Link href="/crm/ventes" className="underline">CRM de l&apos;entreprise</Link>, et l&apos;e-mail de confirmation (simulé, aucun envoi réel) est visible dans la <Link href="/crm/boite-demo" className="underline">boîte mail de démo du CRM</Link>.</p>
       ) : (
         <p className="mt-4 text-forest-soft">Paiement validé par Stripe. Un e-mail récapitulatif t&apos;est envoyé{email ? ` à ${email}` : ""}.</p>
       )}
