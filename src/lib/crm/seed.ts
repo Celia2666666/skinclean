@@ -414,13 +414,14 @@ export function generateCrmDemo(today = ymd(new Date()), nowHm = ymdhm(new Date(
   }
 
   /* Pipeline B2B (entreprises fictives) */
+  const DEAL_TYPE_LABEL_SEED: Record<Deal["type"], string> = { institut: "institut de beauté", concept_store: "concept store", pharmacie: "pharmacie", spa: "spa", marketplace: "marketplace", entreprise: "cadeaux d'entreprise" };
   const DEALS: [string, string, Deal["type"], string, number, DealStage][] = [
-    ["Institut Lumière de Peau", "Hélène Garnier", "institut", "Lyon", 4200, "negociation"],
+    ["Institut Lumière de Peau", "Hélène Garnier", "institut", "Lyon", 4200, "proposition"],
     ["Maison Sève — concept store", "Bastien Morel", "concept_store", "Bordeaux", 6800, "proposition"],
     ["Pharmacie des Tilleuls", "Dr Claire Fontaine", "pharmacie", "Nantes", 9500, "qualifie"],
     ["Spa Les Rives", "Inès Haddad", "spa", "Annecy", 7400, "gagne"],
     ["Atelier Bien-Être", "Margaux Leroy", "institut", "Lille", 2600, "prospect"],
-    ["Hôtel Clos des Vignes — spa", "Antoine Mercier", "spa", "Beaune", 11800, "negociation"],
+    ["Hôtel Clos des Vignes — spa", "Antoine Mercier", "spa", "Beaune", 11800, "proposition"],
     ["Glow Box (box beauté)", "Sarah Benali", "marketplace", "Paris", 15000, "proposition"],
     ["Concept store Nébuleuse", "Jade Rousseau", "concept_store", "Marseille", 3900, "gagne"],
     ["Institut Peau Neuve", "Lucie Perrin", "institut", "Rennes", 2100, "perdu"],
@@ -431,9 +432,15 @@ export function generateCrmDemo(today = ymd(new Date()), nowHm = ymdhm(new Date(
     ["Beauté Locale (marketplace)", "Romain Lambert", "marketplace", "Lille", 6400, "perdu"],
     ["Institut Douceur", "Céline Muller", "institut", "Strasbourg", 2900, "proposition"],
     ["Spa thermal Ondine", "Julien Faure", "spa", "Vichy", 9800, "prospect"],
-    ["Pharmacie Centrale Saint-Michel", "Aurélie Bonnet", "pharmacie", "Grenoble", 7100, "negociation"],
+    ["Pharmacie Centrale Saint-Michel", "Aurélie Bonnet", "pharmacie", "Grenoble", 7100, "proposition"],
+    ["Institut Rose & Sauge", "Camille Blanc", "institut", "Montpellier", 2400, "prospect"],
+    ["Pharmacie de la Croix-Rousse", "Dr Yanis Belkacem", "pharmacie", "Lyon", 6300, "qualifie"],
+    ["BDE École de commerce Lyon", "Lina Moreau", "entreprise", "Lyon", 1500, "proposition"],
+    ["Salle Équilibre Fitness", "Hugo Lefèvre", "concept_store", "Villeurbanne", 1200, "prospect"],
+    ["Concept store Origines", "Manon Girard", "concept_store", "Nice", 3400, "gagne"],
+    ["Spa urbain Bulle d'Eau", "Thomas Chevalier", "spa", "Paris", 5600, "perdu"],
   ];
-  const ORDER_OF: DealStage[] = ["prospect", "qualifie", "proposition", "negociation", "gagne"];
+  const ORDER_OF: DealStage[] = ["prospect", "qualifie", "proposition", "gagne"];
   const deals: Deal[] = DEALS.map(([company, contact, type, city, amount, stage], i) => {
     const created = `${addDays(today, -int(15, 150))}T${pad(int(9, 17))}:${pad(int(0, 59))}`;
     const steps = stage === "perdu" ? ORDER_OF.slice(0, int(2, 4)) : ORDER_OF.slice(0, ORDER_OF.indexOf(stage) + 1);
@@ -446,6 +453,9 @@ export function generateCrmDemo(today = ymd(new Date()), nowHm = ymdhm(new Date(
       closeDate: closed ? hist.at(-1)!.at.slice(0, 10) : addDays(today, int(5, 70)),
       nextStep: closed ? undefined : pick(["Envoyer les échantillons testeurs", "Rappeler pour valider les quantités", "Présenter la gamme en visio", "Envoyer la grille tarifaire revendeur", "Organiser une formation produit"]),
       lostReason: stage === "perdu" ? pick(["Budget gelé jusqu'à l'an prochain", "A choisi une marque déjà référencée chez son grossiste"]) : undefined,
+      // Source du contact et téléphone fictif (plage 06 39 98 réservée aux œuvres de fiction par l'ARCEP)
+      origin: (["reseau_social", "partenaire", "salon", "site", "recommandation"] as const)[i % 5],
+      phone: `06 39 98 ${pad(10 + i)} ${pad((i * 37) % 100)}`,
       stageHistory: hist,
     };
   });
@@ -497,7 +507,21 @@ export function generateCrmDemo(today = ymd(new Date()), nowHm = ymdhm(new Date(
     const [kind, body] = NOTES[i % NOTES.length];
     return { id: `act_${i + 1}`, at: `${addDays(today, -int(1, 90))}T${pad(int(9, 18))}:${pad(int(0, 59))}`, customerId: c.id, kind, body, by: "SKINCLEAN" };
   });
-  for (const d of deals.slice(0, 8)) activities.push({ id: `act_${activities.length + 1}`, at: d.updatedAt, dealId: d.id, kind: "appel", body: `Échange avec ${d.contact} : ${d.nextStep ?? "dossier clôturé"}.`, by: "SKINCLEAN" });
+  const FIRST: Record<NonNullable<Deal["origin"]>, string> = {
+    reseau_social: "Premier contact via un message reçu sur Instagram après une publication SKINCLEAN.",
+    partenaire: "Mise en relation par un partenaire du réseau (créatrice de contenu ou pharmacie déjà cliente).",
+    salon: "Rencontre sur le stand Skin Diag d'un salon professionnel de la beauté.",
+    site: "Demande reçue via le formulaire « professionnels » du site.",
+    recommandation: "Recommandé par un client professionnel satisfait.",
+  };
+  for (const d of deals) {
+    const h = d.stageHistory;
+    activities.push({ id: `act_${activities.length + 1}`, at: h[0].at, dealId: d.id, kind: "note", body: FIRST[d.origin ?? "site"], by: "SKINCLEAN" });
+    if (h.length > 1) activities.push({ id: `act_${activities.length + 1}`, at: h[1].at, dealId: d.id, kind: "appel", body: `Appel de découverte avec ${d.contact} : besoins, volumes et clientèle (${DEAL_TYPE_LABEL_SEED[d.type]}).`, by: "SKINCLEAN" });
+    if (h.length > 2) activities.push({ id: `act_${activities.length + 1}`, at: h[2].at, dealId: d.id, kind: "email", body: `Proposition envoyée : grille revendeur, ${Math.round(d.amount / 100) * 100} € HT estimés sur un an, échantillons joints.`, by: "SKINCLEAN" });
+    if (d.stage === "gagne") activities.push({ id: `act_${activities.length + 1}`, at: h.at(-1)!.at, dealId: d.id, kind: "email", body: "Bon de commande signé, première livraison planifiée.", by: "SKINCLEAN" });
+    if (d.stage === "perdu") activities.push({ id: `act_${activities.length + 1}`, at: h.at(-1)!.at, dealId: d.id, kind: "note", body: `Opportunité perdue : ${d.lostReason ?? "pas de suite"}. Relance prévue dans 6 mois.`, by: "SKINCLEAN" });
+  }
 
   /* Tâches */
   const vip = customers.filter((c) => c.orders >= 5);

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import clsx from "clsx";
 import { Card, PageHeader } from "@/components/hub/ui";
+import { SiteOrdersLive } from "../SiteOrdersLive";
 import { AlertI, ArrowRightI, InfoI } from "@/components/hub/icons";
 import { HBars, Heatmap, SERIES, TrendChart, eur, fmtN, pctf } from "../charts";
 import { Kpi, PeriodTabs, Pill, ORDER_TONE } from "../ui";
@@ -28,12 +29,14 @@ export function Dashboard({ data: d, periods }: { data: DashboardData; periods: 
         </div>
       )}
 
+      <div className="mb-5"><SiteOrdersLive compact /></div>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-6">
         <Kpi label="Chiffre d'affaires TTC" value={eur(k.revenue)} delta={d.deltas.revenue} hint={`${eur(k.ht)} HT`} spark={d.series.revenue} href="/crm/ventes" />
         <Kpi label="Commandes" value={fmtN(k.orders)} delta={d.deltas.orders} hint={`${k.units.toLocaleString("fr-FR")} articles`} spark={d.series.orders} href="/crm/ventes" />
         <Kpi label="Panier moyen" value={eur(k.aov, 2)} delta={d.deltas.aov} hint={`${k.upo.toFixed(1).replace(".", ",")} article(s) / commande`} spark={d.series.aov} />
         <Kpi label="Marge brute" value={pctf(k.grossRate)} delta={d.deltas.grossRate} points hint={`${eur(k.gross)} HT`} href="/crm/rentabilite" />
         <Kpi label="Marge de contribution" value={eur(k.contribution)} delta={d.deltas.contribution} hint="après logistique et frais de paiement" href="/crm/rentabilite" />
+        <Kpi label="Clients" value={fmtN(d.buyers)} hint="acheteurs au total (depuis le lancement)" href="/crm/clients" />
         <Kpi label="Nouveaux clients" value={fmtN(k.newCustomers)} delta={d.deltas.newCustomers} hint={`${pctf(k.returningShare, 0)} de commandes récurrentes`} href="/crm/analyses" />
         <Kpi label="Taux de conversion" value={d.conversion === null ? "—" : pctf(d.conversion, 2)} delta={d.deltas.conversion} hint="commandes / sessions" />
         <Kpi label="Abandon de panier" value={d.abandonment === null ? "—" : pctf(d.abandonment, 0)} delta={d.deltas.abandonment} invert points hint={`${eur(d.lostCarts)} non récupérés`} href="/crm/paniers" />

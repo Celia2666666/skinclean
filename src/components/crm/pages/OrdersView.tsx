@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import clsx from "clsx";
 import { Button, Card, Drawer, PageHeader } from "@/components/hub/ui";
+import { SiteOrdersLive } from "../SiteOrdersLive";
 import { DownloadI } from "@/components/hub/icons";
 import { TruckI } from "../icons";
 import { eur, pctf } from "../charts";
@@ -30,6 +31,7 @@ export function OrdersView({ data: d, periods }: { data: Data; periods: { id: st
     <>
       <PageHeader eyebrow="Ventes" title="Commandes" intro="Suivi des commandes, de la préparation au remboursement. Clique sur une commande pour voir sa marge et changer son statut."
         actions={<><PeriodTabs periods={periods} value={d.period.key} /><a className="hub-btn hub-btn-secondary" href={`/api/crm/export/commandes?from=${d.period.from}&to=${d.period.to}`}><DownloadI size={15} />Export CSV</a></>} />
+      <div className="mb-5"><SiteOrdersLive /></div>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
         <Kpi label="CA TTC (filtre)" value={eur(d.kpis.revenue)} />
         <Kpi label="Commandes" value={d.kpis.orders.toLocaleString("fr-FR")} />

@@ -138,6 +138,8 @@ export interface PurchaseOrder {
 }
 
 export type DealStage = "prospect" | "qualifie" | "proposition" | "negociation" | "gagne" | "perdu";
+/** Source qui a amené le contact (réseau social, partenaire, salon…). */
+export type DealOrigin = "reseau_social" | "partenaire" | "salon" | "site" | "recommandation";
 export interface Deal {
   id: string;
   company: string;
@@ -154,6 +156,7 @@ export interface Deal {
   owner: string;
   nextStep?: string;
   lostReason?: string;
+  origin?: DealOrigin;
   stageHistory: { at: string; stage: DealStage }[];
 }
 
@@ -308,14 +311,15 @@ export const DEVICE_LABEL: Record<Device, string> = { mobile: "Mobile", desktop:
 export const LIFECYCLE_LABEL: Record<Lifecycle, string> = { abonne: "Abonné·e newsletter", lead: "Lead (compte créé)", client: "Client·e", fidele: "Client·e fidèle", vip: "VIP" };
 export const CART_STATUS_LABEL: Record<CartStatus, string> = { abandonne: "Abandonné", relance: "Relancé", recupere: "Récupéré", perdu: "Perdu" };
 export const CART_STEP_LABEL: Record<Cart["step"], string> = { panier: "Panier", livraison: "Livraison", paiement: "Paiement" };
+/** Étapes du pipeline (« négociation » n'est plus proposée : les anciennes opportunités sont rattachées à « Proposition envoyée »). */
 export const DEAL_STAGES: { id: DealStage; label: string; probability: number }[] = [
-  { id: "prospect", label: "Prospect", probability: 10 },
-  { id: "qualifie", label: "Qualifié", probability: 25 },
-  { id: "proposition", label: "Proposition envoyée", probability: 50 },
-  { id: "negociation", label: "Négociation", probability: 75 },
+  { id: "prospect", label: "Nouveau", probability: 10 },
+  { id: "qualifie", label: "Contacté", probability: 25 },
+  { id: "proposition", label: "Proposition envoyée", probability: 55 },
   { id: "gagne", label: "Gagné", probability: 100 },
   { id: "perdu", label: "Perdu", probability: 0 },
 ];
+export const DEAL_ORIGIN_LABEL: Record<DealOrigin, string> = { reseau_social: "Réseau social", partenaire: "Partenaire", salon: "Salon", site: "Site web", recommandation: "Recommandation" };
 export const DEAL_TYPE_LABEL: Record<Deal["type"], string> = { institut: "Institut de beauté", concept_store: "Concept store", pharmacie: "Pharmacie / parapharmacie", spa: "Spa / hôtel", marketplace: "Marketplace", entreprise: "Cadeaux d'entreprise" };
 export const TICKET_CATEGORY_LABEL: Record<Ticket["category"], string> = { livraison: "Livraison", produit: "Question produit", retour: "Retour / échange", conseil: "Conseil routine", paiement: "Paiement", compte: "Compte / Club" };
 export const TICKET_CHANNEL_LABEL: Record<Ticket["channel"], string> = { email: "E-mail", chat: "Chat", instagram: "Instagram", telephone: "Téléphone", formulaire: "Formulaire de contact", chatbot: "Glow Assistant" };

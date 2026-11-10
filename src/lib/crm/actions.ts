@@ -6,7 +6,7 @@ import type { HubUser } from "@/lib/hub/types";
 import { all, crmDb, crmTx, crmUid, one, remove, save } from "./db";
 import { settings } from "./repo";
 import type { Activity, Automation, AutomationKind, CrmSettings, Deal, DealStage, MoveReason, Order, OrderStatus, PurchaseOrder, Task, Ticket } from "./types";
-import { DEAL_STAGES, DELIVERY_LABEL } from "./types";
+import { DEAL_STAGES, DEAL_ORIGIN_LABEL, DELIVERY_LABEL } from "./types";
 import { automations, deliver, runAutomations, sampleMails } from "./automations";
 
 /**
@@ -149,6 +149,7 @@ const handlers: Record<string, (u: HubUser, b: Body) => unknown> = {
       type: (d.type ?? cur?.type ?? "institut") as Deal["type"], city: str(d.city, 80), stage, amount: Math.max(0, Math.round(Number(d.amount) || 0)),
       closeDate: str(d.closeDate, 10) || ymdhm(new Date()).slice(0, 10), createdAt: cur?.createdAt ?? now(), updatedAt: now(), owner: cur?.owner ?? u.name,
       nextStep: str(d.nextStep, 200) || undefined, lostReason: stage === "perdu" ? str(d.lostReason, 200) || cur?.lostReason : undefined,
+      origin: (d.origin && d.origin in DEAL_ORIGIN_LABEL ? d.origin : cur?.origin) as Deal["origin"],
       stageHistory: cur ? (cur.stage === stage ? cur.stageHistory : [...cur.stageHistory, { at: now(), stage }]) : [{ at: now(), stage }],
     };
     return save("deals", next);
