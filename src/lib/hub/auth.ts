@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { db, nowIso, uid } from "./db";
 import { ensureSeeded } from "./repo";
+import { connection } from "next/server";
 import { hubOnline } from "./online";
 import { can, type Permission } from "./permissions";
 import type { HubUser, Role } from "./types";
@@ -133,6 +134,7 @@ export const hubAvailable = () => true;
 
 /** Utilisateur connecté (pages serveur et routes API). En ligne : session démo automatique, compte « Accès complet ». */
 export async function currentUser(): Promise<HubUser | null> {
+  await connection(); // toujours rendu à la demande (jamais pré-généré au build, même en ligne sans cookie)
   await ensureSeeded();
   if (hubOnline()) return listUsers().find((u) => u.role === "admin") ?? null;
   const c = await cookies();

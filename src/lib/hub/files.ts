@@ -9,9 +9,9 @@ import { randomUUID } from "node:crypto";
  */
 const ONLINE = !!process.env.VERCEL;
 /** En ligne (démo), seul /tmp est inscriptible : les fichiers y sont rangés et servis par /api/hub/fichier/… */
-const ROOT = ONLINE ? path.join("/tmp", "hub-media") : path.join(process.cwd(), "public", "media", "uploads");
+const ROOT = ONLINE ? path.join(/*turbopackIgnore: true*/ "/tmp", "hub-media") : path.join(/*turbopackIgnore: true*/ process.cwd(), "public", "media", "uploads");
 const URL_BASE = ONLINE ? "/api/hub/fichier" : "/media/uploads";
-export const ONLINE_MEDIA_ROOT = path.join("/tmp", "hub-media");
+export const ONLINE_MEDIA_ROOT = path.join(/*turbopackIgnore: true*/ "/tmp", "hub-media");
 const ALLOWED = new Set(["image/png", "image/jpeg", "image/webp", "image/gif", "image/svg+xml", "video/mp4", "video/webm", "video/quicktime", "application/pdf", "text/plain"]);
 export const MAX_UPLOAD = 60 * 1024 * 1024;
 
@@ -22,10 +22,10 @@ export function saveBuffer(buf: Buffer, name: string, folder = "divers", mime?: 
   if (mime && !ALLOWED.has(mime)) throw new Error(`Type de fichier non autorisé : ${mime}`);
   if (buf.length > MAX_UPLOAD) throw new Error("Fichier trop volumineux (60 Mo max).");
   const safeFolder = folder.replace(/[^a-z0-9-]/gi, "").toLowerCase() || "divers";
-  const dir = path.join(ROOT, safeFolder);
+  const dir = path.join(/*turbopackIgnore: true*/ ROOT, safeFolder);
   mkdirSync(dir, { recursive: true });
   const file = `${randomUUID().slice(0, 8)}-${slugName(name)}`;
-  writeFileSync(path.join(dir, file), buf);
+  writeFileSync(path.join(/*turbopackIgnore: true*/ dir, file), buf);
   return { url: `${URL_BASE}/${safeFolder}/${file}`, size: buf.length };
 }
 
@@ -47,14 +47,14 @@ export async function imageInfo(publicPath: string) {
 
 export const readPublic = (publicPath: string) =>
   publicPath.startsWith("/api/hub/fichier/")
-    ? readFileSync(path.join(ONLINE_MEDIA_ROOT, publicPath.slice("/api/hub/fichier/".length)))
-    : readFileSync(path.join(process.cwd(), "public", publicPath));
+    ? readFileSync(path.join(/*turbopackIgnore: true*/ ONLINE_MEDIA_ROOT, publicPath.slice("/api/hub/fichier/".length)))
+    : readFileSync(path.join(/*turbopackIgnore: true*/ process.cwd(), "public", publicPath));
 
 /** Fichier rangé dans /tmp (version en ligne) : chemin sûr « dossier/fichier », sinon null. */
 export function readOnlineMedia(rel: string): { buf: Buffer; type: string } | null {
   if (!/^[a-z0-9-]+\/[\w.-]+$/i.test(rel) || rel.includes("..")) return null;
   try {
-    const buf = readFileSync(path.join(ONLINE_MEDIA_ROOT, rel));
+    const buf = readFileSync(path.join(/*turbopackIgnore: true*/ ONLINE_MEDIA_ROOT, rel));
     const ext = rel.split(".").pop()!.toLowerCase();
     const type = ({ jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", gif: "image/gif", svg: "image/svg+xml", mp4: "video/mp4", webm: "video/webm", mov: "video/quicktime", pdf: "application/pdf" } as Record<string, string>)[ext] ?? "application/octet-stream";
     return { buf, type };
@@ -73,8 +73,8 @@ export function saveVideoThumb(src: string, dataUrl: string) {
   const buf = Buffer.from(m[1], "base64");
   if (buf.length > 2 * 1024 * 1024) throw new Error("Vignette trop lourde.");
   if (ONLINE) return { thumb: `/media/videos/thumbs/${name}.jpg` }; // en ligne : vignettes déjà livrées avec le site
-  const dir = path.join(process.cwd(), "public", "media", "videos", "thumbs");
+  const dir = path.join(/*turbopackIgnore: true*/ process.cwd(), "public", "media", "videos", "thumbs");
   mkdirSync(dir, { recursive: true });
-  writeFileSync(path.join(dir, `${name}.jpg`), buf);
+  writeFileSync(path.join(/*turbopackIgnore: true*/ dir, `${name}.jpg`), buf);
   return { thumb: `/media/videos/thumbs/${name}.jpg` };
 }
