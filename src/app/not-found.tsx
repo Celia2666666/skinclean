@@ -8,7 +8,7 @@ export default function NotFound() {
       <Image src="/media/brand/logo-wordmark.png" alt="skinclean" width={150} height={49} className="h-7 w-auto mix-blend-multiply" />
       <h1 className="mt-8 font-display text-5xl">Page introuvable</h1>
       <p className="mt-3 text-forest-soft">Cette page s&apos;est évaporée comme une brume. Revenons à l&apos;essentiel.</p>
-      <div className="mt-6 flex gap-3"><Link href="/" className="btn btn-primary">Accueil</Link><Link href="/hub" className="btn btn-ghost">Marketing Hub</Link></div>
+      <div className="mt-6 flex gap-3"><Link href="/" className="btn btn-primary">Accueil</Link><Link href="/hub" className="btn btn-ghost">Admin</Link></div>
     </div>
   );
 }

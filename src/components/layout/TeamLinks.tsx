@@ -1,20 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
-
-/** Adresse du Marketing Hub sur l'ordinateur de l'équipe (lancé avec « npm run dev »). */
-const HUB_LOCAL_URL = "http://localhost:3000/hub";
-const LOCAL = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
-const noop = () => () => {};
-/** Vrai uniquement dans le navigateur, sur un serveur local (le Marketing Hub n'est pas publié en ligne). */
-const useIsLocal = () => useSyncExternalStore(noop, () => LOCAL.has(window.location.hostname), () => false);
 
 /**
- * Accès « Espace équipe » : CRM (en ligne et en local) et Marketing Hub (serveur local).
+ * Accès « Espace équipe » : CRM et Admin (back-office complet).
  * `tone="dark"` pour le pied de page vert foncé, `"light"` pour le menu.
  */
 export function TeamLinks({ tone = "light" }: { tone?: "light" | "dark" }) {
-  const local = useIsLocal();
   const dark = tone === "dark";
   const item = dark
     ? "inline-flex items-center gap-2 border border-ivory/25 px-3 py-1.5 text-xs text-ivory/80 transition hover:border-ivory hover:text-ivory"
@@ -27,11 +18,10 @@ export function TeamLinks({ tone = "light" }: { tone?: "light" | "dark" }) {
           <span>CRM SKINCLEAN</span>
           {!dark && <span className="text-xs text-forest-soft">Clients, commandes, SAV</span>}
         </Link>
-        {/* En local : /hub du serveur courant. En ligne : le Hub tourne sur l'ordinateur (npm run dev → port 3000). */}
-        <a href={local ? "/hub" : HUB_LOCAL_URL} className={item} title="Le Marketing Hub fonctionne uniquement sur ton ordinateur (serveur local)">
-          <span>Marketing Hub</span>
-          <span className={dark ? "text-[0.65rem] text-ivory/50" : "text-xs text-forest-soft"}>local</span>
-        </a>
+        <Link href="/hub" className={item}>
+          <span>Admin</span>
+          {!dark && <span className="text-xs text-forest-soft">Contenus, campagnes, boutique</span>}
+        </Link>
       </div>
     </div>
   );

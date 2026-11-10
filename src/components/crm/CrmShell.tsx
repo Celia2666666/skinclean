@@ -68,8 +68,8 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
       </div>
       <div className="space-y-1.5 border-t border-white/10 p-3">
         <a href="/" target="_blank" rel="noopener" className="flex items-center gap-2.5 rounded-md bg-white/8 px-3 py-2 text-[0.8rem] text-white hover:bg-white/14"><StoreI size={16} /><span className="flex-1">Voir le site SKINCLEAN</span><ArrowRightI size={12} /></a>
-        <a href={hubUrl} target={online ? "_blank" : undefined} rel="noopener" className="flex items-center gap-2.5 rounded-md bg-white/8 px-3 py-2 text-[0.8rem] text-white hover:bg-white/14" title={online ? "Le Marketing Hub ne fonctionne qu'en local : lance le projet sur ton ordinateur (npm run dev)" : undefined}>
-          <MegaphoneI size={16} /><span className="flex-1">Marketing Hub{online && <span className="block text-[0.62rem] text-white/55">en local uniquement</span>}</span><ArrowRightI size={12} />
+        <a href={hubUrl} className="flex items-center gap-2.5 rounded-md bg-white/8 px-3 py-2 text-[0.8rem] text-white hover:bg-white/14">
+          <MegaphoneI size={16} /><span className="flex-1">Admin<span className="block text-[0.62rem] text-white/55">marque, contenus, boutique</span></span><ArrowRightI size={12} />
         </a>
       </div>
     </nav>
@@ -111,7 +111,7 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
           <footer className="mx-auto flex max-w-[1500px] flex-wrap items-center gap-x-6 gap-y-2 border-t border-line px-4 py-5 text-sm text-forest-soft md:px-8 print:hidden">
             <span className="flex items-center gap-2"><Image src="/media/brand/transparent/logo-mark.png" alt="" width={16} height={20} className="h-5 w-auto" />CRM SKINCLEAN</span>
             <a href="/" target="_blank" rel="noopener" className="flex items-center gap-1 font-medium text-forest underline-offset-4 hover:underline"><StoreI size={15} />Voir le site SKINCLEAN</a>
-            <a href={hubUrl} target={online ? "_blank" : undefined} rel="noopener" className="flex items-center gap-1 font-medium text-forest underline-offset-4 hover:underline"><MegaphoneI size={15} />Marketing Hub{online && <span className="font-normal text-forest-soft">(en local : lance <code className="rounded bg-white px-1">npm run dev</code> sur ton ordinateur)</span>}</a>
+            <a href={hubUrl} className="flex items-center gap-1 font-medium text-forest underline-offset-4 hover:underline"><MegaphoneI size={15} />Admin</a>
           </footer>
           <GlobalSearch open={search} onClose={() => setSearch(false)} />
         </div>

@@ -153,7 +153,7 @@ export default function CommunicationPage() {
             </div>
             <div id="newsletters" className="scroll-mt-[calc(8rem+var(--demo-h))]">
               <p className="mb-1 font-display text-2xl">Les newsletters</p>
-              <p className="mb-6 text-sm text-forest-soft">{hubData.emails.length} e-mails écrits dans le Marketing Hub, de la bienvenue au programme de fidélité. Clique pour voir l&apos;e-mail tel qu&apos;il arrivera dans la boîte de réception.</p>
+              <p className="mb-6 text-sm text-forest-soft">{hubData.emails.length} e-mails prêts à envoyer, de la bienvenue au programme de fidélité. Clique pour voir l&apos;e-mail tel qu&apos;il arrivera dans la boîte de réception.</p>
               <NewsletterShelf />
             </div>
             <div>

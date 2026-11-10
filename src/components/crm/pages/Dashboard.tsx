@@ -51,7 +51,7 @@ export function Dashboard({ data: d, periods }: { data: DashboardData; periods: 
           <TrendChart labels={d.series.labels} current={d.series.revenue} previous={d.series.prevRevenue} format={(n) => `${fmtN(n)} €`} />
           {d.campaigns.length > 0 && (
             <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3 text-xs text-forest-soft">
-              <span className="font-semibold text-forest">Campagnes du Marketing Hub sur la période :</span>
+              <span className="font-semibold text-forest">Campagnes marketing sur la période :</span>
               {d.campaigns.map((c) => <Link key={c.id} href={`/hub/campagnes/${c.id}`} className="hub-badge border border-line bg-white text-forest hover:border-forest"><span className="h-2 w-2 rounded-full" style={{ background: c.color }} />{c.name} · {c.startDate.slice(8, 10)}/{c.startDate.slice(5, 7)}–{c.endDate.slice(8, 10)}/{c.endDate.slice(5, 7)}</Link>)}
             </div>
           )}
