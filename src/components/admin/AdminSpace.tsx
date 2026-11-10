@@ -249,7 +249,7 @@ function ProductCreator() {
               ))}
             </div>
           </motion.div>
-          <p className="mt-4 text-xs text-forest-soft">Les trois visuels sont générés avec les modèles de la charte du Marketing Hub et se mettent à jour à chaque frappe. La fiche n&apos;est pas mise en vente : un nouveau produit n&apos;arrive sur la boutique qu&apos;après validation, avec sa vraie photo, sa liste INCI et ses tests de tolérance.</p>
+          <p className="mt-4 text-xs text-forest-soft">Les trois visuels sont générés avec les modèles de la charte SKINCLEAN et se mettent à jour à chaque frappe. La fiche n&apos;est pas mise en vente : un nouveau produit n&apos;arrive sur la boutique qu&apos;après validation, avec sa vraie photo, sa liste INCI et ses tests de tolérance.</p>
         </div>
       </div>
 
@@ -343,7 +343,7 @@ function Studio() {
           ) : <span />}
           <button type="button" onClick={() => downloadDesign(design, slug(input.headline ?? tpl.name))} className="btn btn-primary">Télécharger en PNG</button>
         </div>
-        <p className="mt-3 text-xs text-forest-soft">Les modèles du Studio du Marketing Hub, avec les couleurs, les polices et le logo de la marque. Le visuel est créé dans ton navigateur, en haute définition.</p>
+        <p className="mt-3 text-xs text-forest-soft">Les modèles du Studio SKINCLEAN, avec les couleurs, les polices et le logo de la marque. Le visuel est créé dans ton navigateur, en haute définition.</p>
       </div>
     </div>
   );

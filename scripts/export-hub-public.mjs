@@ -25,8 +25,32 @@ const READY = ["valide", "publie_test", "a_valider"];
 const posts = all("posts")
   .filter((p) => ["tiktok", "instagram", "pinterest", "facebook", "story"].includes(p.platform) && READY.includes(p.status) && mediaOk(p.visual))
   .map(({ id, title, date, platform, format, objective, pillar, campaignId, visual, caption, hashtags, cta, status }) => ({ id, title, date: date ?? null, platform, format, objective, pillar, campaignId, visual, caption, hashtags, cta, status, comments: [], productIds: [] }));
+// Vidéos vérifiées image par image : chaque publication reçoit une vidéo qui montre ce que dit sa légende.
+// « poster » : aucune vidéo ne correspond (ex. patchs anti-boutons), on affiche le visuel produit de couverture.
+const VIDEO = {
+  lib_005: "pexels-8131891", // vitamine C le matin : pipette de sérum sur le visage (remplace la vidéo de plage, hors charte)
+  lib_006: "pexels-8131887", // acide hyaluronique : gouttes de sérum sur la main
+  lib_025: "pexels-8371244", // Skin Journal jour 1 : elle se filme au téléphone
+  lib_032: "poster", lib_033: "poster", // patchs Spot Hero : pas de vidéo de patch
+  lib_036: "pexels-5927790", // SPF : crème appliquée sur la joue
+  lib_029: "pexels-8131886", // vitamine C : pipette et goutte de sérum
+  lib_037: "pexels-6925816", // SPF en hiver : application du soin sur le visage
+  post_0316: "pexels-7305465", // niacinamide : flacon pipette
+  post_0011: "pexels-12322647", // Dew Drop : brume pulvérisée sur le visage
+  post_0030: "pexels-5468875", // Matte Balance : gel-crème massé sur le visage
+};
+const HASHTAGS = { post_0011: ["#toner", "#hydratation"] };
+const DROP = new Set(["post_0010", "post_0031"]); // doublons des mythes vitamine C et concentration
+for (const p of posts) {
+  const v = VIDEO[p.id];
+  if (v === "poster" && p.visual?.poster) p.visual = { kind: "design", design: p.visual.poster };
+  else if (v) p.visual = { ...p.visual, src: `/media/videos/demo/${v}.mp4` };
+  if (HASHTAGS[p.id]) p.hashtags = HASHTAGS[p.id];
+}
+for (let i = posts.length - 1; i >= 0; i--) if (DROP.has(posts[i].id) || posts[i].visual?.src?.includes("7467138")) posts.splice(i, 1);
+
 // Un même sujet décliné sur deux réseaux n'est montré qu'une fois
-const base = (t, p) => `${p.platform === "tiktok" || p.platform === "instagram" ? "ti" : p.platform}:${t.replace(/^(Reel|TikTok) — /, "").replace(/ — (carrousel|le guide)$/, "").toLowerCase()}`;
+const base = (t, p) => `${p.platform === "tiktok" || p.platform === "instagram" ? "ti" : p.platform}:${t.replace(/^(Reel|TikTok) — /, "").replace(/^Mythe( ou réalité)? : /, "mythe ").replace(/ — (carrousel|le guide)$/, "").toLowerCase()}`;
 const seen = new Set();
 // Les publications validées passent avant celles en cours de validation
 posts.sort((a, b) => READY.indexOf(a.status) - READY.indexOf(b.status));

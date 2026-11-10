@@ -5,7 +5,7 @@ import { euro } from "@/lib/format";
 import { businessModel, competitors, market, ourProduct, personas, pricing, problem, sources, src } from "@/data/strategy";
 import { promise } from "@/data/offer";
 import { hubSection } from "@/data/hub-public";
-import { BlockGrid, Funnel, KindLegend, ObjectiveCards, PersonaDeck, RoadmapTimeline, SwotGrid } from "@/components/strategy/HubSections";
+import { BlockExplorer, Funnel, KindLegend, ObjectiveCards, PersonaDeck, RoadmapTimeline, SwotGrid } from "@/components/strategy/HubSections";
 import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
@@ -179,25 +179,25 @@ export default function StrategyPage() {
           </div>
         </section>
 
-        {/* Analyse détaillée reprise du Marketing Hub */}
+        {/* Analyse détaillée : tendances, SWOT, positionnement, objectifs, plan */}
         <div className="relative overflow-hidden bg-forest px-6 py-12 text-ivory md:px-12 md:py-16">
           <span aria-hidden className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 animate-[spin_40s_linear_infinite] rounded-full border border-ivory/10" />
           <span aria-hidden className="pointer-events-none absolute -right-8 -top-8 h-48 w-48 animate-[spin_25s_linear_infinite_reverse] rounded-full border border-dashed border-ivory/15" />
           <Reveal>
             <p className="eyebrow text-sage">Pour aller plus loin</p>
-            <p className="mt-2 max-w-3xl font-display text-3xl md:text-5xl">L&apos;analyse stratégique du Marketing Hub</p>
-            <p className="mt-4 max-w-2xl text-sm text-ivory/75">Le Marketing Hub est l&apos;outil interne de l&apos;équipe : il reste sur nos ordinateurs. Cette partie reprend ce que nous y avons construit (tendances, SWOT, positionnement, objectifs, plan sur 12 mois), en lecture seule.</p>
+            <p className="mt-2 max-w-3xl font-display text-3xl md:text-5xl">L&apos;analyse stratégique complète</p>
+            <p className="mt-4 max-w-2xl text-sm text-ivory/75">Les tendances, le cadre légal, le SWOT, le positionnement, les profils de la cible, les objectifs chiffrés et le plan marketing sur 12 mois.</p>
           </Reveal>
         </div>
 
         <section aria-labelledby="tendances">
           <H2 id="tendances" kicker="7 · Tendances et cadre légal" intro={hubSection("tendances").summary}>Ce qui change dans le soin</H2>
           <div className="mb-6"><KindLegend /></div>
-          <BlockGrid blocks={hubSection("tendances").blocks} />
+          <BlockExplorer blocks={hubSection("tendances").blocks} />
           <p className="mb-4 mt-12 font-display text-2xl">Les règles que la marque doit respecter</p>
-          <BlockGrid blocks={hubSection("marche").blocks.filter((b) => b.kind === "fait")} dark />
+          <BlockExplorer blocks={hubSection("marche").blocks.filter((b) => b.kind === "fait")} dark />
           <p className="mb-4 mt-12 font-display text-2xl">Ce que font les autres marques</p>
-          <BlockGrid blocks={hubSection("benchmark").blocks} />
+          <BlockExplorer blocks={hubSection("benchmark").blocks} />
         </section>
 
         <section aria-labelledby="swot">
@@ -207,15 +207,15 @@ export default function StrategyPage() {
 
         <section aria-labelledby="positionnement">
           <H2 id="positionnement" kicker="9 · Positionnement" intro={hubSection("positionnement").summary}>Où se place SKINCLEAN</H2>
-          <BlockGrid blocks={hubSection("positionnement").blocks} cols={2} />
+          <BlockExplorer blocks={hubSection("positionnement").blocks} dark />
           <p className="mb-4 mt-12 font-display text-2xl">{hubSection("valeur").title}</p>
-          <BlockGrid blocks={hubSection("valeur").blocks} cols={2} />
+          <BlockExplorer blocks={hubSection("valeur").blocks} />
           <p className="mb-6 mt-12 font-display text-2xl">{hubSection("parcours").title} : de la découverte à la recommandation</p>
           <Funnel section={hubSection("parcours")} />
         </section>
 
         <section aria-labelledby="audience">
-          <H2 id="audience" kicker="10 · L'audience en détail" intro="Les quatre profils suivis dans le Marketing Hub pour écrire les contenus, dont Léa et Camille, nos deux personas principaux. Ce sont des profils types, pas de vraies personnes.">Quatre profils, quatre façons de parler</H2>
+          <H2 id="audience" kicker="10 · L'audience en détail" intro={"Les quatre profils qui guident l'écriture de nos contenus, dont Léa et Camille, nos deux personas principaux. Ce sont des profils types, pas de vraies personnes."}>Quatre profils, quatre façons de parler</H2>
           <PersonaDeck />
         </section>
 

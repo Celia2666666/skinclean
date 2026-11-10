@@ -4,8 +4,8 @@ import { PageHero } from "@/components/catalog/PageHero";
 import { brandPlatform, calendar, channels, firstTen, kpis, partnerships, posts } from "@/data/communication";
 import { sources, src } from "@/data/strategy";
 import { hubData, hubSection } from "@/data/hub-public";
-import { AdsGrid, BlockGrid, CampaignStrip, PillarBars } from "@/components/strategy/HubSections";
-import { FeedLibrary, NewsletterShelf, PlanPosts, Retroplanning, SeoStudio } from "@/components/strategy/HubStudio";
+import { AdsGrid, BlockExplorer, CampaignStrip, PillarBars, StrategyTabs } from "@/components/strategy/HubSections";
+import { EditorialCalendar, FeedLibrary, NewsletterShelf, PlanPosts, SeoStudio } from "@/components/strategy/HubStudio";
 import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
@@ -91,12 +91,12 @@ export default function CommunicationPage() {
           </div>
         </section>
 
-        {/* Ligne éditoriale (Marketing Hub) */}
+        {/* Ligne éditoriale */}
         <section aria-labelledby="ligne">
           <H2 id="ligne" kicker="3 · Ligne éditoriale" intro={hubSection("ligne-editoriale").summary}>Cinq piliers de contenu</H2>
           <PillarBars section={hubSection("ligne-editoriale")} />
           <p className="mb-4 mt-12 font-display text-2xl">Messages clés déclinés dans les contenus</p>
-          <BlockGrid blocks={hubSection("messages").blocks} />
+          <BlockExplorer blocks={hubSection("messages").blocks} dark />
         </section>
 
         {/* Posts */}
@@ -105,20 +105,17 @@ export default function CommunicationPage() {
           <PlanPosts posts={posts} />
         </section>
 
-        {/* Bibliothèque du Marketing Hub */}
+        {/* Bibliothèque de contenus */}
         <section aria-labelledby="bibliotheque">
-          <H2 id="bibliotheque" kicker="5 · Publications prêtes" intro={<>{hubData.posts.length} publications TikTok, Instagram, Pinterest, Facebook et Stories créées dans le Marketing Hub. Clique sur une vignette : l&apos;aperçu s&apos;ouvre comme sur le réseau, avec la légende, les hashtags et le bouton de validation. Les carrousels se feuillettent avec les flèches.</>}>La bibliothèque de contenus</H2>
+          <H2 id="bibliotheque" kicker="5 · Publications prêtes" intro={<>{hubData.posts.length} publications TikTok, Instagram, Pinterest, Facebook et Stories prêtes à publier. Clique sur une vignette : elle s&apos;affiche dans le téléphone comme sur le réseau, avec sa légende complète, et tu peux la modifier ou la valider. Les carrousels se feuillettent avec les flèches.</>}>La bibliothèque de contenus</H2>
           <FeedLibrary />
-          <p className="mt-6 text-xs text-forest-soft">Aperçus sans aucun compteur inventé (ni likes, ni vues). « Publié sur le compte de test » : publication faite sur le compte d&apos;essai du Hub, pas sur un vrai compte. Sauf notre vidéo, les vidéos sont des vidéos de démonstration libres de droits (Pexels), à remplacer par nos tournages.</p>
+          <p className="mt-6 text-xs text-forest-soft">Aperçus sans aucun compteur inventé (ni likes, ni vues). « Publié sur le compte de test » : publication faite sur un compte d&apos;essai, pas sur un vrai compte. Notre vidéo « Ma routine sérum en 5 secondes » a été créée avec un outil d&apos;IA ; les autres vidéos sont des vidéos de démonstration libres de droits (Pexels), à remplacer par nos tournages.</p>
         </section>
 
         {/* Campagnes */}
         <section aria-labelledby="campagnes">
-          <H2 id="campagnes" kicker="6 · Campagnes" intro="Les douze campagnes préparées dans le Marketing Hub. Fais défiler pour toutes les voir.">Une campagne, un message</H2>
+          <H2 id="campagnes" kicker="6 · Campagnes" intro={"Les douze campagnes préparées pour l'année. Fais défiler pour toutes les voir."}>Une campagne, un message</H2>
           <CampaignStrip />
-          <p className="mb-2 mt-14 font-display text-3xl">Rétroplanning</p>
-          <p className="mb-6 max-w-3xl text-sm text-forest-soft">Pour chaque campagne : la préparation à rebours depuis la date de lancement, puis chaque action jour par jour.</p>
-          <Retroplanning />
         </section>
 
         {/* Calendrier */}
@@ -139,19 +136,16 @@ export default function CommunicationPage() {
               </div>
             ))}
           </div>
+          <p className="mb-2 mt-14 font-display text-3xl">Le calendrier, mois par mois</p>
+          <p className="mb-6 max-w-3xl text-sm text-forest-soft">Choisis le plan des 4 semaines ou une campagne : son rétroplanning (préparation à rebours depuis le lancement) et chacune de ses actions s&apos;affichent dans le calendrier. Clique sur une action pour l&apos;ouvrir.</p>
+          <EditorialCalendar />
         </section>
 
-        {/* Dispositif (Marketing Hub) */}
+        {/* Dispositif */}
         <section aria-labelledby="dispositif">
           <H2 id="dispositif" kicker="8 · Le dispositif" intro="Comment les contenus sont produits, puis comment la marque se fait connaître : organique, influence, référencement, newsletters, publicité et relations presse.">Contenu, influence, SEO, newsletters, publicité</H2>
-          <div className="space-y-12">
-            {["contenu", "notoriete", "influence", "acquisition"].map((id) => (
-              <div key={id}>
-                <p className="mb-1 font-display text-2xl">{hubSection(id).title}</p>
-                <p className="mb-4 text-sm text-forest-soft">{hubSection(id).summary}</p>
-                <BlockGrid blocks={hubSection(id).blocks} cols={id === "contenu" ? 3 : 2} />
-              </div>
-            ))}
+          <div className="space-y-16">
+            <StrategyTabs sections={["contenu", "notoriete", "influence", "acquisition"].map(hubSection)} />
             <div id="seo" className="scroll-mt-[calc(8rem+var(--demo-h))]">
               <p className="mb-1 font-display text-2xl">Référencement naturel (SEO)</p>
               <p className="mb-6 text-sm text-forest-soft">Être trouvé sur Google quand la cible cherche une solution à son problème de peau. Clique sur un article pour le lire, voir son aperçu dans Google et le valider.</p>
@@ -164,7 +158,7 @@ export default function CommunicationPage() {
             </div>
             <div>
               <p className="mb-1 font-display text-2xl">Publicité payante (SEA) : les annonces préparées</p>
-              <p className="mb-4 text-sm text-forest-soft">Annonces écrites dans le Marketing Hub. Aucune n&apos;a été diffusée et aucun budget n&apos;a été dépensé : chaque dépense doit d&apos;abord être validée.</p>
+              <p className="mb-4 text-sm text-forest-soft">Annonces prêtes à être programmées. Aucune n&apos;a été diffusée et aucun budget n&apos;a été dépensé : chaque dépense doit d&apos;abord être validée.</p>
               <AdsGrid />
             </div>
           </div>

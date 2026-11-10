@@ -10318,7 +10318,7 @@
    "campaignId": "camp-glow",
    "visual": {
     "kind": "video",
-    "src": "/media/videos/demo/pexels-7467138.mp4",
+    "src": "/media/videos/demo/pexels-8131891.mp4",
     "poster": {
      "w": 1080,
      "h": 1920,
@@ -10405,7 +10405,7 @@
    "pillar": "Routines",
    "visual": {
     "kind": "video",
-    "src": "/media/videos/demo/pexels-6619522.mp4",
+    "src": "/media/videos/demo/pexels-8131887.mp4",
     "poster": {
      "w": 1080,
      "h": 1920,
@@ -10580,7 +10580,7 @@
    "campaignId": "camp-skin-journal",
    "visual": {
     "kind": "video",
-    "src": "/media/videos/demo/pexels-6925815.mp4",
+    "src": "/media/videos/demo/pexels-8371244.mp4",
     "poster": {
      "w": 1080,
      "h": 1920,
@@ -10742,9 +10742,8 @@
    "pillar": "Produits",
    "campaignId": "camp-anti-imperfections",
    "visual": {
-    "kind": "video",
-    "src": "/media/videos/demo/pexels-8996171.mp4",
-    "poster": {
+    "kind": "design",
+    "design": {
      "w": 1080,
      "h": 1920,
      "pages": [
@@ -10803,8 +10802,7 @@
        ]
       }
      ]
-    },
-    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+    }
    },
    "caption": "Le bouton de la veille d'un rendez-vous : le plan d'urgence. #imperfections #patchbouton\n\nSpot Hero Day · Patchs invisibles de jour. Fais ton Skin Diag gratuit (lien en bio).",
    "hashtags": [
@@ -10828,7 +10826,7 @@
    "pillar": "Skin School",
    "visual": {
     "kind": "video",
-    "src": "/media/videos/demo/pexels-7250822.mp4",
+    "src": "/media/videos/demo/pexels-5927790.mp4",
     "poster": {
      "w": 1080,
      "h": 1920,
@@ -17402,9 +17400,8 @@
    "pillar": "Produits",
    "campaignId": "camp-anti-imperfections",
    "visual": {
-    "kind": "video",
-    "src": "/media/videos/demo/pexels-4351114.mp4",
-    "poster": {
+    "kind": "design",
+    "design": {
      "w": 1080,
      "h": 1920,
      "pages": [
@@ -17463,8 +17460,7 @@
        ]
       }
      ]
-    },
-    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
+    }
    },
    "caption": "« Le dentifrice sèche les boutons » #imperfections #patchbouton\n\nSpot Hero Day · Patchs invisibles de jour. Fais ton Skin Diag gratuit (lien en bio).",
    "hashtags": [
@@ -17574,7 +17570,7 @@
    "campaignId": "camp-glow",
    "visual": {
     "kind": "video",
-    "src": "/media/videos/demo/pexels-7019513.mp4",
+    "src": "/media/videos/demo/pexels-8131886.mp4",
     "poster": {
      "w": 1080,
      "h": 1920,
@@ -17744,7 +17740,7 @@
    "pillar": "Skin School",
    "visual": {
     "kind": "video",
-    "src": "/media/videos/demo/pexels-8371244.mp4",
+    "src": "/media/videos/demo/pexels-6925816.mp4",
     "poster": {
      "w": 1080,
      "h": 1920,
@@ -18243,7 +18239,7 @@
    "pillar": "Skin School",
    "visual": {
     "kind": "video",
-    "src": "/media/videos/demo/pexels-8131891.mp4",
+    "src": "/media/videos/demo/pexels-7305465.mp4",
     "poster": {
      "w": 1080,
      "h": 1920,
@@ -20725,7 +20721,7 @@
    "campaignId": "camp-glow",
    "visual": {
     "kind": "video",
-    "src": "/media/videos/demo/pexels-5468875.mp4",
+    "src": "/media/videos/demo/pexels-12322647.mp4",
     "poster": {
      "w": 1080,
      "h": 1920,
@@ -20790,11 +20786,8 @@
    },
    "caption": "ASMR : la texture de Dew Drop #routineglow #vitaminec\n\nDew Drop · Toner hydratant. Fais ton Skin Diag gratuit (lien en bio).",
    "hashtags": [
-    "#routineglow",
-    "#vitaminec",
-    "#glowskin",
-    "#skincaretok",
-    "#skinclean"
+    "#toner",
+    "#hydratation"
    ],
    "cta": "Fais ton Skin Diag gratuit (lien en bio)",
    "status": "a_valider",
@@ -20898,7 +20891,7 @@
    "pillar": "Skin School",
    "visual": {
     "kind": "video",
-    "src": "/media/videos/demo/pexels-12322647.mp4",
+    "src": "/media/videos/demo/pexels-5468875.mp4",
     "poster": {
      "w": 1080,
      "h": 1920,
@@ -21855,179 +21848,6 @@
     "#yourskinyourglow"
    ],
    "cta": "Enregistre le post",
-   "status": "a_valider",
-   "comments": [],
-   "productIds": []
-  },
-  {
-   "id": "post_0010",
-   "title": "Mythe ou réalité : La vitamine C, ça ne se met pas avant le soleil",
-   "date": "2026-10-31T19:00",
-   "platform": "tiktok",
-   "format": "video",
-   "objective": "Engagement",
-   "pillar": "Routines",
-   "campaignId": "camp-glow",
-   "visual": {
-    "kind": "video",
-    "src": "/media/videos/demo/pexels-12322612.mp4",
-    "poster": {
-     "w": 1080,
-     "h": 1920,
-     "pages": [
-      {
-       "bg": {
-        "type": "color",
-        "color": "#D8DFD4"
-       },
-       "layers": [
-        {
-         "id": "lmvv1cdr64i",
-         "type": "logo",
-         "x": 356.4,
-         "y": 249.60000000000002,
-         "w": 367.20000000000005,
-         "variant": "wordmark",
-         "tint": "dark"
-        },
-        {
-         "id": "lmvv1cdr64j",
-         "type": "shape",
-         "x": 86.4,
-         "y": 448.20685714285713,
-         "w": 907.2,
-         "h": 422.4,
-         "color": "#FFFFFF",
-         "radius": 40,
-         "opacity": 0.95
-        },
-        {
-         "id": "lmvv1cdr64k",
-         "type": "text",
-         "x": 162,
-         "y": 448.20685714285713,
-         "w": 756,
-         "text": "« La vitamine C, ça ne se met pas avant le soleil »",
-         "size": 77.75999999999999,
-         "weight": 500,
-         "color": "#1F3329",
-         "align": "center",
-         "font": "display",
-         "lineHeight": 1.12,
-         "maxH": 422.4,
-         "valign": "middle"
-        },
-        {
-         "id": "lmvv1cdr64l",
-         "type": "image",
-         "x": 237.6,
-         "y": 947.406857142857,
-         "w": 604.8000000000001,
-         "h": 626.9931428571429,
-         "src": "/media/packshots/glow-shot-serum-vitamine-c.png",
-         "fit": "contain"
-        }
-       ]
-      }
-     ]
-    },
-    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-   },
-   "caption": "« La vitamine C, ça ne se met pas avant le soleil » #routineglow #vitaminec\n\nGlow Shot · Sérum vitamine C 12 %. Fais ton Skin Diag gratuit (lien en bio).",
-   "hashtags": [
-    "#routineglow",
-    "#vitaminec",
-    "#glowskin",
-    "#skincaretok",
-    "#skinclean"
-   ],
-   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
-   "status": "a_valider",
-   "comments": [],
-   "productIds": []
-  },
-  {
-   "id": "post_0031",
-   "title": "Mythe ou réalité : Plus c'est concentré, mieux c'est",
-   "date": "2026-11-07T19:00",
-   "platform": "tiktok",
-   "format": "video",
-   "objective": "Notoriété",
-   "pillar": "Skin School",
-   "visual": {
-    "kind": "video",
-    "src": "/media/videos/demo/pexels-7305465.mp4",
-    "poster": {
-     "w": 1080,
-     "h": 1920,
-     "pages": [
-      {
-       "bg": {
-        "type": "color",
-        "color": "#D8DFD4"
-       },
-       "layers": [
-        {
-         "id": "lmvv1cdr78r",
-         "type": "logo",
-         "x": 356.4,
-         "y": 249.60000000000002,
-         "w": 367.20000000000005,
-         "variant": "wordmark",
-         "tint": "dark"
-        },
-        {
-         "id": "lmvv1cdr78s",
-         "type": "shape",
-         "x": 86.4,
-         "y": 448.20685714285713,
-         "w": 907.2,
-         "h": 422.4,
-         "color": "#FFFFFF",
-         "radius": 40,
-         "opacity": 0.95
-        },
-        {
-         "id": "lmvv1cdr78t",
-         "type": "text",
-         "x": 162,
-         "y": 448.20685714285713,
-         "w": 756,
-         "text": "« Plus c'est concentré, mieux c'est »",
-         "size": 77.75999999999999,
-         "weight": 500,
-         "color": "#1F3329",
-         "align": "center",
-         "font": "display",
-         "lineHeight": 1.12,
-         "maxH": 422.4,
-         "valign": "middle"
-        },
-        {
-         "id": "lmvv1cdr78u",
-         "type": "image",
-         "x": 237.6,
-         "y": 947.406857142857,
-         "w": 604.8000000000001,
-         "h": 626.9931428571429,
-         "src": "/media/packshots/clear-skin-serum-niacinamide.png",
-         "fit": "contain"
-        }
-       ]
-      }
-     ]
-    },
-    "note": "Vidéo de démonstration libre de droits (Pexels) — à remplacer par le tournage SKINCLEAN."
-   },
-   "caption": "« Plus c'est concentré, mieux c'est » #niacinamide #peaugrasse\n\nClear Skin · Sérum niacinamide 10 % + zinc. Fais ton Skin Diag gratuit (lien en bio).",
-   "hashtags": [
-    "#niacinamide",
-    "#peaugrasse",
-    "#imperfections",
-    "#skincaretok",
-    "#skinclean"
-   ],
-   "cta": "Fais ton Skin Diag gratuit (lien en bio)",
    "status": "a_valider",
    "comments": [],
    "productIds": []

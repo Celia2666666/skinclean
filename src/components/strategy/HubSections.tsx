@@ -49,6 +49,85 @@ export function BlockGrid({ blocks, cols = 3, dark }: { blocks: Block[]; cols?: 
   );
 }
 
+/**
+ * Explorateur : la liste des points à gauche, une grande carte animée à droite.
+ * Les points défilent seuls tant que la section est à l'écran ; un clic reprend la main.
+ */
+export function BlockExplorer({ blocks, dark, interval = 6500 }: { blocks: Block[]; dark?: boolean; interval?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { margin: "-25% 0px" });
+  const reduce = useReducedMotion();
+  const [i, setI] = useState(0);
+  const [auto, setAuto] = useState(true);
+  useEffect(() => {
+    if (!auto || !inView || reduce || blocks.length < 2) return;
+    const t = setTimeout(() => setI((x) => (x + 1) % blocks.length), interval);
+    return () => clearTimeout(t);
+  }, [i, auto, inView, reduce, blocks.length, interval]);
+  const b = blocks[i];
+  const pick = (k: number) => { setAuto(false); setI(k); };
+  return (
+    <div ref={ref} className="grid gap-4 md:grid-cols-[minmax(0,19rem)_1fr]">
+      <ol className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-col md:gap-1 md:overflow-visible md:px-0">
+        {blocks.map((x, k) => (
+          <li key={(x.title ?? "") + k} className="shrink-0">
+            <button type="button" onClick={() => pick(k)} aria-pressed={k === i} className={clsx("relative flex w-full items-center gap-3 overflow-hidden rounded-md px-4 py-3 text-left text-sm transition", k === i ? (dark ? "text-forest" : "text-ivory") : dark ? "bg-forest/90 text-ivory/80 hover:bg-forest" : "bg-ivory text-forest hover:bg-sage-soft")}>
+              {k === i && <motion.span layoutId={`explorer-${blocks[0]?.title}`} className={clsx("absolute inset-0", dark ? "bg-sage" : "bg-forest")} transition={{ type: "spring", stiffness: 380, damping: 34 }} />}
+              <span className="relative font-display text-lg tabular-nums opacity-60">{String(k + 1).padStart(2, "0")}</span>
+              <span className="relative whitespace-nowrap font-medium md:whitespace-normal">{x.title ?? `Point ${k + 1}`}</span>
+              {k === i && auto && inView && !reduce && <motion.span key={`p${i}`} className={clsx("absolute bottom-0 left-0 h-0.5", dark ? "bg-forest" : "bg-sage")} initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: interval / 1000, ease: "linear" }} />}
+            </button>
+          </li>
+        ))}
+      </ol>
+      <div className={clsx("relative min-h-[17rem] overflow-hidden p-7 md:p-10", dark ? "bg-forest text-ivory" : "bg-sage-soft")}>
+        <motion.span aria-hidden className={clsx("pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full border", dark ? "border-ivory/15" : "border-forest/10")} animate={reduce ? undefined : { rotate: 360 }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }} />
+        <AnimatePresence mode="wait">
+          <motion.div key={i} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.45, ease: EASE }} className="relative">
+            <div className="flex items-center gap-3"><span className={clsx("font-display text-6xl leading-none md:text-7xl", dark ? "text-sage/40" : "text-forest/15")}>{String(i + 1).padStart(2, "0")}</span><KindBadge kind={b.kind} /></div>
+            {b.title && <p className="mt-4 font-display text-3xl leading-tight md:text-4xl">{b.title}</p>}
+            <p className={clsx("mt-4 max-w-2xl text-[0.95rem] leading-relaxed", dark ? "text-ivory/80" : "text-forest/80")}>
+              {b.text.split(" · ").length > 2
+                ? b.text.split(" · ").map((t, k) => <motion.span key={k} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 + k * 0.06 }} className="mb-1.5 flex gap-2"><span className={clsx("mt-2 h-1.5 w-1.5 shrink-0 rounded-full", dark ? "bg-sage" : "bg-forest")} />{t}</motion.span>)
+                : b.text}
+            </p>
+            {b.source && <p className={clsx("mt-5 inline-block rounded-full px-3 py-1 text-[0.7rem]", dark ? "bg-ivory/10 text-ivory/70" : "bg-ivory text-forest-soft")}>Source : {b.source}</p>}
+          </motion.div>
+        </AnimatePresence>
+        <div className="absolute bottom-4 right-5 flex gap-2">
+          <button type="button" aria-label="Point précédent" onClick={() => pick((i - 1 + blocks.length) % blocks.length)} className={clsx("grid h-9 w-9 place-items-center rounded-full", dark ? "bg-ivory/10 hover:bg-ivory/20" : "bg-ivory hover:bg-forest hover:text-ivory")}>←</button>
+          <button type="button" aria-label="Point suivant" onClick={() => pick((i + 1) % blocks.length)} className={clsx("grid h-9 w-9 place-items-center rounded-full", dark ? "bg-ivory/10 hover:bg-ivory/20" : "bg-ivory hover:bg-forest hover:text-ivory")}>→</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Plusieurs stratégies : grandes cartes-onglets, puis l'explorateur de la stratégie choisie. */
+export function StrategyTabs({ sections }: { sections: HubSection[] }) {
+  const [id, setId] = useState(sections[0].id);
+  const s = sections.find((x) => x.id === id)!;
+  return (
+    <div>
+      <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+        {sections.map((x, k) => (
+          <motion.button key={x.id} type="button" onClick={() => setId(x.id)} aria-pressed={x.id === id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: k * 0.06 }} whileHover={{ y: -4 }}
+            className={clsx("relative overflow-hidden p-5 text-left transition-colors", x.id === id ? "bg-forest text-ivory" : "border border-line bg-ivory")}>
+            <span className={clsx("font-display text-4xl", x.id === id ? "text-sage" : "text-forest/20")}>{String(k + 1).padStart(2, "0")}</span>
+            <span className="mt-2 block font-display text-xl leading-tight">{x.title.replace(/^Stratégie (de |d')/, "").replace(/^./, (c) => c.toUpperCase())}</span>
+            <span className={clsx("mt-1 block text-xs", x.id === id ? "text-ivory/70" : "text-forest-soft")}>{x.summary}</span>
+          </motion.button>
+        ))}
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.div key={s.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }} className="mt-4">
+          <BlockExplorer blocks={s.blocks} />
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
 /** SWOT : 4 quadrants qui s'ouvrent depuis le centre. */
 export function SwotGrid({ section }: { section: HubSection }) {
   const reduce = useReducedMotion();
@@ -215,7 +294,7 @@ export function RoadmapTimeline() {
   );
 }
 
-/** Personas du Hub : onglets, la fiche glisse d'un profil à l'autre. */
+/** Personas : onglets, la fiche glisse d'un profil à l'autre. */
 export function PersonaDeck() {
   const [i, setI] = useState(0);
   const p = hub.personas[i];
