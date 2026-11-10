@@ -40,6 +40,21 @@ function useStatus(id: string, initial: string): Status {
   return (useStatuses()[id] ?? initial) as Status;
 }
 
+/** Contenus du Marketing Hub qui attendent une validation (avec les choix faits dans ce navigateur). */
+export function usePendingContent() {
+  const st = useStatuses();
+  const wait = (id: string, initial: string) => !["valide", "publie_test"].includes(st[id] ?? initial);
+  return {
+    posts: hub.posts.filter((p) => wait(p.id, p.status)).length,
+    articles: hub.articles.filter((a) => wait(a.id, a.status)).length,
+    emails: hub.emails.filter((e) => wait(e.id, e.status)).length,
+    validated: Object.values(st).filter((s) => s === "valide").length,
+  };
+}
+
+export { useStatuses, setStatus };
+export type { Status };
+
 const STATUS: Record<Status, { label: string; dot: string; cls: string }> = {
   valide: { label: "Validé", dot: "bg-[#2E8B57]", cls: "bg-[#E3EFE6] text-[#2E5E3E]" },
   publie_test: { label: "Publié sur le compte de test", dot: "bg-[#1F4E86]", cls: "bg-[#E2ECF8] text-[#1F4E86]" },
@@ -54,7 +69,7 @@ export function StatusPill({ status }: { status: Status }) {
 }
 
 /** Circuit de validation : Valider / Demander une modification / Remettre en validation. */
-function ValidationBar({ id, initial }: { id: string; initial: string }) {
+export function ValidationBar({ id, initial }: { id: string; initial: string }) {
   const status = useStatus(id, initial);
   const [done, setDone] = useState<string | null>(null);
   const act = (s: Status, msg: string) => { setStatus(id, s); setDone(msg); };

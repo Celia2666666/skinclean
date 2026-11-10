@@ -57,7 +57,7 @@ export function Admin() {
 
 const Box = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => <div className={`rounded-none bg-ivory p-6 ${className}`}>{children}</div>;
 
-function ProductsAdmin() {
+export function ProductsAdmin() {
   const ov = useStore((s) => s.overrides);
   const set = useStore((s) => s.setOverride);
   const [q, setQ] = useState("");
@@ -91,7 +91,7 @@ function ProductsAdmin() {
   );
 }
 
-function KitsAdmin() {
+export function KitsAdmin() {
   const kd = useStore((s) => s.kitDiscounts);
   const setKd = useStore((s) => s.setKitDiscount);
   return (
@@ -125,7 +125,7 @@ function KitsAdmin() {
   );
 }
 
-function OrdersAdmin() {
+export function OrdersAdmin() {
   const accounts = useStore((s) => s.accounts);
   const guest = useStore((s) => s.guestOrders);
   const setStatus = useStore((s) => s.setOrderStatus);
@@ -155,7 +155,7 @@ function OrdersAdmin() {
   );
 }
 
-function CustomersAdmin() {
+export function CustomersAdmin() {
   const accounts = Object.values(useStore((s) => s.accounts));
   return (
     <Box>
@@ -168,7 +168,7 @@ function CustomersAdmin() {
   );
 }
 
-function LoyaltyAdmin() {
+export function LoyaltyAdmin() {
   return (
     <Box>
       <p className="font-display text-2xl">Règles de fidélité</p>
@@ -178,7 +178,7 @@ function LoyaltyAdmin() {
   );
 }
 
-function HomeAdmin() {
+export function HomeAdmin() {
   const hero = useStore((s) => s.homeHero);
   const set = useStore((s) => s.setHomeHero);
   return (
@@ -211,7 +211,7 @@ function Bars({ title, data }: { title: string; data: [string, number][] }) {
   );
 }
 
-function DiagAdmin() {
+export function DiagAdmin() {
   const diags = useStore((s) => s.diagHistory);
   const agg = useMemo(() => {
     const count = (f: (d: (typeof diags)[number]) => string[]) => {
@@ -239,7 +239,7 @@ function DiagAdmin() {
   );
 }
 
-function NewsletterAdmin() {
+export function NewsletterAdmin() {
   const claimed = useStore((s) => s.newsletterClaimed);
   const codes = useStore((s) => s.welcomeCodes);
   return (
@@ -251,7 +251,7 @@ function NewsletterAdmin() {
   );
 }
 
-function RolesAdmin() {
+export function RolesAdmin() {
   const perms = ["products", "kits", "promotions", "orders", "customers", "content", "loyalty", "diag", "newsletter"];
   return (
     <Box>
