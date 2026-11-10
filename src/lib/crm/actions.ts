@@ -1,9 +1,8 @@
 import "server-only";
 import { ymdhm } from "@/lib/hub/dates";
 import { HttpError } from "@/lib/hub/auth";
-import { siteUrl } from "@/lib/sign";
 import type { HubUser } from "@/lib/hub/types";
-import { all, crmDb, crmTx, crmUid, one, remove, save } from "./db";
+import { all, crmDb, crmTx, crmUid, one, remove, save, clearCollection, setCrmMeta } from "./db";
 import { settings } from "./repo";
 import type { Activity, Automation, AutomationKind, CrmSettings, Deal, DealStage, MoveReason, Order, OrderStatus, PurchaseOrder, Task, Ticket } from "./types";
 import { DEAL_STAGES, DEAL_ORIGIN_LABEL, DELIVERY_LABEL } from "./types";
@@ -256,7 +255,7 @@ const handlers: Record<string, (u: HubUser, b: Body) => unknown> = {
     const n = await sampleMails();
     return { message: `${n} e-mails de test générés vers la boîte de démo (${settings().demoInbox || "demo@skinclean.example"}).` };
   },
-  "mail/clear": () => { crmDb().exec("DELETE FROM docs WHERE collection = 'mails'"); remove("mails", "_"); return { ok: true }; },
+  "mail/clear": () => { clearCollection("mails"); return { ok: true }; },
   "chat/task": (_u, b) => {
     const text = str(b.text, 200);
     if (!text) throw new HttpError(400, "Question vide.");
@@ -279,6 +278,13 @@ const handlers: Record<string, (u: HubUser, b: Body) => unknown> = {
 
   /** Régénère le jeu de démonstration (les commandes réelles Stripe sont conservées). */
   "demo/reset": async () => {
+    const j = await import("./journal");
+    if (j.journalEnabled()) {
+      // En ligne : nouvelle génération commune, chaque serveur repart de la même démo à sa prochaine requête
+      await j.resetShared(now());
+      setCrmMeta("anchor", "");
+      return { ok: true };
+    }
     crmTx(() => {
       crmDb().exec(`DELETE FROM docs WHERE json_extract(data, '$.source') IS NOT 'reel'; DELETE FROM meta WHERE key IN ('seeded', 'seed-extras-v1', 'seed-sav-v1', 'automations-last-run');`);
     });

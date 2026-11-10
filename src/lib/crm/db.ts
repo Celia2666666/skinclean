@@ -38,7 +38,43 @@ export interface CrmCollections {
 }
 export type CrmCollection = keyof CrmCollections;
 
-type G = typeof globalThis & { __crmDb?: DatabaseSync; __crmCache?: Map<string, unknown[]> };
+type G = typeof globalThis & { __crmDb?: DatabaseSync; __crmCache?: Map<string, unknown[]>; __crmOps?: JournalOp[]; __crmMute?: boolean };
+
+/**
+ * Journal des écritures (version en ligne) : chaque enregistrement est aussi noté ici, puis envoyé dans la base
+ * partagée (Neon) par flushJournal(), pour que tous les serveurs rejouent les mêmes modifications.
+ */
+export type JournalOp = { t: "save"; c: CrmCollection; doc: unknown } | { t: "remove"; c: CrmCollection; id: string } | { t: "clear"; c: CrmCollection };
+const journaling = () => !!process.env.VERCEL && !!(process.env.DATABASE_URL || process.env.DATABASE_POSTGRES_URL || process.env.POSTGRES_URL);
+function record(op: JournalOp) {
+  if (journaling() && !g.__crmMute) (g.__crmOps ??= []).push(op);
+}
+/** Récupère (et vide) les écritures à envoyer dans le journal partagé. */
+export function takeOps(): JournalOp[] {
+  const ops = g.__crmOps ?? [];
+  g.__crmOps = [];
+  return ops;
+}
+/** Exécute fn sans journaliser (génération de la démo, rejeu du journal). */
+export async function unrecorded<T>(fn: () => T | Promise<T>): Promise<T> {
+  g.__crmMute = true;
+  try { return await fn(); } finally { g.__crmMute = false; }
+}
+/** Rejoue une écriture venue du journal partagé. */
+export function applyOp(op: JournalOp) {
+  const was = g.__crmMute;
+  g.__crmMute = true;
+  try {
+    if (op.t === "save") save(op.c, op.doc as never);
+    else if (op.t === "remove") remove(op.c, op.id);
+    else clearCollection(op.c);
+  } finally { g.__crmMute = was; }
+}
+/** Vide la base locale (nouvelle génération de la démo en ligne). */
+export function wipeLocal() {
+  crmDb().exec("DELETE FROM docs; DELETE FROM meta;");
+  cache().clear();
+}
 const g = globalThis as G;
 const cache = () => (g.__crmCache ??= new Map());
 
@@ -105,12 +141,20 @@ export function save<C extends CrmCollection>(c: C, doc: CrmCollections[C]): Crm
     .prepare("INSERT INTO docs (collection, id, data, at, ref, status) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(collection, id) DO UPDATE SET data = excluded.data, at = excluded.at, ref = excluded.ref, status = excluded.status")
     .run(c, d.id, JSON.stringify(d), at, ref, status);
   cache().delete(c);
+  record({ t: "save", c, doc });
   return doc;
 }
 
 export function remove(c: CrmCollection, id: string) {
   crmDb().prepare("DELETE FROM docs WHERE collection = ? AND id = ?").run(c, id);
   cache().delete(c);
+  record({ t: "remove", c, id });
+}
+
+export function clearCollection(c: CrmCollection) {
+  crmDb().prepare("DELETE FROM docs WHERE collection = ?").run(c);
+  cache().delete(c);
+  record({ t: "clear", c });
 }
 
 /** Insertion en masse (génération du jeu de démonstration). */

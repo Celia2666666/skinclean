@@ -2,7 +2,7 @@ import { HttpError } from "@/lib/hub/auth";
 import { cookies } from "next/headers";
 import { requireCrmApi } from "@/lib/crm/auth";
 import { crmHandler } from "@/lib/crm/actions";
-import { SOURCE_COOKIE, currentSource } from "@/lib/crm/repo";
+import { SOURCE_COOKIE, currentSource, flushJournal } from "@/lib/crm/repo";
 import { crmExport } from "@/lib/crm/exports";
 import { crmSearch } from "@/lib/crm/search";
 import { accessToken } from "@/lib/crm/auth";
@@ -36,7 +36,9 @@ export async function POST(req: Request, ctx: RouteContext<"/api/crm/[...slug]">
     }
     const h = crmHandler(name);
     if (!h) return json({ error: "Action inconnue." }, 404);
-    return json(await h(u, body));
+    const result = await h(u, body);
+    await flushJournal(); // en ligne : l'action est partagée avec tous les serveurs avant de répondre
+    return json(result);
   } catch (e) {
     return fail(e);
   }

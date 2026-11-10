@@ -1,6 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { all, crmDb, crmMeta, crmUid, one, save } from "./db";
+import { all, applyOp, crmDb, crmMeta, crmTx, crmUid, one, save, setCrmMeta, takeOps, unrecorded, wipeLocal } from "./db";
+import { ymdhm } from "@/lib/hub/dates";
 import type { CrmSettings, Customer, DataSource, Order } from "./types";
 
 export const SOURCE_COOKIE = "crm_source";
@@ -9,20 +10,62 @@ export const SOURCE_COOKIE = "crm_source";
 let seeding: Promise<void> | null = null;
 export async function ensureCrmSeeded() {
   crmDb();
+  const { journalEnabled } = await import("./journal");
+  if (journalEnabled()) {
+    seeding ??= syncShared().finally(() => { seeding = null; });
+    return seeding;
+  }
   if (crmMeta("seeded") && crmMeta("seed-extras-v1") && crmMeta("seed-sav-v1")) return;
   // Un seul remplissage même si la mise en page et la page le demandent en parallèle ; mise à niveau des bases existantes
-  seeding ??= import("./seed").then(async (m) => {
-    if (!crmMeta("seeded")) m.seedCrm();
-    else if (!crmMeta("seed-extras-v1")) m.seedCrmExtras();
-    if (!crmMeta("seed-sav-v1")) {
-      m.seedSupportInbox();
-      // Premier passage du SAV automatique + exemples dans la boîte mail de démo
-      const a = await import("./automations");
-      await a.runAutomations("sav_auto");
-      await a.sampleMails();
-    }
-  }).finally(() => { seeding = null; });
+  seeding ??= seedLocal().finally(() => { seeding = null; });
   await seeding;
+}
+
+async function seedLocal(today?: string, nowHm?: string) {
+  const m = await import("./seed");
+  if (!crmMeta("seeded")) m.seedCrm(today, nowHm);
+  else if (!crmMeta("seed-extras-v1")) m.seedCrmExtras(today, nowHm);
+  if (!crmMeta("seed-sav-v1")) {
+    m.seedSupportInbox(nowHm);
+    // Premier passage du SAV automatique + exemples dans la boîte mail de démo
+    const a = await import("./automations");
+    await a.runAutomations("sav_auto");
+    await a.sampleMails();
+  }
+}
+
+/**
+ * En ligne : même démo sur tous les serveurs (générée à la date commune « anchor »), puis rejeu des écritures
+ * du journal partagé. Les écritures en attente de ce serveur sont envoyées d'abord.
+ */
+let lastSync = 0;
+async function syncShared() {
+  const j = await import("./journal");
+  await flushJournal();
+  if (Date.now() - lastSync < 800 && crmMeta("seeded")) return;
+  const anchor = await j.sharedAnchor(ymdhm(new Date()));
+  if (crmMeta("anchor") !== anchor || !crmMeta("seed-sav-v1")) {
+    await unrecorded(async () => {
+      wipeLocal();
+      await seedLocal(anchor.slice(0, 10), anchor);
+      setCrmMeta("anchor", anchor);
+      setCrmMeta("journal-seq", "0");
+    });
+  }
+  const ops = await j.fetchOps(Number(crmMeta("journal-seq") || 0));
+  if (ops.length) crmTx(() => {
+    for (const o of ops) applyOp(o.op);
+    setCrmMeta("journal-seq", String(ops[ops.length - 1].seq));
+  });
+  lastSync = Date.now();
+}
+
+/** Envoie les écritures de cette requête dans le journal partagé (sans effet en local). */
+export async function flushJournal() {
+  const { journalEnabled, pushOps } = await import("./journal");
+  if (!journalEnabled()) return;
+  const ops = takeOps();
+  try { await pushOps(ops); } catch (e) { console.error("[crm journal]", e); }
 }
 
 /** Jeu de données affiché : démonstration ou réel (jamais mélangés). Par défaut : réel s'il existe, sinon démo. */

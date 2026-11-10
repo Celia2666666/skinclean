@@ -555,8 +555,8 @@ export function generateCrmDemo(today = ymd(new Date()), nowHm = ymdhm(new Date(
   return { customers: customerDocs, orders, carts, traffic, stock, moves, purchaseOrders: pos, spend, deals, tickets, activities, tasks, settings, prospects: prospects.length };
 }
 
-export function seedCrm() {
-  const d = generateCrmDemo();
+export function seedCrm(today?: string, nowHm?: string) {
+  const d = generateCrmDemo(today, nowHm);
   crmTx(() => {
     bulk("customers", d.customers);
     bulk("orders", d.orders);
@@ -573,7 +573,7 @@ export function seedCrm() {
     bulk("settings", [d.settings]);
     setCrmMeta("seeded", new Date().toISOString());
   });
-  seedCrmExtras();
+  seedCrmExtras(today, nowHm);
 }
 
 /* ───────── Chatbot, alertes de stock, automatisations, messages de contact (démonstration) ───────── */
@@ -606,6 +606,7 @@ const CHAT_W: Record<string, number> = { acne: 15, glow: 10, dry: 9, oily: 9, re
 const PAGES = ["/", "/soins-visage", "/produits/glow-shot-serum-vitamine-c", "/skin-diag", "/panier", "/club", "/kits", "/best-sellers", "/soins-visage/serums"];
 
 export function seedCrmExtras(today = ymd(new Date()), nowHm = ymdhm(new Date())) {
+  today ||= ymd(new Date()); nowHm ||= ymdhm(new Date());
   R = rng(4242);
   const now = parseLocal(nowHm).getTime();
   const orders = all("orders").filter((o) => o.source === "demo");

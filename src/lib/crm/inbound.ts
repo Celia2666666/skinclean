@@ -2,7 +2,7 @@ import "server-only";
 import { ymdhm } from "@/lib/hub/dates";
 import { baseProducts } from "@/data/products";
 import { all, crmUid, save } from "./db";
-import { ensureCrmSeeded } from "./repo";
+import { ensureCrmSeeded, flushJournal } from "./repo";
 import type { Ticket } from "./types";
 
 /**
@@ -23,6 +23,7 @@ export async function logChat(b: Record<string, unknown>) {
   // On masque les adresses e-mail et numéros éventuellement tapés dans la question (journal anonyme)
   const safe = text.replace(/[^\s@]+@[^\s@]+/g, "[e-mail]").replace(/(\+?\d[\d .-]{7,}\d)/g, "[numéro]");
   save("chats", { id: crmUid("chat_"), source: "reel", at: ymdhm(new Date()), session: clip(b.session, 20) || "anonyme", text: safe, intent: clip(b.intent, 40) || "unknown", page: clip(b.page, 120) });
+  await flushJournal();
   return true;
 }
 
@@ -37,6 +38,7 @@ export async function addStockAlert(b: Record<string, unknown>) {
   if (dup) return true;
   const customer = all("customers").find((c) => c.email === email);
   save("alerts", { id: crmUid("al_"), source: "reel", createdAt: ymdhm(new Date()), email, customerId: customer?.id, productId: p.id, variantId: v?.id, label: `${p.name}${v ? ` — ${v.size}` : ""}`, origin: b.origin === "chatbot" ? "chatbot" : "fiche_produit", status: "en_attente" });
+  await flushJournal();
   return true;
 }
 
@@ -55,7 +57,8 @@ export async function addContactMessage(b: Record<string, unknown>) {
     createdAt: at, messages: [{ at, from: "client", body: clip(b.message, 5000) }],
   });
   // Tri et réponse automatique immédiats (sans faire attendre le visiteur)
-  void import("./automations").then((m) => m.runAutomations("sav_auto")).catch((e) => console.error("[SAV auto]", e));
+  try { await (await import("./automations")).runAutomations("sav_auto"); } catch (e) { console.error("[SAV auto]", e); }
+  await flushJournal();
   return true;
 }
 

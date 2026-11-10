@@ -33,6 +33,7 @@ export async function shellData() {
   const source = await currentSource();
   const { maybeRunAutomations } = await import("./automations");
   await maybeRunAutomations();
+  await (await import("./repo")).flushJournal();
   const today = todayYmd();
   const rows = stockRows(all("stock"), ordersOf(source), all("purchaseOrders"));
   return {
