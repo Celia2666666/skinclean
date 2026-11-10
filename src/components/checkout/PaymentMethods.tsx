@@ -81,7 +81,7 @@ export function PaymentMethodPicker({ value, onChange }: { value: PaymentMethod;
 /** Bouton de validation, au style de chaque moyen de paiement (comme les boutons officiels Apple Pay / Google Pay). */
 export function PayButton({ method, amount, loading, disabled, test }: { method: PaymentMethod; amount: string; loading?: boolean; disabled?: boolean; test?: boolean }) {
   const base = "flex w-full items-center justify-center gap-2 rounded-[6px] py-4 text-base font-medium transition disabled:opacity-50";
-  const suffix = test ? <span className="ml-1 text-xs font-normal opacity-70">(commande de test)</span> : null;
+  const suffix = test ? <span className="ml-1 text-xs font-normal opacity-70">(paiement simulé)</span> : null;
   if (loading) return <button disabled className={`${base} bg-forest text-ivory`}>Redirection…</button>;
   if (method === "apple-pay")
     return (

@@ -39,7 +39,7 @@ export function CartPage() {
             <button onClick={() => openAssistant("cart-check")} className="flex w-full items-center gap-3 rounded-[2px] bg-sky-soft p-4 text-left transition hover:bg-sky"><ChatIcon /> Tu veux vérifier que tes produits fonctionnent bien ensemble ? Demande au Glow Assistant.</button>
             <CartSuggestions />
           </motion.div>
-          <motion.aside initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.25 }} className="space-y-5 lg:sticky lg:top-24 lg:self-start">
+          <motion.aside initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.25 }} className="space-y-5 lg:sticky lg:top-[calc(6rem+var(--demo-h))] lg:self-start">
             <div className="space-y-5 rounded-none bg-ivory p-6">
               <PromoAndRewards />
               <TotalsBlock />

@@ -19,7 +19,7 @@ export function ProductGallery({ product }: { product: Product }) {
   const s = slides[i];
 
   return (
-    <div className="md:sticky md:top-28 md:self-start">
+    <div className="md:sticky md:top-[calc(7rem+var(--demo-h))] md:self-start">
       <div
         className="relative aspect-square overflow-hidden rounded-none"
         style={{ background: product.color.bg }}

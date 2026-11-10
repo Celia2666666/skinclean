@@ -41,7 +41,7 @@ export function HowToStage({ product: p, steps, footer }: { product: Product; st
   return (
     <section className="mt-16 bg-sky-soft">
       <div ref={ref} className="relative mx-auto max-w-[1400px] px-4 md:h-[260vh] md:px-8">
-        <div className="grid items-center gap-10 py-20 md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:grid-cols-2 md:py-0">
+        <div className="grid items-center gap-10 py-20 md:sticky md:top-[calc(4rem+var(--demo-h))] md:h-[calc(100vh-4rem-var(--demo-h))] md:grid-cols-2 md:py-0">
           {/* Scène produit */}
           <div className="relative mx-auto aspect-[4/5] w-full max-w-[520px] overflow-hidden md:max-h-[78vh]" style={{ background: p.color.bg }}>
             {/* Halo */}

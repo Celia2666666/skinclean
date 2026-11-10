@@ -73,7 +73,7 @@ export function SetBuilder() {
         </motion.div>
       </div>
 
-      <div className="lg:sticky lg:top-24 lg:flex lg:max-h-[calc(100vh-11rem)] lg:flex-col lg:self-start">
+      <div className="lg:sticky lg:top-[calc(6rem+var(--demo-h))] lg:flex lg:max-h-[calc(100vh-11rem)] lg:flex-col lg:self-start">
         <div className="relative aspect-[5/4] shrink-0 overflow-hidden rounded-none lg:aspect-auto lg:h-[min(36vh,320px)] bg-[radial-gradient(120%_100%_at_30%_10%,#FFFEFB,#EFEEEA_60%,#EFEEEA)]">
           <div className="absolute inset-x-6 bottom-6 h-6 rounded-[50%] bg-forest/10 blur-md" />
           <LayoutGroup>

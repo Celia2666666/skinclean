@@ -9,7 +9,7 @@ export function Toasts() {
   const toasts = useUI((s) => s.toasts);
   const dismiss = useUI((s) => s.dismiss);
   return (
-    <div className="pointer-events-none fixed left-1/2 top-24 z-[70] flex w-[min(92vw,380px)] -translate-x-1/2 flex-col gap-2" aria-live="polite">
+    <div className="pointer-events-none fixed left-1/2 top-[calc(6rem+var(--demo-h))] z-[70] flex w-[min(92vw,380px)] -translate-x-1/2 flex-col gap-2" aria-live="polite">
       <AnimatePresence>
         {toasts.map((t) => {
           const p = t.productId ? getProduct(t.productId) : undefined;

@@ -37,9 +37,9 @@ export function OrderConfirmed({ mode, sessionId, orderId, email }: { mode: "str
   return (
     <div className="relative mx-auto max-w-3xl overflow-hidden px-5 py-20 text-center">
       <motion.div initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 200, damping: 12 }} className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-sage text-forest"><CheckIcon size={40} /></motion.div>
-      <h1 className="mt-6 font-display text-5xl">{mode === "test" ? "Commande de test enregistrée" : "Merci, ta commande est confirmée !"}</h1>
+      <h1 className="mt-6 font-display text-5xl">{mode === "test" ? "Merci, ta commande est enregistrée !" : "Merci, ta commande est confirmée !"}</h1>
       {mode === "test" ? (
-        <p className="mt-4 rounded-[2px] bg-butter p-4 text-sm">Cette commande est un <b>test</b> : <b>aucun paiement n&apos;a été effectué</b> et elle ne sera pas expédiée. Elle permet de tester l&apos;historique et la fidélité.</p>
+        <p className="mt-4 rounded-[2px] bg-sage-soft p-4 text-sm"><b>Paiement simulé</b> (projet étudiant INSEEC) : aucune somme n&apos;a été débitée et la commande ne sera pas expédiée. Elle apparaît dans ton compte client.</p>
       ) : (
         <p className="mt-4 text-forest-soft">Paiement validé par Stripe. Un e-mail récapitulatif t&apos;est envoyé{email ? ` à ${email}` : ""}.</p>
       )}
@@ -48,7 +48,7 @@ export function OrderConfirmed({ mode, sessionId, orderId, email }: { mode: "str
           <p className="font-semibold">Commande {order.id}</p>
           <ul className="mt-3 space-y-1 text-sm">{order.lines.map((l, i) => <li key={i} className="flex justify-between"><span>{l.qty} × {l.name} ({l.size})</span><span>{euro(l.unit * l.qty)}</span></li>)}</ul>
           {order.gift && <p className="mt-2 text-sm">Cadeau offert : {order.gift}</p>}
-          <p className="mt-3 flex justify-between border-t border-line pt-3 font-semibold"><span>Total</span><span>{euro(order.total)}</span></p>
+          <p className="mt-3 flex justify-between border-t border-line pt-3 font-semibold"><span>Total TTC</span><span>{euro(order.total)}</span></p>
           {order.leaves > 0 && <p className="mt-2 text-sm">{order.leaves} feuilles {acc ? "en attente — créditées à l'expédition" : "à gagner en créant un compte la prochaine fois"}</p>}
         </div>
       )}

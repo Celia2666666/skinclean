@@ -42,7 +42,9 @@
   @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgb(199 221 206 / 0.9); } 100% { box-shadow: 0 0 0 18px rgb(199 221 206 / 0); } }
 }
 
-:root { color-scheme: light; }
+:root { color-scheme: light; --demo-h: 2.75rem; }
+/* Hauteur du bandeau « Projet étudiant INSEEC » (2 lignes sur mobile, 1 ligne dès 768 px) */
+@media (min-width: 768px) { :root { --demo-h: 2rem; } }
 
 /* Une grille sans colonnes explicites ne doit jamais dépasser son conteneur sur mobile
    (la colonne implicite « auto » s'élargit sinon au contenu le plus large, ex. une rangée d'onglets).

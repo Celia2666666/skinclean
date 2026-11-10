@@ -69,6 +69,8 @@ interface State {
   guestOrders: Order[];
   register: (a: { email: string; firstName: string; lastName: string; password: string; newsletter: boolean }) => Promise<string | null>;
   login: (email: string, password: string) => Promise<string | null>;
+  /** Comptes de démonstration : connexion en un clic, sans mot de passe. */
+  loginDemo: (email: string) => string | null;
   logout: () => void;
   updateAccount: (patch: Partial<Account>) => void;
   // Fidélité / newsletter
@@ -196,24 +198,22 @@ export const useStore = create<State>()(
         login: async (email, password) => {
           const e = email.trim().toLowerCase();
           let acc = get().accounts[e];
-          // Comptes de test : créés avec leur historique à la première connexion (src/data/demo-accounts.ts)
-          if (!acc) {
-            const demo = findDemoAccount(e, password);
-            if (demo) {
-              acc = { ...demo.build(), passwordHash: await hash(password) };
-              set({ accounts: { ...get().accounts, [e]: acc } });
-            }
-          }
           if (!acc || acc.passwordHash !== (await hash(password))) return "E-mail ou mot de passe incorrect.";
-          // Compte de démonstration créé avant l'ajout du journal pré-rempli : on le complète.
-          const demo = findDemoAccount(e, password);
-          if (demo) {
-            const built = demo.build();
-            if (acc.journal.entries.length === 0 && built.journal.entries.length) acc = { ...acc, journal: built.journal };
-            const known = new Set(acc.ledger.map((l) => l.id));
-            const missing = built.ledger.filter((l) => !known.has(l.id));
-            if (missing.length) acc = { ...acc, ledger: [...acc.ledger, ...missing].sort((a, b) => a.date - b.date) };
-          }
+          const favs = Array.from(new Set([...acc.favorites, ...get().favorites]));
+          set({ session: e, accounts: { ...get().accounts, [e]: { ...acc, favorites: favs } }, favorites: [] });
+          return null;
+        },
+        loginDemo: (email) => {
+          const demo = findDemoAccount(email);
+          if (!demo) return "Compte de démonstration introuvable.";
+          const e = demo.email;
+          const built = demo.build();
+          let acc: Account = get().accounts[e] ?? { ...built, passwordHash: "" };
+          // Compte créé avant l'ajout du journal pré-rempli ou de nouveaux mouvements de feuilles : on le complète.
+          if (acc.journal.entries.length === 0 && built.journal.entries.length) acc = { ...acc, journal: built.journal };
+          const known = new Set(acc.ledger.map((l) => l.id));
+          const missing = built.ledger.filter((l) => !known.has(l.id));
+          if (missing.length) acc = { ...acc, ledger: [...acc.ledger, ...missing].sort((x, y) => x.date - y.date) };
           const favs = Array.from(new Set([...acc.favorites, ...get().favorites]));
           set({ session: e, accounts: { ...get().accounts, [e]: { ...acc, favorites: favs } }, favorites: [] });
           return null;

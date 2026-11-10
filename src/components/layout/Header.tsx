@@ -19,7 +19,7 @@ const nav = [
   { label: "Créer mon set", href: "/creer-mon-set" },
   { label: "Skin Diag", href: "/skin-diag", highlight: true },
   { label: "SKINCLEAN Club", href: "/club" },
-  { label: "Notre univers", href: "/notre-histoire", sub: [{ href: "/notre-histoire", label: "Notre histoire" }, { href: "/nos-engagements", label: "Nos engagements" }, { href: "/faq", label: "FAQ & contact" }] },
+  { label: "Notre univers", href: "/notre-histoire", sub: [{ href: "/offre", label: "Offre & prix" }, { href: "/notre-histoire", label: "Notre histoire" }, { href: "/nos-engagements", label: "Nos engagements" }, { href: "/faq", label: "FAQ & contact" }] },
 ];
 
 export function Header() {
@@ -50,7 +50,7 @@ export function Header() {
       <motion.header
         animate={{ y: hidden ? "-100%" : "0%" }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className={`sticky top-0 z-40 transition-colors duration-300 ${scrolled || mega ? "bg-cream/90 shadow-[0_1px_0_var(--color-line)] backdrop-blur-xl" : "bg-cream"}`}
+        className={`sticky top-[var(--demo-h)] z-40 transition-colors duration-300 ${scrolled || mega ? "bg-cream/90 shadow-[0_1px_0_var(--color-line)] backdrop-blur-xl" : "bg-cream"}`}
         onMouseLeave={() => setMega(null)}
       >
         <div className="mx-auto flex h-[68px] max-w-[1400px] items-center gap-4 px-4 md:px-8">
@@ -195,6 +195,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
           <Link href="/compte/journal" className="rounded-[2px] bg-ivory p-3">Mon Skin Journal</Link>
           <Link href="/faq" className="rounded-[2px] bg-ivory p-3">FAQ & contact</Link>
           <Link href="/livraison" className="rounded-[2px] bg-ivory p-3">Livraison</Link>
+          <Link href="/offre" className="col-span-2 rounded-[2px] bg-ivory p-3">Offre & prix</Link>
         </div>
         <div className="mt-auto border-t border-line pt-5"><TeamLinks /></div>
       </motion.nav>

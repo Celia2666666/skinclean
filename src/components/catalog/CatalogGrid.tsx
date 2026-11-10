@@ -38,7 +38,7 @@ export function CatalogGrid({ products, hideType = false, hideConcern = false }:
 
   return (
     <div>
-      <div className="sticky top-[68px] z-20 -mx-4 mb-8 flex items-center gap-2 bg-cream/90 px-4 py-3 backdrop-blur-xl md:mx-0 md:px-0">
+      <div className="sticky top-[calc(68px+var(--demo-h))] z-20 -mx-4 mb-8 flex items-center gap-2 bg-cream/90 px-4 py-3 backdrop-blur-xl md:mx-0 md:px-0">
         <button onClick={() => setOpen((o) => !o)} className="btn btn-soft px-4 py-2 text-sm" aria-expanded={open}>
           Filtres {active > 0 && <span className="grid h-5 w-5 place-items-center rounded-full bg-forest text-[0.65rem] text-ivory">{active}</span>}
         </button>

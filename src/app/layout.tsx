@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
+import { DemoBanner } from "@/components/layout/DemoBanner";
 
 // Titres : grotesque droite et sobre (esprit Typology) · Texte : Inter, très lisible
 const display = Inter_Tight({ variable: "--font-display-face", subsets: ["latin"], display: "swap", weight: ["400", "500", "600"] });
@@ -25,7 +26,7 @@ export const viewport: Viewport = { themeColor: "#F4F3EF", width: "device-width"
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" className={`${display.variable} ${body.variable}`}>
-      <body className="min-h-screen overflow-x-clip">{children}</body>
+      <body className="min-h-screen overflow-x-clip"><DemoBanner />{children}</body>
     </html>
   );
 }

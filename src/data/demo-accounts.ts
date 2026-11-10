@@ -5,15 +5,13 @@ import { shipping as shippingConfig } from "@/data/config";
 
 /**
  * COMPTES DE TEST — démonstration uniquement (travail d'école, données fictives).
- * Utilisables sur /compte/connexion (boutons « Compte de test » qui remplissent le formulaire).
+ * Utilisables sur /compte/connexion : connexion en un clic, sans mot de passe (aucun secret dans le code).
  * Le compte est créé dans le navigateur à la première connexion, avec son historique ci-dessous.
- * Ne jamais réutiliser ces mots de passe ailleurs.
  */
 export interface DemoAccount {
   label: string;
   description: string;
   email: string;
-  password: string;
   build: () => Omit<Account, "passwordHash">;
 }
 
@@ -70,7 +68,6 @@ export const demoAccounts: DemoAccount[] = [
     label: "Cliente fidèle",
     description: "2 commandes livrées, 1 en cours d'expédition, plus de 950 feuilles SKINCLEAN Club (palier Fleur), Skin Journal rempli, routine enregistrée, favoris.",
     email: "camille@skinclean.test",
-    password: "Glow-2026!",
     build: () => {
       const email = "camille@skinclean.test";
       const o1 = order("SC-DEMO-0001", 120, email, ["sc-cl-01", "sc-sr-01", "sc-cr-03", "sc-sp-01"], "livree");
@@ -116,7 +113,6 @@ export const demoAccounts: DemoAccount[] = [
     label: "Nouvelle cliente",
     description: "Aucune commande : idéal pour tester le cadeau de 1ʳᵉ commande, le Skin Diag et la newsletter.",
     email: "lea@skinclean.test",
-    password: "Glow-2026!",
     build: () => ({
       id: "u_demo_lea", email: "lea@skinclean.test", firstName: "Léa", lastName: "Durand", createdAt: now(),
       addresses: [], newsletter: { status: "none", marketing: false },
@@ -125,5 +121,4 @@ export const demoAccounts: DemoAccount[] = [
   },
 ];
 
-export const findDemoAccount = (email: string, password: string) =>
-  demoAccounts.find((d) => d.email === email.trim().toLowerCase() && d.password === password);
+export const findDemoAccount = (email: string) => demoAccounts.find((d) => d.email === email.trim().toLowerCase());

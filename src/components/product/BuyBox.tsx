@@ -25,7 +25,7 @@ export function BuyBox({ product }: { product: Product }) {
     <div className="space-y-5">
       <div className="flex items-center gap-3">
         <PriceTag productId={product.id} variantId={variantId} className="font-display text-4xl" />
-        <span className="text-sm text-forest-soft">{v.size}</span>
+        <span className="text-sm text-forest-soft">TTC · {v.size}</span>
         <span className="ml-auto"><StockBadge productId={product.id} variantId={variantId} /></span>
       </div>
 

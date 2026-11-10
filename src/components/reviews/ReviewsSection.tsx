@@ -57,7 +57,7 @@ export function ReviewsSection({ productId, productName, isAccessory = false }: 
         ) : (
           <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[320px_1fr]">
             {/* Synthèse */}
-            <aside className="lg:sticky lg:top-28 lg:self-start">
+            <aside className="lg:sticky lg:top-[calc(7rem+var(--demo-h))] lg:self-start">
               <p className="font-display text-6xl">{stats.avg.toFixed(1).replace(".", ",")}<span className="text-2xl text-forest-soft"> / 5</span></p>
               <LeafRating value={stats.avg} size={24} className="mt-2" />
               <p className="mt-2 text-sm text-forest-soft">{stats.count} avis</p>

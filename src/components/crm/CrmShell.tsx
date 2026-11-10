@@ -79,14 +79,14 @@ export function CrmShell({ user, source, hasReal, badges, children, online = fal
     <UserProvider user={user}>
       <ToastProvider>
         <div className="min-h-screen bg-[#F6F5F1] text-forest lg:pl-[256px] print:bg-white print:pl-0">
-          <aside className="fixed inset-y-0 left-0 z-40 hidden w-[256px] bg-forest lg:block print:hidden">{sidebar}</aside>
+          <aside className="fixed bottom-0 left-0 top-[var(--demo-h)] z-40 hidden w-[256px] bg-forest lg:block print:hidden">{sidebar}</aside>
           {menu && (
             <div className="fixed inset-0 z-[120] lg:hidden" onClick={() => setMenu(false)}>
               <div className="absolute inset-0 bg-black/40" />
               <aside className="absolute inset-y-0 left-0 w-[280px] bg-forest" onClick={(e) => e.stopPropagation()}>{sidebar}</aside>
             </div>
           )}
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line bg-white/90 px-4 backdrop-blur md:px-6 print:hidden">
+          <header className="sticky top-[var(--demo-h)] z-30 flex h-14 items-center gap-3 border-b border-line bg-white/90 px-4 backdrop-blur md:px-6 print:hidden">
             <button className="hub-btn hub-btn-ghost lg:hidden" onClick={() => setMenu(true)} aria-label="Ouvrir le menu"><MenuI /></button>
             <button onClick={() => setSearch(true)} className="flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-[#FAF9F6] px-3 text-sm text-forest-soft hover:border-forest md:max-w-md">
               <SearchI size={15} /><span className="truncate">Rechercher un client, une commande, un produit…</span><kbd className="ml-auto hidden rounded border border-line bg-white px-1.5 text-[0.65rem] sm:inline">⌘ K</kbd>

@@ -137,7 +137,7 @@ export function Checkout() {
               </p>
             ) : (
               <div className="rounded-[2px] bg-sage-soft p-4 text-sm">
-                <p><b>Site de démonstration :</b> aucun paiement réel n&apos;est effectué. Le bouton ci-dessous passe une <b>commande de test</b> ({paymentMethodLabel[method]}) pour tester le parcours (fidélité, historique). Elle sera marquée « non payée ».</p>
+                <p><b>Paiement simulé :</b> projet étudiant, aucune somme n&apos;est débitée et aucune donnée bancaire n&apos;est demandée. Le bouton ci-dessous enregistre ta commande ({paymentMethodLabel[method]}) et t&apos;emmène à la page de confirmation.</p>
               </div>
             )}
             <label className="flex items-start gap-2 text-sm">
@@ -148,7 +148,7 @@ export function Checkout() {
             <PayButton method={method} amount={`${t.total.toFixed(2).replace(".", ",")} €`} loading={loading} disabled={!status} test={status ? !status.stripe : false} />
           </fieldset>
         </form>
-        <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
+        <aside className="space-y-5 lg:sticky lg:top-[calc(6rem+var(--demo-h))] lg:self-start">
           <div className="rounded-none bg-ivory p-6">
             <p className="font-display text-2xl">Récapitulatif</p>
             <CartLines editable={false} />

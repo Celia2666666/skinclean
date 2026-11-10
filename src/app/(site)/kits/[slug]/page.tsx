@@ -59,7 +59,7 @@ export default async function KitPage({ params }: PageProps<"/kits/[slug]">) {
             <p>Le prix du kit est calculé à partir des prix catalogue de ces {pr.lines.length} soins, avec une remise de {kit.discountPercent} %. Pour vérifier que cette routine convient à ta peau, fais le <Link href="/skin-diag" className="underline">Skin Diag</Link>.</p>
           </div>
         </div>
-        <div className="lg:sticky lg:top-28 lg:self-start"><KitBuy kit={kit} /></div>
+        <div className="lg:sticky lg:top-[calc(7rem+var(--demo-h))] lg:self-start"><KitBuy kit={kit} /></div>
       </div>
     </>
   );

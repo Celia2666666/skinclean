@@ -11,6 +11,7 @@ export function AuthForms({ mode }: { mode: "login" | "register" | "forgot" }) {
   const router = useRouter();
   const search = useSearchParams();
   const login = useStore((s) => s.login);
+  const loginDemo = useStore((s) => s.loginDemo);
   const register = useStore((s) => s.register);
   const [f, setF] = useState({ email: "", password: "", firstName: "", lastName: "", newsletter: false, consent: false });
   const [error, setError] = useState<string>();
@@ -50,16 +51,16 @@ export function AuthForms({ mode }: { mode: "login" | "register" | "forgot" }) {
           <>
           {mode === "login" && (
             <div className="mt-6 border border-dashed border-sage-deep/40 bg-sage-soft/60 p-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-forest-soft">Comptes de test</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-forest-soft">Comptes de démonstration · connexion en un clic</p>
               <div className="mt-2 grid gap-2">
                 {demoAccounts.map((d) => (
-                  <button key={d.email} type="button" onClick={() => setF({ ...f, email: d.email, password: d.password })} className="border border-line bg-ivory px-3 py-2 text-left text-sm transition hover:border-forest">
+                  <button key={d.email} type="button" onClick={() => { const err = loginDemo(d.email); if (err) setError(err); else router.push(back); }} className="border border-line bg-ivory px-3 py-2 text-left text-sm transition hover:border-forest">
                     <span className="block font-medium">{d.label}</span>
                     <span className="block text-xs text-forest-soft">{d.description}</span>
                   </button>
                 ))}
               </div>
-              <p className="mt-2 text-[0.7rem] text-forest-soft">Clique sur un compte pour remplir le formulaire, puis sur « Se connecter ».</p>
+              <p className="mt-2 text-[0.7rem] text-forest-soft">Données fictives : clique sur un compte pour te connecter directement, sans mot de passe.</p>
             </div>
           )}
           <form onSubmit={submit} className="mt-6 space-y-3">
