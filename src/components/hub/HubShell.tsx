@@ -33,6 +33,12 @@ function Leaf({ size = 28 }: { size?: number }) {
   );
 }
 
+/** Modules de l'Admin qui appliquent une partie du plan de communication (/communication) : lien de retour vers le plan. */
+const PLAN_LINKS: [string, string][] = [
+  ["/hub/reseaux-sociaux", "bibliotheque"], ["/hub/campagnes", "campagnes"], ["/hub/calendrier", "calendrier"], ["/hub/seo", "seo"],
+  ["/hub/emailing", "newsletters"], ["/hub/ads", "dispositif"], ["/hub/performances", "indicateurs"],
+];
+
 export const NAV: { href: string; label: string; icon: (p: { size?: number }) => React.ReactElement; sub?: boolean }[] = [
   { href: "/hub", label: "Accueil Admin", icon: HomeI },
   { href: "/hub/strategie", label: "Ma stratégie marketing", icon: TargetI },
@@ -82,6 +88,7 @@ export function HubShell({ user, children, unread, badges, online = false }: { u
     window.location.href = "/hub/connexion";
   };
 
+  const planAnchor = PLAN_LINKS.find(([p]) => path === p || path.startsWith(`${p}/`))?.[1];
   const active = (href: string) => (href === "/hub" ? path === "/hub" : path === href || path.startsWith(`${href}/`));
   const sidebar = (
     <nav aria-label="Navigation de l'Admin" className="flex h-full flex-col">
@@ -182,7 +189,15 @@ export function HubShell({ user, children, unread, badges, online = false }: { u
               {!online && <button onClick={logout} className="hub-btn hub-btn-ghost" title="Déconnexion" aria-label="Déconnexion"><LogoutI /></button>}
             </div>
           </header>
-          <main className="mx-auto max-w-[1500px] px-4 py-6 md:px-8 md:py-8">{children}</main>
+          <main className="mx-auto max-w-[1500px] px-4 py-6 md:px-8 md:py-8">
+            {planAnchor && (
+              <Link href={`/communication#${planAnchor}`} className="mb-5 flex items-center gap-2 rounded-lg border border-sage bg-sage-soft px-4 py-2.5 text-sm text-forest transition hover:border-forest print:hidden">
+                <span className="flex-1">Ce module applique le <strong>plan de communication</strong>.</span>
+                <span className="flex shrink-0 items-center gap-1 font-medium">Voir le plan <ArrowRightI size={14} /></span>
+              </Link>
+            )}
+            {children}
+          </main>
           {/* Assistant IA toujours accessible : bulle en bas à droite sur toutes les pages */}
           {path !== "/hub/assistant" && (
             <>
