@@ -122,7 +122,7 @@ export function AnalysesView({ data: d }: { data: Data }) {
             </tbody>
           </table>
         </div>
-        <p className="px-4 py-3 text-xs text-forest-soft">Dépenses marketing de démonstration. En réel, elles se saisissent depuis les régies (Meta, Google, TikTok) ou le module SEA & Social Ads du Marketing Hub.</p>
+        <p className="px-4 py-3 text-xs text-forest-soft">Dépenses marketing de démonstration. En réel, elles se saisissent depuis les régies (Meta, Google, TikTok) ou le module SEA & Social Ads de l'Admin.</p>
       </Card>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
