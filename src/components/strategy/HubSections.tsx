@@ -128,6 +128,18 @@ export function StrategyTabs({ sections }: { sections: HubSection[] }) {
   );
 }
 
+/** Passerelle vers l'outil correspondant de l'Admin (le plan est ici, l'exécution se fait là-bas). */
+export function AdminLink({ href, label, hint }: { href: string; label: string; hint?: string }) {
+  return (
+    <motion.a href={href} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} whileHover={{ y: -2 }}
+      className="group mt-6 inline-flex max-w-full items-center gap-4 rounded-full border border-forest bg-ivory py-2 pl-2 pr-5 text-sm transition hover:bg-forest hover:text-ivory">
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-forest text-ivory transition group-hover:bg-sage group-hover:text-forest" aria-hidden>⚙</span>
+      <span className="min-w-0"><span className="block font-medium">{label}</span>{hint && <span className="block truncate text-xs opacity-70">{hint}</span>}</span>
+      <span className="transition group-hover:translate-x-1" aria-hidden>→</span>
+    </motion.a>
+  );
+}
+
 /** SWOT : 4 quadrants qui s'ouvrent depuis le centre. */
 export function SwotGrid({ section }: { section: HubSection }) {
   const reduce = useReducedMotion();

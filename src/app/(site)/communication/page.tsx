@@ -4,7 +4,7 @@ import { PageHero } from "@/components/catalog/PageHero";
 import { brandPlatform, calendar, channels, firstTen, kpis, partnerships, posts } from "@/data/communication";
 import { sources, src } from "@/data/strategy";
 import { hubData, hubSection } from "@/data/hub-public";
-import { AdsGrid, BlockExplorer, CampaignStrip, PillarBars, StrategyTabs } from "@/components/strategy/HubSections";
+import { AdminLink, AdsGrid, BlockExplorer, CampaignStrip, PillarBars, StrategyTabs } from "@/components/strategy/HubSections";
 import { EditorialCalendar, FeedLibrary, NewsletterShelf, PlanPosts, SeoStudio } from "@/components/strategy/HubStudio";
 import { Reveal } from "@/components/ui/Reveal";
 
@@ -109,6 +109,7 @@ export default function CommunicationPage() {
         <section aria-labelledby="bibliotheque">
           <H2 id="bibliotheque" kicker="5 · Publications prêtes" intro={<>{hubData.posts.length} publications TikTok, Instagram, Pinterest, Facebook et Stories prêtes à publier. Clique sur une vignette : elle s&apos;affiche dans le téléphone comme sur le réseau, avec sa légende complète, et tu peux la modifier ou la valider. Les carrousels se feuillettent avec les flèches.</>}>La bibliothèque de contenus</H2>
           <FeedLibrary />
+          <AdminLink href="/hub/reseaux-sociaux" label="Programmer et publier dans l'Admin" hint="Réseaux sociaux : programmation, publication, statistiques" />
           <p className="mt-6 text-xs text-forest-soft">Aperçus sans aucun compteur inventé (ni likes, ni vues). « Publié sur le compte de test » : publication faite sur un compte d&apos;essai, pas sur un vrai compte. Notre vidéo « Ma routine sérum en 5 secondes » a été créée avec un outil d&apos;IA ; les autres vidéos sont des vidéos de démonstration libres de droits (Pexels), à remplacer par nos tournages.</p>
         </section>
 
@@ -116,6 +117,7 @@ export default function CommunicationPage() {
         <section aria-labelledby="campagnes">
           <H2 id="campagnes" kicker="6 · Campagnes" intro={"Les douze campagnes préparées pour l'année. Fais défiler pour toutes les voir."}>Une campagne, un message</H2>
           <CampaignStrip />
+          <AdminLink href="/hub/campagnes" label="Gérer les campagnes dans l'Admin" hint="Planning, budget, publications, scripts et publicités de chaque campagne" />
         </section>
 
         {/* Calendrier */}
@@ -139,6 +141,7 @@ export default function CommunicationPage() {
           <p className="mb-2 mt-14 font-display text-3xl">Le calendrier, mois par mois</p>
           <p className="mb-6 max-w-3xl text-sm text-forest-soft">Choisis le plan des 4 semaines ou une campagne : son rétroplanning (préparation à rebours depuis le lancement) et chacune de ses actions s&apos;affichent dans le calendrier. Clique sur une action pour l&apos;ouvrir.</p>
           <EditorialCalendar />
+          <AdminLink href="/hub/calendrier" label="Ouvrir le calendrier complet dans l'Admin" hint="Vues jour, semaine, mois, par réseau et par campagne ; glisser-déposer" />
         </section>
 
         {/* Dispositif */}
@@ -150,16 +153,19 @@ export default function CommunicationPage() {
               <p className="mb-1 font-display text-2xl">Référencement naturel (SEO)</p>
               <p className="mb-6 text-sm text-forest-soft">Être trouvé sur Google quand la cible cherche une solution à son problème de peau. Clique sur un article pour le lire, voir son aperçu dans Google et le valider.</p>
               <SeoStudio />
+              <AdminLink href="/hub/seo" label="Lancer l'audit SEO dans l'Admin" hint="Audit du site, mots-clés, articles et optimisation des images" />
             </div>
             <div id="newsletters" className="scroll-mt-[calc(8rem+var(--demo-h))]">
               <p className="mb-1 font-display text-2xl">Les newsletters</p>
               <p className="mb-6 text-sm text-forest-soft">{hubData.emails.length} e-mails prêts à envoyer, de la bienvenue au programme de fidélité. Clique pour voir l&apos;e-mail tel qu&apos;il arrivera dans la boîte de réception.</p>
               <NewsletterShelf />
+              <AdminLink href="/hub/emailing" label="Ouvrir l'emailing dans l'Admin" hint="Créer, tester et programmer les newsletters" />
             </div>
             <div>
               <p className="mb-1 font-display text-2xl">Publicité payante (SEA) : les annonces préparées</p>
               <p className="mb-4 text-sm text-forest-soft">Annonces prêtes à être programmées. Aucune n&apos;a été diffusée et aucun budget n&apos;a été dépensé : chaque dépense doit d&apos;abord être validée.</p>
               <AdsGrid />
+              <AdminLink href="/hub/ads" label="Gérer les publicités dans l'Admin" hint="Google Ads, Meta Ads et TikTok Ads : ciblage, budget, validation" />
             </div>
           </div>
         </section>
@@ -215,6 +221,7 @@ export default function CommunicationPage() {
             ))}
           </div>
           <p className="mt-4 text-xs text-forest-soft">Ces valeurs sont des objectifs fixés pour les 4 premières semaines, pas des résultats : ils sont relevés chaque vendredi (statistiques des réseaux, tableau de bord du CRM).</p>
+          <AdminLink href="/hub/performances" label="Voir les performances dans l'Admin" hint="Portée, engagement, trafic et conversions, par réseau et par campagne" />
         </section>
       </div>
     </>
