@@ -1,4 +1,5 @@
 import "server-only";
+import { randomBytes } from "node:crypto";
 import { getMeta, nowIso, setMeta, tx } from "../db";
 import { create, list, put, update } from "../repo";
 import { createUser, listUsers } from "../auth";
@@ -22,7 +23,19 @@ import { roadmap } from "./roadmap";
 export const SEED_USERS = [
   { email: "skinclean@skinclean.local", name: "SKINCLEAN", role: "admin" as const, title: "Compte universel — accès complet" },
 ];
-export const seedPassword = () => process.env.HUB_SEED_PASSWORD || "SkinClean-Hub-2026";
+/**
+ * Mot de passe des comptes créés au premier lancement : HUB_SEED_PASSWORD si défini,
+ * sinon un mot de passe aléatoire affiché une seule fois dans le terminal (aucun secret écrit dans le code).
+ */
+let generatedSeedPassword: string | undefined;
+export const seedPassword = () => {
+  if (process.env.HUB_SEED_PASSWORD) return process.env.HUB_SEED_PASSWORD;
+  if (!generatedSeedPassword) {
+    generatedSeedPassword = randomBytes(9).toString("base64url");
+    console.info(`[Marketing Hub] Mot de passe initial des comptes : ${generatedSeedPassword} (définis HUB_SEED_PASSWORD pour le choisir, ou npm run hub:mot-de-passe pour le changer).`);
+  }
+  return generatedSeedPassword;
+};
 
 export const DEFAULT_SETTINGS: Settings = {
   frequencies: {

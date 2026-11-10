@@ -121,7 +121,7 @@ npm run dev            # puis http://localhost:3000/hub
 **Compte universel** (créé au premier lancement, tous les droits) — change le mot de passe dans « Mon compte » :
 
 - E-mail : `skinclean@skinclean.local`
-- Mot de passe : `SkinClean-Hub-2026` (ou la valeur de `HUB_SEED_PASSWORD`)
+- Mot de passe : la valeur de `HUB_SEED_PASSWORD` dans `.env.local` ; sans cette variable, un mot de passe aléatoire est affiché dans le terminal au premier lancement (pour le changer : `npm run hub:mot-de-passe`). Aucun mot de passe n'est écrit dans le code.
 
 **Mot de passe oublié** : lien « Mot de passe oublié ? » sur l'écran de connexion. Le lien de réinitialisation (30 min, usage unique) est envoyé par e-mail si Resend est configuré, sinon déposé dans `data/hub/lien-reinitialisation.txt` (et affiché dans le terminal du serveur). Secours en ligne de commande : `npm run hub:mot-de-passe -- <e-mail> <nouveau-mot-de-passe>`.
 
