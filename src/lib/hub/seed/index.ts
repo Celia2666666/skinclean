@@ -237,6 +237,16 @@ export function upgradeSeed() {
     if (list("campaigns").some((c) => c.id === "camp-skin-diag")) update("campaigns", "camp-skin-diag", { plan: skinDiagPlan });
     setMeta("seed-videos-v9b", nowIso());
   });
+  // v10 : les deux publicités TikTok n'utilisent plus la même vidéo
+  if (!getMeta("seed-ads-v10")) tx(() => {
+    const swap: Record<string, string> = { "ad-tiktok-diag": "5936529", "ad-tiktok-niacinamide": "6446058" };
+    for (const a of list("ads")) {
+      const vid = swap[a.id];
+      if (!vid) continue;
+      update("ads", a.id, { ads: a.ads.map((x) => (x.visual?.kind === "video" && x.visual.src?.includes("8131891") ? { ...x, visual: { ...x.visual, src: `/media/videos/demo/pexels-${vid}.mp4` } } : x)) });
+    }
+    setMeta("seed-ads-v10", nowIso());
+  });
   // v8 : données de démonstration des Performances prolongées jusqu'à aujourd'hui (16 semaines)
   if (!getMeta("seed-demo-v8")) tx(() => {
     for (const m of list("metrics")) if (m.source === "demo") remove("metrics", m.id);

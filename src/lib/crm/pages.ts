@@ -83,8 +83,10 @@ export async function dashboardData(p?: string) {
 
   // Campagnes du Marketing Hub actives sur la période (même application, base distincte)
   let campaigns: { id: string; name: string; color: string; startDate: string; endDate: string; status: string }[] = [];
-  if (!process.env.VERCEL) try {
-    const { list } = await import("@/lib/hub/repo");
+  try {
+    // L'Admin (Marketing Hub) est aussi en ligne : ses campagnes s'affichent et ouvrent leur fiche
+    const { ensureSeeded, list } = await import("@/lib/hub/repo");
+    await ensureSeeded();
     campaigns = list("campaigns").filter((c) => c.startDate <= period.to && c.endDate >= period.from && c.status !== "bibliotheque").map((c) => ({ id: c.id, name: c.name, color: c.color, startDate: c.startDate, endDate: c.endDate, status: c.status }));
   } catch { /* Hub indisponible : on ignore */ }
 
