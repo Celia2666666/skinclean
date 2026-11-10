@@ -34,8 +34,8 @@ export const problem = {
 
 export const personas = [
   {
-    name: "Inès, 22 ans",
-    role: "Étudiante en alternance (communication), Lyon",
+    name: "Léa, 19 ans",
+    role: "Étudiante en BTS communication, en alternance, Lyon",
     skin: "Peau mixte à imperfections, poussées avant les examens",
     budget: "20 à 30 € par mois pour ses soins",
     channels: "TikTok (tutos, avis), Instagram, recommandations d'amies ; achète en ligne le soir",
@@ -44,7 +44,7 @@ export const personas = [
     offer: "Skin Diag → routine Acne Control ou set de 3 soins à -15 %",
   },
   {
-    name: "Camille, 31 ans",
+    name: "Camille, 29 ans",
     role: "Cheffe de projet marketing, Paris",
     skin: "Peau sensible avec rougeurs, tiraillements l'hiver",
     budget: "40 à 60 € par mois, prête à payer pour des soins fiables",

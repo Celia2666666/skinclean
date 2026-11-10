@@ -4,6 +4,9 @@ import { PageHero } from "@/components/catalog/PageHero";
 import { euro } from "@/lib/format";
 import { businessModel, competitors, market, ourProduct, personas, pricing, problem, sources, src } from "@/data/strategy";
 import { promise } from "@/data/offer";
+import { hubSection } from "@/data/hub-public";
+import { BlockGrid, Funnel, KindLegend, ObjectiveCards, PersonaDeck, RoadmapTimeline, SwotGrid } from "@/components/strategy/HubSections";
+import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "Stratégie : pourquoi ce produit",
@@ -17,6 +20,12 @@ const sections = [
   { id: "concurrence", label: "Concurrence" },
   { id: "prix", label: "Prix" },
   { id: "modele", label: "Modèle économique" },
+  { id: "tendances", label: "Tendances & cadre" },
+  { id: "swot", label: "SWOT" },
+  { id: "positionnement", label: "Positionnement" },
+  { id: "audience", label: "4 profils" },
+  { id: "objectifs", label: "Objectifs SMART" },
+  { id: "plan", label: "Plan 12 mois" },
   { id: "sources", label: "Sources" },
 ];
 
@@ -31,11 +40,12 @@ function Cite({ id }: { id: string }) {
   );
 }
 
-const H2 = ({ id, kicker, children }: { id: string; kicker: string; children: React.ReactNode }) => (
-  <div className="mb-8">
+const H2 = ({ id, kicker, children, intro }: { id: string; kicker: string; children: React.ReactNode; intro?: React.ReactNode }) => (
+  <Reveal className="mb-8">
     <p className="eyebrow text-sage-deep">{kicker}</p>
     <h2 id={id} className="mt-2 scroll-mt-[calc(8rem+var(--demo-h))] font-display text-4xl md:text-5xl">{children}</h2>
-  </div>
+    {intro && <p className="mt-3 max-w-3xl text-forest-soft">{intro}</p>}
+  </Reveal>
 );
 
 export default function StrategyPage() {
@@ -167,6 +177,56 @@ export default function StrategyPage() {
               <Link href="/communication" className="btn border-ivory/50 text-ivory hover:bg-ivory hover:text-forest">Voir le plan de communication</Link>
             </div>
           </div>
+        </section>
+
+        {/* Analyse détaillée reprise du Marketing Hub */}
+        <div className="relative overflow-hidden bg-forest px-6 py-12 text-ivory md:px-12 md:py-16">
+          <span aria-hidden className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 animate-[spin_40s_linear_infinite] rounded-full border border-ivory/10" />
+          <span aria-hidden className="pointer-events-none absolute -right-8 -top-8 h-48 w-48 animate-[spin_25s_linear_infinite_reverse] rounded-full border border-dashed border-ivory/15" />
+          <Reveal>
+            <p className="eyebrow text-sage">Pour aller plus loin</p>
+            <p className="mt-2 max-w-3xl font-display text-3xl md:text-5xl">L&apos;analyse stratégique du Marketing Hub</p>
+            <p className="mt-4 max-w-2xl text-sm text-ivory/75">Le Marketing Hub est l&apos;outil interne de l&apos;équipe : il reste sur nos ordinateurs. Cette partie reprend ce que nous y avons construit (tendances, SWOT, positionnement, objectifs, plan sur 12 mois), en lecture seule.</p>
+          </Reveal>
+        </div>
+
+        <section aria-labelledby="tendances">
+          <H2 id="tendances" kicker="7 · Tendances et cadre légal" intro={hubSection("tendances").summary}>Ce qui change dans le soin</H2>
+          <div className="mb-6"><KindLegend /></div>
+          <BlockGrid blocks={hubSection("tendances").blocks} />
+          <p className="mb-4 mt-12 font-display text-2xl">Les règles que la marque doit respecter</p>
+          <BlockGrid blocks={hubSection("marche").blocks.filter((b) => b.kind === "fait")} dark />
+          <p className="mb-4 mt-12 font-display text-2xl">Ce que font les autres marques</p>
+          <BlockGrid blocks={hubSection("benchmark").blocks} />
+        </section>
+
+        <section aria-labelledby="swot">
+          <H2 id="swot" kicker="8 · SWOT" intro={hubSection("swot").summary}>Forces, faiblesses, opportunités, menaces</H2>
+          <SwotGrid section={hubSection("swot")} />
+        </section>
+
+        <section aria-labelledby="positionnement">
+          <H2 id="positionnement" kicker="9 · Positionnement" intro={hubSection("positionnement").summary}>Où se place SKINCLEAN</H2>
+          <BlockGrid blocks={hubSection("positionnement").blocks} cols={2} />
+          <p className="mb-4 mt-12 font-display text-2xl">{hubSection("valeur").title}</p>
+          <BlockGrid blocks={hubSection("valeur").blocks} cols={2} />
+          <p className="mb-6 mt-12 font-display text-2xl">{hubSection("parcours").title} : de la découverte à la recommandation</p>
+          <Funnel section={hubSection("parcours")} />
+        </section>
+
+        <section aria-labelledby="audience">
+          <H2 id="audience" kicker="10 · L'audience en détail" intro="Les quatre profils suivis dans le Marketing Hub pour écrire les contenus, dont Léa et Camille, nos deux personas principaux. Ce sont des profils types, pas de vraies personnes.">Quatre profils, quatre façons de parler</H2>
+          <PersonaDeck />
+        </section>
+
+        <section aria-labelledby="objectifs">
+          <H2 id="objectifs" kicker="11 · Objectifs SMART" intro="Objectifs marketing chiffrés, datés et attribués : ce sont des cibles, pas des résultats.">Ce que l&apos;on vise d&apos;ici 2027</H2>
+          <ObjectiveCards />
+        </section>
+
+        <section aria-labelledby="plan">
+          <H2 id="plan" kicker="12 · Plan annuel" intro="Un thème par mois, avec les campagnes, les réseaux, le référencement, la publicité, les newsletters et le budget prévu.">Douze mois de marketing, d&apos;octobre 2026 à septembre 2027</H2>
+          <RoadmapTimeline />
         </section>
 
         {/* Sources */}

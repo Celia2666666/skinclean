@@ -20,7 +20,7 @@ export const brandPlatform = {
 };
 
 export const channels = [
-  { name: "TikTok", why: "1ʳᵉ source d'information produit des 15-25 ans (66 %) : le canal du persona Inès, idéal pour les tutos et les avis courts.", role: "Notoriété et preuve en vidéo", rhythm: "3 vidéos par semaine, 1 live par mois", source: "genz" },
+  { name: "TikTok", why: "1ʳᵉ source d'information produit des 15-25 ans (66 %) : le canal du persona Léa, idéal pour les tutos et les avis courts.", role: "Notoriété et preuve en vidéo", rhythm: "3 vidéos par semaine, 1 live par mois", source: "genz" },
   { name: "Instagram", why: "Utilisé par 44 % des 15-25 ans pour s'informer, et par le persona Camille qui y suit marques et pharmaciens.", role: "Image de marque, carrousels pédagogiques, avis", rhythm: "3 posts et stories quotidiennes", source: "genz" },
   { name: "YouTube Shorts", why: "3ᵉ plateforme d'information produit des 15-25 ans (38 %) : vidéos courtes qui restent trouvables par la recherche.", role: "Tutoriels « comment utiliser » et routines", rhythm: "2 Shorts par semaine", source: "genz" },
   { name: "Newsletter et site", why: "Canaux que l'on possède : on y convertit l'audience des réseaux (code -20 %, routine envoyée par e-mail).", role: "Conversion et fidélisation", rhythm: "1 newsletter par semaine", source: null },
