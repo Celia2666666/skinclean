@@ -54,3 +54,14 @@ export function startScheduler() {
   setTimeout(() => { tick().catch((e) => console.error("[hub scheduler]", e)); }, 8000);
   g.__hubScheduler = setInterval(() => { tick().catch((e) => console.error("[hub scheduler]", e)); }, 60_000);
 }
+
+/**
+ * En ligne (pas de planificateur en arrière-plan) : les publications programmées (simulées) arrivées à échéance
+ * sont traitées à la consultation du Hub, au plus une fois par minute.
+ */
+export async function tickIfDue() {
+  const g = globalThis as G & { __hubOnlineTick?: number };
+  if (Date.now() - (g.__hubOnlineTick ?? 0) < 60_000) return;
+  g.__hubOnlineTick = Date.now();
+  await tick().catch(() => {});
+}
