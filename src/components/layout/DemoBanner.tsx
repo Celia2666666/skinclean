@@ -8,7 +8,7 @@ export const SPACES = [
   { href: "/crm", label: "CRM", hint: "côté entreprise" },
   { href: "/strategie", label: "Stratégie", hint: "pourquoi ce produit" },
   { href: "/communication", label: "Communication", hint: "comment le vendre" },
-  { href: "/hub", label: "Admin", hint: "Marketing Hub : gérer la marque et la boutique" },
+  { href: "/hub", label: "Admin", hint: "gérer la marque et la boutique" },
 ] as const;
 
 const activeSpace = (path: string) =>
