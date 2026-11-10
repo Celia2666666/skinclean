@@ -2,6 +2,19 @@
 
 Site e-commerce skincare (projet académique, marque fictive) : catalogue, Skin Diag, routine par e-mail, panier, paiement Stripe, compte client, SKINCLEAN Club, Skin Journal, Glow Assistant, back-office.
 
+## Projet INSEEC : une URL, quatre espaces
+
+Site de démonstration (projet étudiant INSEEC, aucune vente réelle) : **https://skinclean.vercel.app**
+
+| Espace | Adresse | Contenu |
+|---|---|---|
+| 1. Vente (côté client) | `/` · `/offre` · `/faq` · `/contact` | Promesse, offre détaillée et prix TTC/HT, achat simulé jusqu'à la confirmation, FAQ et contact |
+| 2. CRM (côté entreprise) | `/crm` · `/crm/pipeline` | 23 contacts fictifs avec source, fiche, historique et prochaine action, pipeline Nouveau → Gagné/Perdu, tableau de bord (CA, clients, conversion), commandes de la boutique en direct |
+| 3. Stratégie | `/strategie` | Problème, 2 personas, marché sourcé, 3 concurrents réels et leurs prix, justification du prix, modèle économique et objectif à 12 mois |
+| 4. Communication | `/communication` | Plateforme de marque, canaux, 9 posts avec visuels, calendrier sur 4 semaines, 5 partenariats, 10 premiers clients, indicateurs |
+
+Le bandeau « Projet étudiant INSEEC, démo sans vente réelle » et la navigation entre les quatre espaces apparaissent sur chaque page. Les comptes clients de démonstration se connectent en un clic, sans mot de passe ; le CRM en ligne s'ouvre sans compte. Les visuels des posts sont générés par `node scripts/make-posts.mjs`.
+
 ## Démarrer
 
 ```bash

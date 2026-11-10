@@ -10,7 +10,7 @@ const PAY: Record<string, string> = { card: "Carte", "apple-pay": "Apple Pay", "
 const eur = (n: number) => n.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
 
 /** Lit les commandes passées sur la boutique dans ce navigateur (mode démo : stockage local du site, même adresse). */
-function readSiteOrders(): SiteOrder[] {
+export function readSiteOrders(): SiteOrder[] {
   try {
     const raw = localStorage.getItem("skinclean-v1");
     if (!raw) return [];
