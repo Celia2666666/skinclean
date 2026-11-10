@@ -150,7 +150,10 @@ export async function GET(req: Request, ctx: RouteContext<"/api/hub/[...slug]">)
     if (name === "notifications") return json(list("notifications").filter((n) => n.userId === u.id).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 50));
     if (name === "seo/images") return json(await imageAudit());
     if (name === "ads/export") {
-      const a = get("ads", url.searchParams.get("id") ?? "");
+      const id = url.searchParams.get("id");
+      // Sans identifiant : export de toutes les campagnes publicitaires, l'une après l'autre
+      if (!id) return new Response(list("ads").map((x) => `# ${x.name}\n${adsCsv(x)}`).join("\n\n"), { headers: { "content-type": "text/csv; charset=utf-8", "content-disposition": 'attachment; filename="skinclean-campagnes-publicitaires.csv"' } });
+      const a = get("ads", id);
       if (!a) throw new HttpError(404, "Campagne introuvable.");
       return new Response(adsCsv(a), { headers: { "content-type": "text/csv; charset=utf-8", "content-disposition": `attachment; filename="${a.id}.csv"` } });
     }
