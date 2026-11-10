@@ -19,7 +19,7 @@ const fr = (n: number, d = 1) => n.toLocaleString("fr-FR", { maximumFractionDigi
 
 export function PerformanceView({ metrics, editorial, initialSource, keywords }: { metrics: Metric[]; editorial: Editorial; initialSource?: "demo"; keywords: { keyword: string; position: number; history: { date: string; position: number }[] }[] }) {
   const realCount = metrics.filter((m) => m.source !== "demo").length;
-  const [source, setSource] = useState<"reel" | "demo">(initialSource ?? "reel");
+  const [source, setSource] = useState<"reel" | "demo">(initialSource ?? (realCount ? "reel" : "demo"));
   const [weeks, setWeeks] = useState(8);
   const [entry, setEntry] = useState<null | { channel: string; date: string; values: Record<string, string> }>(null);
   const { run } = useAction();
@@ -53,11 +53,11 @@ export function PerformanceView({ metrics, editorial, initialSource, keywords }:
       <div className="hub-card mb-4 flex flex-wrap items-center gap-3 p-3 print:hidden">
         <div className="flex rounded-md border border-line p-0.5">
           <button onClick={() => setSource("reel")} className={clsx("rounded px-3 py-1.5 text-sm", source === "reel" ? "bg-forest text-white" : "text-forest-soft")}>Données réelles ({realCount})</button>
-          <button onClick={() => setSource("demo")} className={clsx("rounded px-3 py-1.5 text-sm", source === "demo" ? "bg-[#7A5B00] text-white" : "text-forest-soft")}>Démonstration</button>
+          <button onClick={() => setSource("demo")} className={clsx("rounded px-3 py-1.5 text-sm", source === "demo" ? "bg-forest text-white" : "text-forest-soft")}>Données d&apos;exemple</button>
         </div>
         <select className="hub-input w-auto py-1.5" value={weeks} onChange={(e) => setWeeks(Number(e.target.value))} aria-label="Période"><option value={4}>4 dernières semaines</option><option value={8}>8 dernières semaines</option><option value={13}>3 derniers mois</option><option value={52}>12 derniers mois</option></select>
       </div>
-      {source === "demo" ? <DemoBanner><strong>Mode démonstration</strong> : chiffres fictifs générés pour illustrer le tableau de bord. Ils ne décrivent aucune activité réelle de SKINCLEAN.</DemoBanner> : null}
+      {source === "demo" ? <DemoBanner>Exemple de tableau de bord : chiffres fictifs, remplacés par tes vrais résultats dès que tes comptes sont connectés ou que tu saisis tes statistiques.</DemoBanner> : null}
 
       <div className="space-y-6">
         <Section title="Réseaux sociaux">

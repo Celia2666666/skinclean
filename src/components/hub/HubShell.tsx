@@ -14,6 +14,25 @@ import {
 /** Adresse publique du site e-commerce et du CRM (Vercel). */
 const PUBLISHED_SITE = (process.env.NEXT_PUBLIC_PUBLISHED_SITE_URL || "https://skinclean.vercel.app").replace(/\/$/, "");
 
+/** Petite feuille dessinée, reprise de la feuille au pied du « S » du logo SKINCLEAN. */
+function Leaf({ size = 28 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" aria-hidden="true">
+      <defs>
+        <linearGradient id="hub-leaf" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stopColor="#5E7A68" />
+          <stop offset="0.55" stopColor="#8FAA8C" />
+          <stop offset="1" stopColor="#C9D8C2" />
+        </linearGradient>
+      </defs>
+      <path d="M6 34C5 21 13 8 34 5c1 15-6 28-28 29Z" fill="url(#hub-leaf)" />
+      <path d="M6 34C13 25 21 16 31 8" fill="none" stroke="#F4F7F1" strokeWidth="1.4" strokeLinecap="round" opacity="0.9" />
+      <path d="M13 26c1-4 1-7 0-10M18 21c2-3 2-6 2-9M23 16c2-2 3-4 4-6M15 25c4 0 7-1 10-3M20 20c3 0 6-1 9-3" fill="none" stroke="#F4F7F1" strokeWidth="0.9" strokeLinecap="round" opacity="0.65" />
+      <path d="M6 34c-1 1-2 2-3 2" stroke="#5E7A68" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export const NAV: { href: string; label: string; icon: (p: { size?: number }) => React.ReactElement; sub?: boolean }[] = [
   { href: "/hub", label: "Mon Marketing Hub", icon: HomeI },
   { href: "/hub/strategie", label: "Ma stratégie marketing", icon: TargetI },
@@ -169,7 +188,7 @@ export function HubShell({ user, children, unread, badges }: { user: ClientUser;
               {copilot && (
                 <section role="dialog" aria-label="Assistant marketing IA" className="fixed bottom-24 right-4 z-[140] flex h-[min(620px,calc(100vh-8rem))] w-[min(410px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-2xl md:right-6">
                   <header className="flex items-center gap-2 border-b border-line bg-forest px-4 py-3 text-white">
-                    <SparkI size={18} />
+                    <span className="grid h-8 w-8 place-items-center rounded-full bg-white"><Leaf size={20} /></span>
                     <span className="flex-1"><span className="block text-sm font-semibold">Assistant marketing IA</span><span className="block text-[0.7rem] text-white/70">Pose ta question, je t&apos;aide sur tout le Hub</span></span>
                     <Link href="/hub/assistant" className="rounded-md px-2 py-1 text-xs text-white/80 hover:bg-white/10" onClick={() => setCopilot(false)}>Plein écran</Link>
                     <button onClick={() => setCopilot(false)} className="rounded-md p-1 hover:bg-white/10" aria-label="Fermer l'assistant"><XI size={16} /></button>
@@ -178,8 +197,9 @@ export function HubShell({ user, children, unread, badges }: { user: ClientUser;
                 </section>
               )}
               <button onClick={() => setCopilot((x) => !x)} aria-label={copilot ? "Fermer l'assistant IA" : "Ouvrir l'assistant IA"} title="Assistant marketing IA (Ctrl/⌘ K)"
-                className="fixed bottom-5 right-4 z-[140] flex h-14 items-center gap-2 rounded-full bg-forest pl-4 pr-5 text-sm font-medium text-white shadow-xl transition hover:scale-[1.03] hover:bg-[#2a4437] md:right-6">
-                {copilot ? <XI size={20} /> : <SparkI size={20} />}<span className="hidden sm:inline">{copilot ? "Fermer" : "Une question ?"}</span>
+                className="group fixed bottom-5 right-4 z-[140] flex h-14 items-center gap-2 rounded-full border border-sage bg-white pl-2 pr-5 text-sm font-medium text-forest shadow-xl transition hover:-translate-y-0.5 hover:shadow-2xl md:right-6">
+                <span className="grid h-11 w-11 place-items-center rounded-full bg-sage-soft transition group-hover:rotate-[-8deg]">{copilot ? <XI size={18} /> : <Leaf size={32} />}</span>
+                <span className="hidden sm:inline">{copilot ? "Fermer" : "Une question ?"}</span>
               </button>
             </>
           )}

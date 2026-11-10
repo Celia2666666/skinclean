@@ -69,10 +69,13 @@ function grabFrame(src: string): Promise<string> {
       v.muted = true; v.playsInline = true; v.preload = "auto"; v.src = src;
       v.onloadedmetadata = () => { v.currentTime = Math.min(1, v.duration / 3); };
       v.onseeked = () => done(() => {
+        // Recadrage vertical 9:16 en 540×960 depuis la pleine résolution : net même pour une vidéo paysage
         const c = document.createElement("canvas");
-        c.width = 360; c.height = Math.round((360 * v.videoHeight) / v.videoWidth);
-        c.getContext("2d")!.drawImage(v, 0, 0, c.width, c.height);
-        resolve(c.toDataURL("image/jpeg", 0.72));
+        c.width = 540; c.height = 960;
+        const t = 9 / 16, vw = v.videoWidth, vh = v.videoHeight;
+        const sw = vw / vh > t ? vh * t : vw, sh = vw / vh > t ? vh : vw / t;
+        c.getContext("2d")!.drawImage(v, (vw - sw) / 2, (vh - sh) / 2, sw, sh, 0, 0, 540, 960);
+        resolve(c.toDataURL("image/jpeg", 0.82));
       });
       v.onerror = () => done(() => reject(new Error("Vidéo illisible")));
     }));
@@ -82,10 +85,29 @@ function grabFrame(src: string): Promise<string> {
   return frameCache.get(src)!;
 }
 
+/** Vignette enregistrée sur le serveur pour une vidéo (générée une seule fois). */
+const thumbOf = (src: string) => `/media/videos/thumbs/${src.split("/").pop()!.replace(/\.mp4$/, "")}.jpg`;
+const saved = new Set<string>();
+
 function VideoFrame({ src, className, fallback }: { src: string; className?: string; fallback?: React.ReactNode }) {
+  const [stored, setStored] = useState(true); // on essaie d'abord la vignette enregistrée
+  if (stored) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={thumbOf(src)} alt="" loading="lazy" className={className} onError={() => setStored(false)} />;
+  }
+  return <ExtractedFrame src={src} className={className} fallback={fallback} />;
+}
+
+/** Pas encore de vignette : on extrait une image de la vidéo, puis on l'enregistre pour les prochaines fois. */
+function ExtractedFrame({ src, className, fallback }: { src: string; className?: string; fallback?: React.ReactNode }) {
   const [frame, setFrame] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!frame || saved.has(src)) return;
+    saved.add(src);
+    fetch("/api/hub/media/video-thumb", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ src, image: frame }) }).catch(() => saved.delete(src));
+  }, [frame, src]);
   useEffect(() => {
     let live = true;
     const el = ref.current;

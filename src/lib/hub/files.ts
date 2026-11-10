@@ -42,3 +42,20 @@ export async function imageInfo(publicPath: string) {
 }
 
 export const readPublic = (publicPath: string) => readFileSync(path.join(process.cwd(), "public", publicPath));
+
+/**
+ * Vignette d'une vidéo (image JPEG extraite par le navigateur), enregistrée une fois pour toutes
+ * dans /public/media/videos/thumbs/<nom-de-la-vidéo>.jpg : les listes l'affichent sans décoder la vidéo.
+ */
+export function saveVideoThumb(src: string, dataUrl: string) {
+  const name = /^\/media\/videos\/(?:[\w-]+\/)*([\w-]+)\.mp4$/.exec(src)?.[1];
+  if (!name) throw new Error("Vidéo inconnue.");
+  const m = /^data:image\/jpeg;base64,(.+)$/.exec(dataUrl);
+  if (!m) throw new Error("Image invalide.");
+  const buf = Buffer.from(m[1], "base64");
+  if (buf.length > 2 * 1024 * 1024) throw new Error("Vignette trop lourde.");
+  const dir = path.join(process.cwd(), "public", "media", "videos", "thumbs");
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(path.join(dir, `${name}.jpg`), buf);
+  return { thumb: `/media/videos/thumbs/${name}.jpg` };
+}

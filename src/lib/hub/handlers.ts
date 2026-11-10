@@ -6,7 +6,7 @@ import { activity, create, emitEvent, get, list, logActivity, nextTicketNumber, 
 import { can, type Permission } from "./permissions";
 import { searchConsoleQuery, sendBroadcast, sendTestEmail } from "./connectors";
 import { destinationFor, publishPost, type PostPublishOutcome } from "./publish";
-import { saveDataUrl } from "./files";
+import { saveDataUrl, saveVideoThumb } from "./files";
 import { patchOverrides } from "./site-sync";
 import { renderEmailHtml } from "./email-html";
 import { addDays, todayYmd, ymdhm } from "./dates";
@@ -170,6 +170,7 @@ const H: Record<string, Handler> = {
     log(u, "creation", "post", p.id, p.title);
     return p;
   } },
+  "media/video-thumb": { perm: "content.edit", fn: (_u, b) => saveVideoThumb(str(b.src, "vidéo", 300), str(b.image, "image", 3_000_000)) },
   "posts/update": { perm: "content.edit", fn: (u, b) => {
     const p = postOr404(b.id);
     if (p.status === "publie") throw new HttpError(409, "Ce contenu est déjà publié sur la plateforme : duplique-le pour le modifier.");

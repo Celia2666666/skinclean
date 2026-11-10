@@ -119,7 +119,7 @@ export function upgradeVisualsV5() {
  * Les vidéos sont redistribuées par thème ; les TikTok en surplus deviennent des carrousels photo
  * avec les produits mis en scène (aucun contenu supprimé). Contenus publiés et vidéo de la marque inchangés.
  */
-export function upgradeVideosV6() {
+export function upgradeVideosV6(spread = false) {
   const MAX = 2;
   const used = new Map<string, number>();
   const all = list("posts").filter((p) => p.platform === "tiktok" && p.visual?.kind === "video" && p.visual.src);
@@ -134,7 +134,8 @@ export function upgradeVideosV6() {
     const free = DEMO_VIDEOS.filter((v) => (used.get(v.src) ?? 0) < MAX);
     if (free.length) {
       const scored = free.map((v) => ({ v, s: v.tags.filter((t) => topic.includes(t)).length, n: used.get(v.src) ?? 0 }));
-      scored.sort((a, b) => b.s - a.s || a.n - b.n);
+      // spread : on privilégie les vidéos encore inutilisées du bon thème (moins de répétitions)
+      scored.sort(spread ? (a, b) => Number(b.s > 0) - Number(a.s > 0) || a.n - b.n || b.s - a.s : (a, b) => b.s - a.s || a.n - b.n);
       const src = scored[0].v.src;
       used.set(src, (used.get(src) ?? 0) + 1);
       if (src !== p.visual!.src) update("posts", p.id, { visual: { ...p.visual!, src, note: DEMO_VIDEO_NOTE } });

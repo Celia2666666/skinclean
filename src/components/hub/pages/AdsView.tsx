@@ -217,7 +217,7 @@ function AdPreview({ platform, ad, url }: { platform: AdPlatform; ad: AdCampaign
 
 function AdPerformance({ ads, metrics }: { ads: AdCampaign[]; metrics: Metric[] }) {
   const real = metrics.filter((m) => m.source !== "demo");
-  const [source, setSource] = useState<"reel" | "demo">("reel");
+  const [source, setSource] = useState<"reel" | "demo">(real.length ? "reel" : "demo");
   const [entry, setEntry] = useState<null | Record<string, string>>(null);
   const { run } = useAction();
   const allowed = useCan();
@@ -233,7 +233,7 @@ function AdPerformance({ ads, metrics }: { ads: AdCampaign[]; metrics: Metric[] 
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex rounded-md border border-line p-0.5">
           <button onClick={() => setSource("reel")} className={clsx("rounded px-3 py-1.5 text-sm", source === "reel" ? "bg-forest text-white" : "text-forest-soft")}>Données réelles ({real.length})</button>
-          <button onClick={() => setSource("demo")} className={clsx("rounded px-3 py-1.5 text-sm", source === "demo" ? "bg-[#7A5B00] text-white" : "text-forest-soft")}>Démonstration</button>
+          <button onClick={() => setSource("demo")} className={clsx("rounded px-3 py-1.5 text-sm", source === "demo" ? "bg-forest text-white" : "text-forest-soft")}>Données d&apos;exemple</button>
         </div>
         {allowed("content.edit") && <Button size="sm" className="ml-auto" icon={<PlusI size={13} />} onClick={() => setEntry({ adId: ads[0]?.id ?? "", date: todayYmd(), impressions: "", reach: "", clicks: "", spend: "", videoViews: "" })}>Saisir des statistiques</Button>}
       </div>

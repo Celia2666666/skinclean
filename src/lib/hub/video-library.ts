@@ -42,6 +42,25 @@ export const DEMO_VIDEOS = [
   V("8298623", "mousse nettoy gel"),
   V("8371244", "routine lifestyle spf matin"),
   V("8996171", "nettoy imperfection bouton"),
+  // Ajouts novembre 2026 : gestes de soin, produit peu visible
+  V("4612174", "routine matin lifestyle miroir glow"),
+  V("4665050", "creme hydrat glow mains"),
+  V("5468859", "creme hydrat routine soir"),
+  V("5927727", "masque argile exfol pores"),
+  V("5927789", "routine soir detente nuit"),
+  V("5936527", "yeux patch cerne poches"),
+  V("5936529", "glow eclat matin teint"),
+  V("5937387", "nettoy rincage double mousse"),
+  V("5937414", "nettoy demaquill routine"),
+  V("6446008", "glow teint eclat vitamine"),
+  V("6446013", "routine matin spf lifestyle"),
+  V("6446058", "serum goutte niacinamide vitamine retinal"),
+  V("6619500", "sensible apais creme rougeur"),
+  V("6694019", "massage gua glow"),
+  V("6706917", "nettoy serviette rincage"),
+  V("6945770", "creme mains texture barriere"),
+  V("6945771", "routine soir creme hydrat"),
+  V("6975316", "masque tissu hydrat"),
 ];
 
 const norm = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();

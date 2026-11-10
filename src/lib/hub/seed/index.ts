@@ -1,7 +1,7 @@
 import "server-only";
 import { randomBytes } from "node:crypto";
 import { getMeta, nowIso, setMeta, tx } from "../db";
-import { create, list, put, update } from "../repo";
+import { create, list, put, remove, update } from "../repo";
 import { createUser, listUsers } from "../auth";
 import type { Metric, Post, Settings } from "../types";
 import { addDays, diffDays, parseLocal, todayYmd, ymd } from "../dates";
@@ -61,14 +61,14 @@ function rng(seed: number) {
   return () => ((s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296);
 }
 
-/** Données de DÉMONSTRATION : 8 semaines passées, étiquetées source = "demo", jamais mélangées aux données réelles. */
-function demoMetrics(): Omit<Metric, "id">[] {
+/** Données de DÉMONSTRATION : semaines passées jusqu'à aujourd'hui, étiquetées source = "demo", jamais mélangées aux données réelles. */
+function demoMetrics(weeks = 8): Omit<Metric, "id">[] {
   const r = rng(42);
   const out: Omit<Metric, "id">[] = [];
   const t = todayYmd();
-  for (let w = 8; w >= 1; w--) {
+  for (let w = weeks; w >= 0; w--) {
     const date = addDays(t, -7 * w);
-    const g = (9 - w) / 8; // croissance progressive
+    const g = (weeks + 1 - w) / (weeks + 1); // croissance progressive
     const social = (channel: string, base: number) => {
       const reach = Math.round(base * (0.6 + g) * (0.85 + r() * 0.3));
       const impressions = Math.round(reach * (1.4 + r() * 0.4));
@@ -138,7 +138,8 @@ export async function seedAll() {
     }
     extra.forEach((p, i) => put("posts", { ...p, id: `cal_${String(i + 1).padStart(3, "0")}` }));
 
-    demoMetrics().forEach((m) => create("metrics", m as Metric));
+    demoMetrics(16).forEach((m) => create("metrics", m as Metric));
+    setMeta("seed-demo-v8", nowIso());
 
     // Ticket d'accueil de l'équipe marketing
     const team = { name: "Équipe marketing" };
@@ -182,6 +183,13 @@ export function upgradeSeed() {
   if (!getMeta("seed-media-v4")) tx(() => { upgradeMedia(addDays(todayYmd(), 6)); setMeta("seed-media-v4", nowIso()); });
   if (!getMeta("seed-visuals-v5")) tx(() => { upgradeVisualsV5(); setMeta("seed-visuals-v5", nowIso()); });
   if (!getMeta("seed-videos-v6")) tx(() => { upgradeVideosV6(); setMeta("seed-videos-v6", nowIso()); });
+  if (!getMeta("seed-videos-v7")) tx(() => { upgradeVideosV6(true); setMeta("seed-videos-v7", nowIso()); });
+  // v8 : données de démonstration des Performances prolongées jusqu'à aujourd'hui (16 semaines)
+  if (!getMeta("seed-demo-v8")) tx(() => {
+    for (const m of list("metrics")) if (m.source === "demo") remove("metrics", m.id);
+    demoMetrics(16).forEach((m) => create("metrics", m as Metric));
+    setMeta("seed-demo-v8", nowIso());
+  });
   if (!getMeta("seed-example-v3")) tx(() => {
     // Campagne exemple « Sérum niacinamide » finalisée + vidéo routine dans la bibliothèque TikTok
     const c = list("campaigns").find((x) => x.id === "camp-niacinamide");

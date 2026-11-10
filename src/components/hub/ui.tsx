@@ -281,7 +281,7 @@ export function Avatar({ name, color, size = 32 }: { name: string; color?: strin
 }
 
 export function DemoBanner({ children }: { children: React.ReactNode }) {
-  return <div className="mb-4 flex items-start gap-2 rounded-lg border border-[#F0DDA6] bg-[#FFF8E6] px-4 py-3 text-sm text-[#6B5000]"><InfoI size={16} className="mt-0.5 shrink-0" /><div>{children}</div></div>;
+  return <div className="mb-4 flex items-center gap-2 text-xs text-forest-soft"><span className="hub-badge shrink-0 bg-sage-soft text-forest">Données d&apos;exemple</span><span>{children}</span></div>;
 }
 
 export function Notice({ children, tone = "info" }: { children: React.ReactNode; tone?: "info" | "ok" | "warn" }) {
