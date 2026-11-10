@@ -32,13 +32,12 @@ describe("CRM en ligne — journal partagé entre serveurs", () => {
     const ordersA = db.all("orders").length;
 
     // Serveur B : base locale vide, même date de génération, puis rejeu du journal
-    db.wipeLocal();
-    await new Promise((r) => setTimeout(r, 900));
+    db.wipeLocal(); // base vide : la synchronisation repart toujours de la démo commune
     await repo.ensureCrmSeeded();
     expect(db.all("orders").length).toBe(ordersA);
     expect(db.one("orders", order.id)!.status).toBe("en_preparation");
     expect(db.all("tasks").some((t) => t.title === "Tâche partagée")).toBe(true);
     // La génération de la démo ne remplit pas le journal
     expect(shared.ops.every((o) => (o.op as { c: string }).c !== "customers")).toBe(true);
-  });
+  }, 60_000); // deux générations complètes de la démo : plusieurs secondes quand la suite tourne en parallèle
 });
