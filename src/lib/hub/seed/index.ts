@@ -171,7 +171,7 @@ export async function seedAll() {
     // Ticket d'accueil de l'équipe marketing
     const team = { name: "Équipe marketing" };
     put("tickets", {
-      id: "tkt_welcome", number: 1001, type: "Question", subject: "Bienvenue sur ton Marketing Hub", priority: "normale", status: "en_attente",
+      id: "tkt_welcome", number: 1001, type: "Question", subject: "Bienvenue sur ton Admin SKINCLEAN", priority: "normale", status: "en_attente",
       description: "Ta stratégie, ton calendrier des 3 prochains mois et tes 12 campagnes sont prêts. Les contenus des 10 prochains jours t'attendent dans « Mes contenus à valider ».",
       attachments: [], createdBy: "equipe", assignee: team.name, createdAt: nowIso(), updatedAt: nowIso(),
       messages: [{ id: "m1", author: team.name, role: "equipe", at: nowIso(), text: "Bonjour ! Nous avons préparé l'ensemble de ta stratégie marketing. Commence par l'accueil : tes actions du jour y sont listées. Une question ? Réponds simplement à ce message." }],

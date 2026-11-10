@@ -16,12 +16,12 @@ const CAPABILITIES = [
 export function AssistantView({ ai, initial }: { ai: boolean; initial?: string }) {
   return (
     <div>
-      <PageHeader eyebrow="Assistant marketing IA" title="SKINCLEAN Marketing Copilot" intro="Ton assistant marketing consulte les données du Hub (calendrier, campagnes, contenus, statistiques) et prépare de véritables brouillons. Il propose, tu confirmes : rien n'est créé, publié ou dépensé sans ton accord." />
+      <PageHeader eyebrow="Assistant marketing IA" title="SKINCLEAN Marketing Copilot" intro="Ton assistant marketing consulte les données de l'Admin (calendrier, campagnes, contenus, statistiques) et prépare de véritables brouillons. Il propose, tu confirmes : rien n'est créé, publié ou dépensé sans ton accord." />
       <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
         <div className="h-[calc(100vh-240px)] min-h-[520px]"><CopilotChat initial={initial} /></div>
         <div className="space-y-4">
           <Notice tone={ai ? "ok" : "info"}>
-            {ai ? <>Mode <strong>IA générative</strong> actif (Claude, via ANTHROPIC_API_KEY). Les réponses s&apos;appuient sur un instantané des données du Hub.</> : <>Mode <strong>guidé</strong> : l&apos;assistant répond à partir de règles et des données réelles du Hub. Ajoute ANTHROPIC_API_KEY dans .env.local pour activer la rédaction libre par IA.</>}
+            {ai ? <>Mode <strong>IA générative</strong> actif (Claude, via ANTHROPIC_API_KEY). Les réponses s&apos;appuient sur un instantané des données de l&apos;Admin.</> : <>Mode <strong>guidé</strong> : l&apos;assistant répond à partir de règles et des données réelles de l&apos;Admin. Ajoute ANTHROPIC_API_KEY dans .env.local pour activer la rédaction libre par IA.</>}
           </Notice>
           <Card title={<span className="flex items-center gap-2"><SparkI size={16} />Ce que je sais faire</span>}>
             <ul className="space-y-2.5 text-sm">{CAPABILITIES.map(([t, d]) => <li key={t}><p className="font-medium">{t}</p><p className="text-forest-soft">{d}</p></li>)}</ul>

@@ -161,13 +161,13 @@ export function AccountView({ user, users, history, myActivity, notifications, c
               ))}
             </div>
             <Card title="Préparation du futur CRM">
-              <p className="text-sm">Le Hub expose déjà ses données marketing en lecture pour le CRM (session requise) :</p>
+              <p className="text-sm">L&apos;Admin expose déjà ses données marketing en lecture pour le CRM (session requise) :</p>
               <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
                 <li><code>GET /api/hub/events?since=…</code> — journal d&apos;événements (contenus publiés, campagnes activées, budgets validés, articles publiés…).</li>
                 <li><code>GET /api/hub/export?collection=campaigns|posts|ads|emails|articles|keywords|objectives|roadmap|personas</code> — export JSON.</li>
                 <li>Paramètres UTM générés pour chaque publicité : l&apos;attribution des ventes se fera dans le CRM.</li>
               </ul>
-              <p className="mt-2 text-xs text-forest-soft">Aucune donnée client ni commande n&apos;est stockée dans le Marketing Hub.</p>
+              <p className="mt-2 text-xs text-forest-soft">Aucune donnée client ni commande n&apos;est stockée dans l&apos;Admin.</p>
             </Card>
           </div>
         )}

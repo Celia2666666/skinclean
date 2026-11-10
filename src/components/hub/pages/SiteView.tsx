@@ -80,7 +80,7 @@ export function SiteView({ overrides, products, kits, assets, defaults }: { over
       <PageHeader eyebrow="Site e-commerce" title="Gestion du site et des visuels" intro={<>Modifie les contenus marketing du site SKINCLEAN : fiches et visuels produits, slider, bannières, collection mise en avant, best-sellers, textes promotionnels et kits saisonniers. Les changements sont publiés immédiatement sur le site (mêmes données produits). Commandes et clients ne sont pas gérés ici.</>}
         actions={<Link href="/" target="_blank" className="hub-btn hub-btn-secondary"><EyeI size={15} />Voir le site</Link>} />
       {!allowed("site.edit") && <div className="mb-4"><Notice tone="warn">Ton rôle permet de consulter cette page, pas de modifier le site.</Notice></div>}
-      {online && <div className="mb-4"><Notice>Version en ligne de démonstration : tes modifications sont enregistrées dans l&apos;Admin pour la visite, mais <strong>la boutique publiée ne change pas</strong>. La mise à jour réelle du site se fait depuis le Hub en local.</Notice></div>}
+      {online && <div className="mb-4"><Notice>Version en ligne de démonstration : tes modifications sont enregistrées dans l&apos;Admin pour la visite, mais <strong>la boutique publiée ne change pas</strong>. La mise à jour réelle du site se fait depuis l&apos;Admin en local.</Notice></div>}
       {overrides.updatedAt && <p className="mb-3 text-xs text-forest-soft">Dernière publication sur le site : {new Date(overrides.updatedAt).toLocaleString("fr-FR", { timeZone: "Europe/Paris" })} par {overrides.updatedBy}.</p>}
       <Tabs value={tab} onChange={setTab} tabs={[
         { id: "accueil", label: "Accueil, slider & bannières" }, { id: "produits", label: "Produits : ajouter, descriptions, images", count: products.length }, { id: "collection", label: "Collection mise en avant" },
@@ -118,7 +118,7 @@ function ProductsTab({ products }: { products: P[] }) {
             <div className="relative aspect-square" style={{ background: p.color }}>
               {p.media.packshot && // eslint-disable-next-line @next/next/no-img-element
                 <img src={p.media.packshot} alt={p.name} className="h-full w-full object-contain p-4" loading="lazy" />}
-              <div className="absolute left-2 top-2 flex flex-wrap gap-1">{p.isNew && <span className="hub-badge bg-forest text-white">Nouveau</span>}{p.bestseller && <span className="hub-badge bg-white">Best-seller #{p.bestseller}</span>}{p.added && <span className="hub-badge bg-[#E2ECF8] text-[#1F4E86]">Ajouté via le Hub</span>}{p.hidden && <span className="hub-badge bg-[#F8E1E1] text-[#8A2B2B]">Masqué</span>}</div>
+              <div className="absolute left-2 top-2 flex flex-wrap gap-1">{p.isNew && <span className="hub-badge bg-forest text-white">Nouveau</span>}{p.bestseller && <span className="hub-badge bg-white">Best-seller #{p.bestseller}</span>}{p.added && <span className="hub-badge bg-[#E2ECF8] text-[#1F4E86]">Ajouté via l&apos;Admin</span>}{p.hidden && <span className="hub-badge bg-[#F8E1E1] text-[#8A2B2B]">Masqué</span>}</div>
             </div>
             <div className="p-3">
               <p className="font-medium">{p.name}</p>
@@ -392,7 +392,7 @@ function KitsTab({ kits, products }: { kits: K[]; products: P[] }) {
           <Card key={k.id} title={k.name} subtitle={`${k.group === "saison" ? `Kit de saison${k.season ? ` · ${k.season}` : ""}` : k.group === "routine" ? "Routine" : "Voyage"} · -${k.discountPercent} %`} action={<Link href={`/kits/${k.slug}`} target="_blank" className="hub-btn hub-btn-ghost hub-btn-sm"><EyeI size={13} /></Link>}>
             <p className="text-sm">{k.tagline}</p>
             <p className="mt-2 text-xs text-forest-soft">{k.items.map((id) => products.find((p) => p.id === id)?.name).filter(Boolean).join(" · ")}</p>
-            {k.added && <span className="hub-badge mt-2 bg-[#E2ECF8] text-[#1F4E86]">Ajouté via le Hub</span>}
+            {k.added && <span className="hub-badge mt-2 bg-[#E2ECF8] text-[#1F4E86]">Ajouté via l&apos;Admin</span>}
           </Card>
         ))}
       </div>

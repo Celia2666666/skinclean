@@ -169,7 +169,7 @@ function AdDetail({ ad, campaigns, onDeleted }: { ad: AdCampaign; campaigns: { i
         {allowed("budget.validate") && !ad.budgetValidated && <Button variant="primary" icon={<CheckI size={14} />} onClick={() => setBudgetOpen(true)}>Valider le budget</Button>}
         {allowed("content.publish") && ad.budgetValidated && ad.status === "prete" && <Button icon={<ClockI size={14} />} onClick={() => run("ads/schedule", { id: ad.id }, "Diffusion programmée (à activer sur la plateforme)")}>Programmer</Button>}
         {allowed("content.publish") && ad.budgetValidated && !["active"].includes(ad.status) && <Button variant="primary" icon={<PlayI size={14} />} onClick={async () => { const r = await hubApi<{ activated: boolean; reason?: string }>("ads/activate", { id: ad.id }).catch((e) => { toast("err", e.message); return null; }); if (r && !r.activated) setActivation(r.reason ?? ""); }}>Activer</Button>}
-        {allowed("content.publish") && ["active", "programmee"].includes(ad.status) && <Button icon={<PauseI size={14} />} onClick={() => run("ads/pause", { id: ad.id }, ad.status === "active" ? "En pause dans le Hub — pense à la mettre en pause sur la plateforme." : "Mise en pause")}>Mettre en pause</Button>}
+        {allowed("content.publish") && ["active", "programmee"].includes(ad.status) && <Button icon={<PauseI size={14} />} onClick={() => run("ads/pause", { id: ad.id }, ad.status === "active" ? "En pause dans l'Admin — pense à la mettre en pause sur la plateforme." : "Mise en pause")}>Mettre en pause</Button>}
       </div>
 
       <Modal open={budgetOpen} onClose={() => setBudgetOpen(false)} title="Valider le budget publicitaire" size="sm"

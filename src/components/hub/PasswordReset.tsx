@@ -37,13 +37,13 @@ export function ForgotPasswordForm() {
   };
   if (sent) {
     return (
-      <Shell title="Demande enregistrée" intro="Si cet e-mail correspond à un compte du Marketing Hub, un lien de réinitialisation vient d'être créé (valable 30 minutes, utilisable une seule fois).">
+      <Shell title="Demande enregistrée" intro="Si cet e-mail correspond à un compte de l'Admin SKINCLEAN, un lien de réinitialisation vient d'être créé (valable 30 minutes, utilisable une seule fois).">
         {sent.delivery === "email" ? (
           <p className="flex items-start gap-2 rounded-lg border border-sage bg-sage-soft p-4 text-sm"><MailI size={18} className="mt-0.5 shrink-0" />Ouvre l&apos;e-mail reçu et clique sur le lien pour choisir un nouveau mot de passe.</p>
         ) : (
           <div className="space-y-3 rounded-lg border border-line bg-white p-4 text-sm">
             <p className="font-medium">Où trouver le lien ?</p>
-            <p className="text-forest-soft">Aucun service d&apos;envoi d&apos;e-mails n&apos;est configuré : le Hub fonctionnant en local, le lien est déposé sur ton ordinateur, dans le dossier du projet SKINCLEAN :</p>
+            <p className="text-forest-soft">Aucun service d&apos;envoi d&apos;e-mails n&apos;est configuré : l&apos;Admin fonctionnant en local, le lien est déposé sur ton ordinateur, dans le dossier du projet SKINCLEAN :</p>
             <p className="rounded bg-sage-soft px-3 py-2 font-mono text-xs">{sent.file}</p>
             <p className="text-forest-soft">Ouvre ce fichier, copie le lien et colle-le dans ton navigateur. Il est aussi affiché dans le terminal où tourne le serveur.</p>
           </div>

@@ -29,7 +29,7 @@ export function LoginForm({ demo, next }: { demo: boolean; next?: string }) {
         <div className="absolute inset-0 flex flex-col justify-between p-12 text-white">
           <Image src="/media/brand/transparent/logo-wordmark.png" alt="skinclean" width={180} height={41} className="h-9 w-auto brightness-0 invert" />
           <div>
-            <p className="eyebrow text-sage">{crm ? "CRM" : "Marketing Hub"}</p>
+            <p className="eyebrow text-sage">{crm ? "CRM" : "Admin SKINCLEAN"}</p>
             <h1 className="mt-3 max-w-md font-display text-5xl font-medium leading-[1.05]">{crm ? "Tes clients, tes ventes, ton stock." : "Ta stratégie marketing, prête à publier."}</h1>
             <p className="mt-4 max-w-md text-white/80">{crm ? "Chiffre d'affaires, rentabilité, fiches clients, paniers abandonnés et réassort : tout le pilotage commercial SKINCLEAN au même endroit." : "Programme du jour, contenus à valider, campagnes, SEO et performances : tout ton marketing SKINCLEAN au même endroit."}</p>
           </div>
@@ -39,7 +39,7 @@ export function LoginForm({ demo, next }: { demo: boolean; next?: string }) {
         <form onSubmit={submit} className="w-full max-w-sm">
           <Image src="/media/brand/transparent/logo-mark.png" alt="" width={44} height={55} className="h-12 w-auto" />
           <h2 className="mt-6 font-display text-3xl font-semibold">Connexion</h2>
-          <p className="mt-1 text-sm text-forest-soft">{crm ? "Accède au CRM SKINCLEAN (même compte que le Marketing Hub)." : "Accède à ton Marketing Hub SKINCLEAN."}</p>
+          <p className="mt-1 text-sm text-forest-soft">{crm ? "Accède au CRM SKINCLEAN (même compte que l'Admin)." : "Accède à ton Admin SKINCLEAN SKINCLEAN."}</p>
           <label className="mt-8 block">
             <span className="hub-label">E-mail</span>
             <input className="hub-input" type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} />

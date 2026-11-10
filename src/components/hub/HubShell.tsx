@@ -34,7 +34,7 @@ function Leaf({ size = 28 }: { size?: number }) {
 }
 
 export const NAV: { href: string; label: string; icon: (p: { size?: number }) => React.ReactElement; sub?: boolean }[] = [
-  { href: "/hub", label: "Mon Marketing Hub", icon: HomeI },
+  { href: "/hub", label: "Accueil Admin", icon: HomeI },
   { href: "/hub/strategie", label: "Ma stratégie marketing", icon: TargetI },
   { href: "/hub/calendrier", label: "Calendrier éditorial", icon: CalendarI },
   { href: "/hub/reseaux-sociaux", label: "Réseaux sociaux", icon: ShareI },
@@ -84,12 +84,12 @@ export function HubShell({ user, children, unread, badges, online = false }: { u
 
   const active = (href: string) => (href === "/hub" ? path === "/hub" : path === href || path.startsWith(`${href}/`));
   const sidebar = (
-    <nav aria-label="Navigation du Marketing Hub" className="flex h-full flex-col">
+    <nav aria-label="Navigation de l'Admin" className="flex h-full flex-col">
       <Link href="/hub" className="flex items-center gap-2.5 px-5 pb-4 pt-5">
         <Image src="/media/brand/transparent/logo-mark.png" alt="" width={28} height={35} className="h-8 w-auto" />
         <span>
           <Image src="/media/brand/transparent/logo-wordmark.png" alt="skinclean" width={110} height={25} className="h-[18px] w-auto brightness-0 invert" />
-          <span className="mt-0.5 block text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-sage">Marketing Hub</span>
+          <span className="mt-0.5 block text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-sage">Admin</span>
         </span>
       </Link>
       <ul className="hub-scroll flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">
@@ -137,7 +137,7 @@ export function HubShell({ user, children, unread, badges, online = false }: { u
           )}
           <header className="sticky top-[var(--demo-h,0px)] z-30 flex h-14 print:hidden items-center gap-3 border-b border-line bg-white/90 px-4 backdrop-blur md:px-6">
             <button className="hub-btn hub-btn-ghost lg:hidden" onClick={() => setMenu(true)} aria-label="Ouvrir le menu"><MenuI /></button>
-            <p className="hidden truncate text-sm text-forest-soft md:block">{NAV.find((n) => active(n.href))?.label ?? "Marketing Hub"}</p>
+            <p className="hidden truncate text-sm text-forest-soft md:block">{NAV.find((n) => active(n.href))?.label ?? "Admin SKINCLEAN"}</p>
             <div className="ml-auto flex items-center gap-2">
               <button onClick={() => setCopilot(true)} className="hub-btn hub-btn-soft" title="Marketing Copilot (Ctrl/⌘ K)">
                 <SparkI size={16} /><span className="hidden sm:inline">Copilot</span>
@@ -190,7 +190,7 @@ export function HubShell({ user, children, unread, badges, online = false }: { u
                 <section role="dialog" aria-label="Assistant marketing IA" className="fixed bottom-24 right-4 z-[140] flex h-[min(620px,calc(100vh-8rem))] w-[min(410px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-2xl md:right-6">
                   <header className="flex items-center gap-2 border-b border-line bg-forest px-4 py-3 text-white">
                     <span className="grid h-8 w-8 place-items-center rounded-full bg-white"><Leaf size={20} /></span>
-                    <span className="flex-1"><span className="block text-sm font-semibold">Assistant marketing IA</span><span className="block text-[0.7rem] text-white/70">Pose ta question, je t&apos;aide sur tout le Hub</span></span>
+                    <span className="flex-1"><span className="block text-sm font-semibold">Assistant marketing IA</span><span className="block text-[0.7rem] text-white/70">Pose ta question, je t&apos;aide dans tout l&apos;Admin</span></span>
                     <Link href="/hub/assistant" className="rounded-md px-2 py-1 text-xs text-white/80 hover:bg-white/10" onClick={() => setCopilot(false)}>Plein écran</Link>
                     <button onClick={() => setCopilot(false)} className="rounded-md p-1 hover:bg-white/10" aria-label="Fermer l'assistant"><XI size={16} /></button>
                   </header>

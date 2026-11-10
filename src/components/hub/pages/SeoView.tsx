@@ -179,7 +179,7 @@ function MetasTab({ products }: { products: ProductSeo[] }) {
             const desc = p.seoDescription || `${p.tagline}. ${p.description.slice(0, 140)}`;
             return (
               <tr key={p.id} className="border-t border-line align-top">
-                <td className="p-3 font-medium">{p.name}<span className="block text-xs font-normal text-forest-soft">{p.seoTitle ? "Optimisé depuis le Hub" : "Valeur par défaut du site"}</span></td>
+                <td className="p-3 font-medium">{p.name}<span className="block text-xs font-normal text-forest-soft">{p.seoTitle ? "Optimisé depuis l'Admin" : "Valeur par défaut du site"}</span></td>
                 <td className="p-3">{title}<span className={clsx("block text-xs", title.length > 60 ? "text-[#8A3D1E]" : "text-forest-soft")}>{title.length} car.</span></td>
                 <td className="p-3 text-forest-soft">{desc.slice(0, 160)}<span className={clsx("block text-xs", desc.length > 160 ? "text-[#8A3D1E]" : "")}>{desc.length} car.</span></td>
                 <td className="p-3">{allowed("seo.edit") && <Button size="sm" icon={<EditI size={13} />} onClick={() => setEdit(p)}>Optimiser</Button>}</td>

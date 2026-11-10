@@ -154,7 +154,7 @@ export const strategySections: StrategySection[] = [
     blocks: [
       { kind: "proposition", title: "Méthode « 1 idée → 6 formats »", text: "Chaque semaine, un thème pilier (ex. « la niacinamide ») devient : 1 carrousel Instagram, 1 Reel/TikTok, 1 épingle, 1 story quiz, 1 post Facebook et, deux fois par mois, une rubrique de newsletter ou un article SEO." },
       { kind: "proposition", title: "Production", text: "Tournage groupé 2 demi-journées par mois (textures, gestes, face cam) ; visuels produits issus du Studio créatif avec les templates de marque." },
-      { kind: "proposition", title: "Validation", text: "Tout contenu passe par le statut « À valider » avant publication ; le client valide en un clic depuis l'accueil du Hub." },
+      { kind: "proposition", title: "Validation", text: "Tout contenu passe par le statut « À valider » avant publication ; le client valide en un clic depuis l'accueil de l'Admin." },
     ],
   }),
   s("acquisition", {
