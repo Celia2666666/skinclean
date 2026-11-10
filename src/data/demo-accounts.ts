@@ -68,7 +68,7 @@ export function camilleJournal(): Account["journal"] {
 export const demoAccounts: DemoAccount[] = [
   {
     label: "Cliente fidèle",
-    description: "2 commandes livrées, 1 en cours d'expédition, feuilles SKINCLEAN Club (palier Bourgeon), routine enregistrée, favoris.",
+    description: "2 commandes livrées, 1 en cours d'expédition, plus de 950 feuilles SKINCLEAN Club (palier Fleur), Skin Journal rempli, routine enregistrée, favoris.",
     email: "camille@skinclean.test",
     password: "Glow-2026!",
     build: () => {
@@ -83,6 +83,11 @@ export const demoAccounts: DemoAccount[] = [
         { id: "l_d4", date: now() - 40 * DAY, delta: 20, label: "Bonus avis — Clear Skin", status: "credited" },
         { id: "l_d5", date: o3.date + 1 * DAY, delta: o3.leaves, label: `Commande ${o3.id}`, status: "credited", orderId: o3.id },
         { id: "l_d6", date: now() - 30 * DAY, delta: 140, label: "Bonus anniversaire + offre fidélité", status: "credited" },
+        { id: "l_d7", date: now() - 26 * DAY, delta: 150, label: "Parrainage — Inès a passé sa 1ʳᵉ commande", status: "credited" },
+        { id: "l_d8", date: now() - 20 * DAY, delta: 20, label: "Bonus avis — Aqua Plump", status: "credited" },
+        { id: "l_d9", date: now() - 12 * DAY, delta: 120, label: "Opération Glow Week : feuilles doublées", status: "credited" },
+        { id: "l_d10", date: now() - 2 * DAY, delta: 200, label: "Défi Skin Journal 30 jours terminé", status: "credited" },
+        { id: "l_d11", date: now() - 1 * DAY, delta: 20, label: "Bonus avis — Clear Foam", status: "credited" },
       ];
       const step = (productId: string, s: RoutineStep, moments: ("matin" | "soir")[]) => ({
         step: s, productId, variantId: "std", moments, reason: "Routine enregistrée (compte de test).", alternatives: [], selected: true, frequency: getProduct(productId)!.frequency,
