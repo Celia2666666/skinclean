@@ -8,20 +8,19 @@ export const SPACES = [
   { href: "/crm", label: "CRM", hint: "côté entreprise" },
   { href: "/strategie", label: "Stratégie", hint: "pourquoi ce produit" },
   { href: "/communication", label: "Communication", hint: "comment le vendre" },
-  { href: "/admin", label: "Admin", hint: "gérer la boutique" },
+  { href: "/hub", label: "Admin", hint: "Marketing Hub : gérer la marque et la boutique" },
 ] as const;
 
 const activeSpace = (path: string) =>
-  path.startsWith("/crm") ? "/crm" : path.startsWith("/strategie") ? "/strategie" : path.startsWith("/communication") ? "/communication" : path.startsWith("/admin") ? "/admin" : "/";
+  path.startsWith("/crm") ? "/crm" : path.startsWith("/strategie") ? "/strategie" : path.startsWith("/communication") ? "/communication" : path.startsWith("/hub") || path.startsWith("/admin") ? "/hub" : "/";
 
 /**
  * Bandeau obligatoire « Projet étudiant INSEEC, démo sans vente réelle » + navigation entre les 4 espaces.
  * Fixé en haut de chaque page ; sa hauteur est réservée par la variable CSS --demo-h (voir globals.css).
- * Masqué sur le Marketing Hub, outil interne qui n'est pas publié en ligne.
+ * Affiché aussi sur le Marketing Hub (espace « Admin »), dont la mise en page est décalée de --demo-h.
  */
 export function DemoBanner() {
   const path = usePathname() ?? "/";
-  if (path.startsWith("/hub")) return null;
   const current = activeSpace(path);
   return (
     <>

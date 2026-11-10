@@ -2,6 +2,7 @@ import "server-only";
 import { Resend } from "resend";
 import { siteUrlPublic } from "@/lib/site";
 import { settings } from "./repo";
+import { hubOnline } from "./online";
 import type { Platform } from "./types";
 
 /**
@@ -15,7 +16,8 @@ export interface ConnectorInfo {
   id: string; name: string; scope: string; connected: boolean; env: string[]; capability: string; limits?: string;
 }
 
-const has = (...k: string[]) => k.every((x) => !!process.env[x]);
+/** En ligne (démo), aucun service réel n'est jamais branché : réseaux, e-mails, IA et Search Console restent coupés. */
+const has = (...k: string[]) => !hubOnline() && k.every((x) => !!process.env[x]);
 export const isPublicSite = () => !/localhost|127\.0\.0\.1/.test(siteUrlPublic());
 
 export function connectors(): ConnectorInfo[] {

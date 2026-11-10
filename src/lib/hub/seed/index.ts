@@ -1,8 +1,10 @@
 import "server-only";
 import { randomBytes } from "node:crypto";
-import { getMeta, nowIso, setMeta, tx } from "../db";
+import { db, getMeta, nowIso, setMeta, tx } from "../db";
+import { randomUUID } from "node:crypto";
+import { hubOnline } from "../online";
 import { create, list, put, remove, update } from "../repo";
-import { createUser, listUsers } from "../auth";
+import { createUser, hashPassword, listUsers } from "../auth";
 import type { Metric, Post, Settings } from "../types";
 import { addDays, diffDays, parseLocal, todayYmd, ymd } from "../dates";
 import { tplBanner } from "../templates";
@@ -14,6 +16,7 @@ import { ads } from "./ads";
 import { articleBriefs, articles as baseArticles, keywords } from "./seo";
 import { briefArticles } from "./seo-articles";
 import { niacinamidePlan, routineVideoLibraryPost } from "./example-campaign";
+import { skinDiagPlan } from "./campaign-content";
 import { upgradeMedia, upgradeVideosV6, upgradeVisualsV5 } from "./media-upgrade";
 
 const articles = [...baseArticles, ...briefArticles];
@@ -97,8 +100,32 @@ function demoMetrics(weeks = 8): Omit<Metric, "id">[] {
   return out;
 }
 
+/**
+ * Version en ligne : la base (dans /tmp) est remplie à partir de l'instantané nettoyé de la base locale
+ * (src/data/hub-snapshot.json, généré par scripts/hub-export-snapshot.mjs). Le compte « Accès complet »
+ * est recréé avec un mot de passe aléatoire jamais affiché : en ligne, la session démo est automatique.
+ */
+async function seedFromSnapshot() {
+  const snap = (await import("@/data/hub-snapshot.json")).default as {
+    admin: { id: string; email: string; name: string; role: string; title?: string; avatarColor?: string } | null;
+    meta: { key: string; value: string }[];
+    docs: { collection: string; id: string; data: string; created_at: string; updated_at: string }[];
+  };
+  tx(() => {
+    const ins = db().prepare("INSERT OR REPLACE INTO docs (collection, id, data, created_at, updated_at) VALUES (?, ?, ?, ?, ?)");
+    for (const d of snap.docs) ins.run(d.collection, d.id, d.data, d.created_at, d.updated_at);
+    const a = snap.admin ?? { id: "usr_demo", email: SEED_USERS[0].email, name: SEED_USERS[0].name, role: "admin", title: SEED_USERS[0].title };
+    const { id, email, ...profile } = a;
+    const data = { ...profile, notifications: { validation: true, publication: true, ticket: true, campagne: true, rapport: true }, createdAt: nowIso() };
+    db().prepare("INSERT OR IGNORE INTO users (id, email, password_hash, data) VALUES (?, ?, ?, ?)").run(id, email, hashPassword(randomUUID() + randomUUID()), JSON.stringify(data));
+    for (const m of snap.meta) setMeta(m.key, m.value);
+    setMeta("seeded", nowIso());
+  });
+}
+
 export async function seedAll() {
   if (getMeta("seeded")) return;
+  if (hubOnline()) return seedFromSnapshot();
   const t0 = todayYmd();
   tx(() => {
     if (!listUsers().length) for (const u of SEED_USERS) createUser({ ...u, password: seedPassword() });
@@ -184,6 +211,32 @@ export function upgradeSeed() {
   if (!getMeta("seed-visuals-v5")) tx(() => { upgradeVisualsV5(); setMeta("seed-visuals-v5", nowIso()); });
   if (!getMeta("seed-videos-v6")) tx(() => { upgradeVideosV6(); setMeta("seed-videos-v6", nowIso()); });
   if (!getMeta("seed-videos-v7")) tx(() => { upgradeVideosV6(true); setMeta("seed-videos-v7", nowIso()); });
+  // v9 : vidéos revues image par image et réassociées à leur texte (vidéo de plage retirée, patchs sans vidéo)
+  if (!getMeta("seed-videos-v9")) tx(() => {
+    const v = (id: string) => `/media/videos/demo/pexels-${id}.mp4`;
+    const fix: Record<string, string> = {
+      lib_005: "8131891", lib_006: "8131887", lib_025: "8371244", lib_036: "5927790", lib_029: "8131886", lib_037: "6925816",
+      post_0316: "7305465", post_0011: "12322647", post_0030: "5468875", lib_028: "6446008", post_0273: "5936529",
+    };
+    for (const [id, vid] of Object.entries(fix)) {
+      const p = list("posts").find((x) => x.id === id);
+      if (p?.visual?.kind === "video") update("posts", id, { visual: { ...p.visual, src: v(vid) }, ...(id === "post_0011" ? { hashtags: p.hashtags.map((h) => (h === "#vitaminec" ? "#toner" : h)).concat(p.hashtags.includes("#hydratation") ? [] : ["#hydratation"]) } : {}) });
+    }
+    // Patchs Spot Hero : aucune vidéo de patch disponible → visuel de couverture
+    for (const id of ["lib_032", "lib_033"]) {
+      const p = list("posts").find((x) => x.id === id);
+      if (p?.visual?.kind === "video" && p.visual.poster) update("posts", id, { visual: { kind: "design", design: p.visual.poster } });
+    }
+    // Doublons des mythes « vitamine C » et « concentration » : repassés en brouillon
+    for (const id of ["post_0010", "post_0031"]) if (list("posts").some((x) => x.id === id && x.status === "a_valider")) update("posts", id, { status: "brouillon" });
+    // Vidéo de la marque : générée par IA, pas un tournage
+    for (const p of list("posts")) if (p.visual?.kind === "video" && p.visual.src === "/media/videos/tiktok-routine-skinclean.mp4") update("posts", p.id, { visual: { ...p.visual, note: "Vidéo générée par IA (Hailuo) — à remplacer par un tournage SKINCLEAN." } });
+    setMeta("seed-videos-v9", nowIso());
+  });
+  if (!getMeta("seed-videos-v9b")) tx(() => {
+    if (list("campaigns").some((c) => c.id === "camp-skin-diag")) update("campaigns", "camp-skin-diag", { plan: skinDiagPlan });
+    setMeta("seed-videos-v9b", nowIso());
+  });
   // v8 : données de démonstration des Performances prolongées jusqu'à aujourd'hui (16 semaines)
   if (!getMeta("seed-demo-v8")) tx(() => {
     for (const m of list("metrics")) if (m.source === "demo") remove("metrics", m.id);

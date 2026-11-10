@@ -1,4 +1,5 @@
 import "server-only";
+import { hubOnline } from "./online";
 import Anthropic from "@anthropic-ai/sdk";
 import { products } from "@/data/products";
 import type { Product } from "@/lib/types";
@@ -273,7 +274,7 @@ function snapshot() {
 }
 
 async function withClaude(u: HubUser, messages: Msg[]): Promise<CopilotReply | null> {
-  if (!process.env.ANTHROPIC_API_KEY) return null;
+  if (!process.env.ANTHROPIC_API_KEY || hubOnline()) return null; // en ligne : assistant guidé uniquement, aucun appel à l'IA
   const client = new Anthropic();
   const system = `Tu es SKINCLEAN Marketing Copilot, l'assistant marketing de la marque de skincare SKINCLEAN (« Your skin. Your glow. »).
 Tu aides le client à exécuter sa stratégie : contenus du jour, validations, publications, campagnes, newsletters, SEO, analyse des performances de communication.

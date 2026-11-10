@@ -14,7 +14,8 @@ import { randomUUID } from "node:crypto";
  */
 
 export const DATA_DIR = path.join(process.cwd(), "data", "hub");
-const DB_FILE = process.env.HUB_DB_FILE || path.join(DATA_DIR, "marketing-hub.sqlite");
+/** En ligne (Vercel), seul /tmp est inscriptible : la base y est recréée depuis l'instantané à chaque démarrage d'instance. */
+const DB_FILE = process.env.HUB_DB_FILE || (process.env.VERCEL ? path.join("/tmp", "skinclean-hub.sqlite") : path.join(DATA_DIR, "marketing-hub.sqlite"));
 
 type G = typeof globalThis & { __hubDb?: DatabaseSync; __hubSeeding?: boolean; __hubSchema?: number };
 /** À incrémenter à chaque ajout de table : le schéma est alors complété même sur une connexion déjà ouverte. */

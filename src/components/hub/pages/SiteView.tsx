@@ -7,7 +7,7 @@ import { announcements as currentAnnouncements } from "@/data/config";
 import type { SiteOverrides, HomeSlide } from "@/lib/site-overrides";
 import type { ProductMedia, ProductType } from "@/lib/types";
 import type { Asset } from "@/lib/hub/types";
-import { Button, Card, Drawer, Empty, Field, Modal, Notice, PageHeader, Tabs, hubApi, copyText, euro, uploadFiles, useAction, useCan, useConfirm, useToast } from "../ui";
+import { Button, Card, Drawer, Empty, Field, Modal, Notice, PageHeader, Tabs, hubApi, copyText, euro, uploadFiles, useAction, useCan, useConfirm, useOnline, useToast } from "../ui";
 import { ArrowRightI, CopyI, EditI, EyeI, FolderI, PaletteI, PlusI, SearchI, TrashI, UploadI, ChevronDownI } from "../icons";
 import { tplProductHero } from "@/lib/hub/templates";
 
@@ -74,11 +74,13 @@ export function SiteView({ overrides, products, kits, assets, defaults }: { over
   const sp = useSearchParams();
   const [tab, setTab] = useState<Tab>((sp.get("tab") as Tab) || "accueil");
   const allowed = useCan();
+  const online = useOnline();
   return (
     <div>
       <PageHeader eyebrow="Site e-commerce" title="Gestion du site et des visuels" intro={<>Modifie les contenus marketing du site SKINCLEAN : fiches et visuels produits, slider, bannières, collection mise en avant, best-sellers, textes promotionnels et kits saisonniers. Les changements sont publiés immédiatement sur le site (mêmes données produits). Commandes et clients ne sont pas gérés ici.</>}
         actions={<Link href="/" target="_blank" className="hub-btn hub-btn-secondary"><EyeI size={15} />Voir le site</Link>} />
       {!allowed("site.edit") && <div className="mb-4"><Notice tone="warn">Ton rôle permet de consulter cette page, pas de modifier le site.</Notice></div>}
+      {online && <div className="mb-4"><Notice>Version en ligne de démonstration : tes modifications sont enregistrées dans l&apos;Admin pour la visite, mais <strong>la boutique publiée ne change pas</strong>. La mise à jour réelle du site se fait depuis le Hub en local.</Notice></div>}
       {overrides.updatedAt && <p className="mb-3 text-xs text-forest-soft">Dernière publication sur le site : {new Date(overrides.updatedAt).toLocaleString("fr-FR")} par {overrides.updatedBy}.</p>}
       <Tabs value={tab} onChange={setTab} tabs={[
         { id: "accueil", label: "Accueil, slider & bannières" }, { id: "produits", label: "Produits : ajouter, descriptions, images", count: products.length }, { id: "collection", label: "Collection mise en avant" },

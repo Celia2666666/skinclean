@@ -13,6 +13,9 @@ export interface ClientUser { id: string; name: string; email: string; role: Rol
 const UserCtx = createContext<ClientUser | null>(null);
 export const UserProvider = ({ user, children }: { user: ClientUser; children: React.ReactNode }) => <UserCtx.Provider value={user}>{children}</UserCtx.Provider>;
 export const useUser = () => useContext(UserCtx)!;
+/** Version en ligne de démonstration (Vercel) : certaines actions réelles sont désactivées. */
+export const OnlineCtx = createContext(false);
+export const useOnline = () => useContext(OnlineCtx);
 export const useCan = () => {
   const u = useUser();
   return (p: Permission) => can(u?.role, p);

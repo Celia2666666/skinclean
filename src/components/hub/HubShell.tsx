@@ -4,7 +4,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import clsx from "clsx";
-import { Avatar, ToastProvider, UserProvider, hubApi, type ClientUser } from "./ui";
+import { Avatar, OnlineCtx, ToastProvider, UserProvider, hubApi, type ClientUser } from "./ui";
 import { CopilotChat } from "./Copilot";
 import { ROLE_LABEL, type Notification } from "@/lib/hub/types";
 import {
@@ -53,7 +53,7 @@ export const NAV: { href: string; label: string; icon: (p: { size?: number }) =>
   { href: "/crm", label: "CRM — clients, ventes, stock", icon: ChartI },
 ];
 
-export function HubShell({ user, children, unread, badges }: { user: ClientUser; children: React.ReactNode; unread: number; badges: Record<string, number> }) {
+export function HubShell({ user, children, unread, badges, online = false }: { user: ClientUser; children: React.ReactNode; unread: number; badges: Record<string, number>; online?: boolean }) {
   const path = usePathname();
   const router = useRouter();
   const [menu, setMenu] = useState(false);
@@ -124,17 +124,18 @@ export function HubShell({ user, children, unread, badges }: { user: ClientUser;
   );
 
   return (
+    <OnlineCtx.Provider value={online}>
     <UserProvider user={user}>
       <ToastProvider>
         <div className="min-h-screen bg-[#F6F5F1] text-forest lg:pl-[268px] print:bg-white print:pl-0">
-          <aside className="fixed inset-y-0 left-0 z-40 hidden w-[268px] bg-forest lg:block print:hidden">{sidebar}</aside>
+          <aside className="fixed bottom-0 left-0 top-[var(--demo-h,0px)] z-40 hidden w-[268px] bg-forest lg:block print:hidden">{sidebar}</aside>
           {menu && (
             <div className="fixed inset-0 z-[120] lg:hidden" onClick={() => setMenu(false)}>
               <div className="absolute inset-0 bg-black/40" />
               <aside className="absolute inset-y-0 left-0 w-[280px] bg-forest" onClick={(e) => e.stopPropagation()}>{sidebar}</aside>
             </div>
           )}
-          <header className="sticky top-0 z-30 flex h-14 print:hidden items-center gap-3 border-b border-line bg-white/90 px-4 backdrop-blur md:px-6">
+          <header className="sticky top-[var(--demo-h,0px)] z-30 flex h-14 print:hidden items-center gap-3 border-b border-line bg-white/90 px-4 backdrop-blur md:px-6">
             <button className="hub-btn hub-btn-ghost lg:hidden" onClick={() => setMenu(true)} aria-label="Ouvrir le menu"><MenuI /></button>
             <p className="hidden truncate text-sm text-forest-soft md:block">{NAV.find((n) => active(n.href))?.label ?? "Marketing Hub"}</p>
             <div className="ml-auto flex items-center gap-2">
@@ -178,7 +179,7 @@ export function HubShell({ user, children, unread, badges }: { user: ClientUser;
                   <span className="block text-[0.68rem] text-forest-soft">{ROLE_LABEL[user.role]}</span>
                 </span>
               </Link>
-              <button onClick={logout} className="hub-btn hub-btn-ghost" title="Déconnexion" aria-label="Déconnexion"><LogoutI /></button>
+              {!online && <button onClick={logout} className="hub-btn hub-btn-ghost" title="Déconnexion" aria-label="Déconnexion"><LogoutI /></button>}
             </div>
           </header>
           <main className="mx-auto max-w-[1500px] px-4 py-6 md:px-8 md:py-8">{children}</main>
@@ -206,5 +207,6 @@ export function HubShell({ user, children, unread, badges }: { user: ClientUser;
         </div>
       </ToastProvider>
     </UserProvider>
+    </OnlineCtx.Provider>
   );
 }

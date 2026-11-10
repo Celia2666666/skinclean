@@ -8,6 +8,7 @@ import { BRAND, tplBanner, tplCarousel, tplProductHero, tplRoutine, tplStoryPoll
  */
 
 export const ROUTINE_VIDEO = "/media/videos/tiktok-routine-skinclean.mp4";
+const AI_NOTE = "Vidéo générée par IA (Hailuo) — à remplacer par un tournage SKINCLEAN.";
 const SERUM = "/media/packshots/clear-skin-serum-niacinamide.png";
 const pack = (slug: string) => `/media/packshots/${slug}.png`;
 const design = (d: Visual["design"]): Visual => ({ kind: "design", design: d });
@@ -46,7 +47,7 @@ export const niacinamidePlan: Campaign["plan"] = [
     content: {
       caption: tiktokCaption, hashtags: ["#niacinamide", "#skincaretok", "#routinematin", "#peaumixte", "#skinclean"],
       script: routineScript,
-      visual: { kind: "video", src: ROUTINE_VIDEO, poster: tplVideoCover({ headline: "Le geste de 5 secondes qui change ma routine", packshot: SERUM }) },
+      visual: { kind: "video", src: ROUTINE_VIDEO, note: AI_NOTE, poster: tplVideoCover({ headline: "Le geste de 5 secondes qui change ma routine", packshot: SERUM }) },
     },
   },
   {
@@ -120,7 +121,7 @@ Matin et soir, 2 à 3 gouttes avant ta crème. Disponible sur skinclean.fr`,
     content: {
       caption: reelCaption, hashtags: ["#reelskincare", "#niacinamide", "#routinebeaute", "#skinclean"],
       script: routineScript,
-      visual: { kind: "video", src: ROUTINE_VIDEO, poster: tplVideoCover({ headline: "Ma routine en 5 secondes", packshot: SERUM }) },
+      visual: { kind: "video", src: ROUTINE_VIDEO, note: AI_NOTE, poster: tplVideoCover({ headline: "Ma routine en 5 secondes", packshot: SERUM }) },
     },
   },
 ];

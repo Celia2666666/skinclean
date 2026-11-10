@@ -6,7 +6,8 @@ import { DATA_DIR } from "@/lib/hub/db";
 import { sendEmail } from "@/emails/send";
 import { ensureSeeded, events, get, list, logActivity } from "@/lib/hub/repo";
 import { getHandler } from "@/lib/hub/handlers";
-import { saveBuffer, MAX_UPLOAD } from "@/lib/hub/files";
+import { saveBuffer, MAX_UPLOAD, readOnlineMedia } from "@/lib/hub/files";
+import { hubOnline, ONLINE_NOTICE } from "@/lib/hub/online";
 import { create } from "@/lib/hub/repo";
 import type { NewDoc, Asset } from "@/lib/hub/types";
 import { adsCsv, reportCsv } from "@/lib/hub/exports";
@@ -34,6 +35,12 @@ export async function POST(req: Request, ctx: RouteContext<"/api/hub/[...slug]">
   if (!hubAvailable()) return json({ error: "Marketing Hub indisponible sur cet hébergement." }, 404);
   try {
     await ensureSeeded();
+    // En ligne (démo) : session automatique, aucune connexion ni réinitialisation de mot de passe
+    if (hubOnline() && name.startsWith("auth/")) {
+      if (name === "auth/login" || name === "auth/logout") return json({ ok: true, user: await requireApiUser() });
+      return json({ error: ONLINE_NOTICE.account }, 400);
+    }
+    if (hubOnline() && name === "seo/optimize-image") return json({ error: "Version en ligne de démonstration : l'optimisation d'image (réécriture du fichier) est disponible uniquement en local." }, 400);
     if (name === "auth/login") {
       const ip = req.headers.get("x-forwarded-for") ?? "local";
       const a = attempts.get(ip);
@@ -131,6 +138,12 @@ export async function GET(req: Request, ctx: RouteContext<"/api/hub/[...slug]">)
   const url = new URL(req.url);
   if (!hubAvailable()) return json({ error: "Marketing Hub indisponible sur cet hébergement." }, 404);
   try {
+    // Fichiers importés dans la version en ligne (rangés dans /tmp)
+    if (name.startsWith("fichier/")) {
+      const f = readOnlineMedia(name.slice("fichier/".length));
+      if (!f) return json({ error: "Fichier introuvable." }, 404);
+      return new Response(new Uint8Array(f.buf), { headers: { "content-type": f.type, "cache-control": "private, max-age=3600" } });
+    }
     await ensureSeeded();
     const u = await requireApiUser();
     if (name === "me") return json({ user: u });

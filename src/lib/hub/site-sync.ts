@@ -10,14 +10,16 @@ import { applyKitOverrides, applyProductOverrides } from "@/lib/site-overrides";
  * Écriture des contenus marketing du site (src/data/site-overrides.json).
  * Le fichier est relu à chaque appel (pas de cache) pour ne jamais écraser une modification récente.
  */
-const FILE = path.join(process.cwd(), "src", "data", "site-overrides.json");
+const SITE_FILE = path.join(process.cwd(), "src", "data", "site-overrides.json");
+/** En ligne (démo) : les modifications restent dans l'Admin (copie dans /tmp) ; la boutique publiée ne change pas. */
+const ONLINE_FILE = path.join("/tmp", "skinclean-site-overrides.json");
+const FILE = process.env.VERCEL ? ONLINE_FILE : SITE_FILE;
 
 export function readOverrides(): SiteOverrides {
-  try {
-    return JSON.parse(readFileSync(FILE, "utf8"));
-  } catch {
-    return {};
+  for (const f of FILE === SITE_FILE ? [SITE_FILE] : [ONLINE_FILE, SITE_FILE]) {
+    try { return JSON.parse(readFileSync(f, "utf8")); } catch { /* fichier suivant */ }
   }
+  return {};
 }
 
 export function writeOverrides(next: SiteOverrides, by: string) {

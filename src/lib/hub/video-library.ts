@@ -31,7 +31,7 @@ export const DEMO_VIDEOS = [
   V("7305465", "serum retinal goutte niacinamide"),
   V("7306686", "yeux ridule anti-age bakuchiol retin"),
   V("7390197", "toner coton pads exfol bha lotion"),
-  V("7467138", "glow eclat teint lumineux"),
+  // 7467138 retirée : vidéo de plage hors charte
   V("7593979", "masque peel"),
   V("7597957", "nettoy rincage matin eau"),
   V("8098907", "masque argile pores grasse"),

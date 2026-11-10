@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { db, nowIso, uid } from "./db";
 import { ensureSeeded } from "./repo";
+import { hubOnline } from "./online";
 import { can, type Permission } from "./permissions";
 import type { HubUser, Role } from "./types";
 
@@ -125,14 +126,15 @@ export function userFromToken(token: string | undefined): HubUser | null {
 }
 
 /**
- * Le Hub est un outil strictement local : jamais disponible sur Vercel ni sur un autre hébergement.
- * (Le contrôle de l'adresse « localhost » est fait par src/proxy.ts.) Le site public n'est jamais affecté.
+ * Le Hub est disponible en local et en ligne (mode démonstration, voir online.ts).
+ * En local, l'accès depuis le réseau est bloqué par src/proxy.ts.
  */
-export const hubAvailable = () => !process.env.VERCEL;
+export const hubAvailable = () => true;
 
-/** Utilisateur connecté (pages serveur et routes API). */
+/** Utilisateur connecté (pages serveur et routes API). En ligne : session démo automatique, compte « Accès complet ». */
 export async function currentUser(): Promise<HubUser | null> {
   await ensureSeeded();
+  if (hubOnline()) return listUsers().find((u) => u.role === "admin") ?? null;
   const c = await cookies();
   return userFromToken(c.get(SESSION_COOKIE)?.value);
 }

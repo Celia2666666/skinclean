@@ -164,7 +164,9 @@ D'autres comptes peuvent être ajoutés dans « Mon compte → Autorisations & u
 - **Lien avec le site** : le Hub écrit `src/data/site-overrides.json`, appliqué par `products.ts`, `kits.ts`, `home.ts` et `config.ts` (une seule source produit). En développement, le site se met à jour immédiatement ; en production, relancer le build pour les pages statiques.
 - **Médias** : `public/media/uploads/` (servis directement par le site).
 - **Futur CRM** : `GET /api/hub/events` (journal d'événements marketing) et `GET /api/hub/export?collection=…` ; UTM générés sur chaque publicité.
-- **Uniquement en localhost** : `src/proxy.ts` renvoie une 404 pour `/hub` et `/api/hub` sur tout autre hôte (Vercel, domaine public, adresse réseau). Le site public n'est pas affecté.
+- **En local** : réservé à la machine (`src/proxy.ts` renvoie une 404 aux autres adresses du réseau).
+- **En ligne (espace « Admin » de https://skinclean.vercel.app/hub)** : version de démonstration (`src/lib/hub/online.ts`). Session démo automatique avec le compte « Accès complet » (aucun écran de connexion, aucun mot de passe), base recréée dans `/tmp` à partir de `src/data/hub-snapshot.json` (instantané nettoyé : ni comptes, ni sessions, ni hash). Modifications possibles mais non conservées ; aucune vraie publication, aucun e-mail, assistant en mode guidé, et la boutique publiée n'est jamais modifiée. Page non indexée (`x-robots-tag: noindex`).
+- **Mettre à jour l'instantané en ligne** : `node scripts/hub-export-snapshot.mjs`, puis commit et déploiement.
 
 ### Publication automatique et comptes de test
 - **Valider = programmer** : valider un contenu prépare ses visuels et le programme à sa date et son heure du calendrier. Le planificateur du serveur local (chaque minute) le publie automatiquement, sans connexion de l'utilisateur. Serveur éteint à l'heure prévue → publication au redémarrage, signalée « avec retard ».

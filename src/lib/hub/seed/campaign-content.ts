@@ -132,7 +132,7 @@ export const skinDiagPlan: Campaign["plan"] = [
         { t: "15–22 s", shot: "Révélation du résultat.", onScreen: "Peau mixte, un peu déshydratée" },
         { t: "22–25 s", shot: "Application du soin conseillé.", onScreen: "À ton tour : lien en bio" },
       ] },
-      visual: video("7467138", "Je fais le Skin Diag en direct", P.dewDrop.src),
+      visual: video("5936529", "Je fais le Skin Diag en direct", P.dewDrop.src),
     },
   },
   {

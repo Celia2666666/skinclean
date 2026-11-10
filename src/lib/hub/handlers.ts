@@ -7,6 +7,7 @@ import { can, type Permission } from "./permissions";
 import { searchConsoleQuery, sendBroadcast, sendTestEmail } from "./connectors";
 import { destinationFor, publishPost, type PostPublishOutcome } from "./publish";
 import { saveDataUrl, saveVideoThumb } from "./files";
+import { hubOnline, ONLINE_NOTICE } from "./online";
 import { patchOverrides } from "./site-sync";
 import { renderEmailHtml } from "./email-html";
 import { addDays, todayYmd, ymdhm } from "./dates";
@@ -115,6 +116,7 @@ const H: Record<string, Handler> = {
     return updateUser(u.id, patch);
   } },
   "account/password": { fn: (u, b) => {
+    if (hubOnline()) throw new HttpError(400, ONLINE_NOTICE.account);
     if (!checkPassword(u.id, String(b.current ?? ""))) throw new HttpError(400, "Mot de passe actuel incorrect.");
     const pw = String(b.next ?? "");
     if (pw.length < 10 || !/[A-Za-z]/.test(pw) || !/\d/.test(pw)) throw new HttpError(400, "Le nouveau mot de passe doit contenir au moins 10 caractères, dont des lettres et des chiffres.");
@@ -123,6 +125,7 @@ const H: Record<string, Handler> = {
     return { ok: true, relogin: true };
   } },
   "users/create": { perm: "users.manage", fn: (u, b) => {
+    if (hubOnline()) throw new HttpError(400, ONLINE_NOTICE.account);
     const role = String(b.role) as Role;
     if (!ROLE_LABEL[role]) throw new HttpError(400, "Rôle inconnu.");
     const pw = str(b.password, "mot de passe");
@@ -136,6 +139,7 @@ const H: Record<string, Handler> = {
     }
   } },
   "users/update": { perm: "users.manage", fn: (u, b) => {
+    if (hubOnline()) throw new HttpError(400, ONLINE_NOTICE.account);
     const id = String(b.id);
     const role = b.role as Role | undefined;
     if (role && !ROLE_LABEL[role]) throw new HttpError(400, "Rôle inconnu.");
@@ -145,6 +149,7 @@ const H: Record<string, Handler> = {
     return r;
   } },
   "users/reset-password": { perm: "users.manage", fn: (u, b) => {
+    if (hubOnline()) throw new HttpError(400, ONLINE_NOTICE.account);
     const pw = str(b.password, "mot de passe");
     if (pw.length < 10) throw new HttpError(400, "Mot de passe : 10 caractères minimum.");
     setPassword(String(b.id), pw);
@@ -152,6 +157,7 @@ const H: Record<string, Handler> = {
     return { ok: true };
   } },
   "users/delete": { perm: "users.manage", fn: (u, b) => {
+    if (hubOnline()) throw new HttpError(400, ONLINE_NOTICE.account);
     if (String(b.id) === u.id) throw new HttpError(400, "Tu ne peux pas supprimer ton propre compte.");
     const t = must(getUser(String(b.id)), "Utilisateur");
     deleteUser(t.id);
