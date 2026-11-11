@@ -84,6 +84,8 @@ export function Checkout() {
   const testOrder = (e: React.FormEvent) => {
     e.preventDefault();
     const o = recordOrder({ ...snapshot(), status: "test", paymentMode: "test" });
+    // Bonus : la commande et son e-mail de confirmation arrivent dans le CRM partagé (visible depuis tous les navigateurs)
+    fetch("/api/commande", { method: "POST", keepalive: true, headers: { "content-type": "application/json" }, body: JSON.stringify({ ...o, device: window.matchMedia("(max-width: 767px)").matches ? "mobile" : "desktop" }) }).catch(() => {});
     clearCart();
     router.push(`/commande/confirmation?test=${o.id}`);
   };

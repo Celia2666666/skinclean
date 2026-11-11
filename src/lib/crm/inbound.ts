@@ -3,7 +3,7 @@ import { ymdhm } from "@/lib/hub/dates";
 import { baseProducts } from "@/data/products";
 import { all, crmUid, save } from "./db";
 import { ensureCrmSeeded, flushJournal } from "./repo";
-import type { Ticket } from "./types";
+import type { Order, OrderItem, Ticket } from "./types";
 
 /**
  * Données entrantes depuis le site public vers le CRM local : questions du Glow Assistant (anonymes),
@@ -62,3 +62,53 @@ export async function addContactMessage(b: Record<string, unknown>) {
   return true;
 }
 
+const PAYMENT: Record<string, Order["payment"]> = { card: "carte", "apple-pay": "apple_pay", "google-pay": "google_pay" };
+
+/**
+ * Commande passée sur la boutique en paiement simulé : elle arrive dans le CRM (commandes + fiche client)
+ * et l'e-mail de confirmation est déposé dans la boîte de démo (/crm/boite-demo). Les prix viennent du catalogue.
+ */
+export async function addSiteOrder(b: Record<string, unknown>): Promise<{ number: string; mail: string } | false> {
+  if (!crmInboundAvailable()) return false;
+  await ensureCrmSeeded();
+  const email = clip(b.email, 200).toLowerCase();
+  const raw = Array.isArray(b.lines) ? (b.lines as Record<string, unknown>[]).slice(0, 40) : [];
+  const stock = new Map(all("stock").map((s) => [s.id, s]));
+  const items: OrderItem[] = [];
+  for (const l of raw) {
+    const p = baseProducts.find((x) => x.id === l.productId);
+    const v = p?.variants.find((x) => x.id === l.variantId);
+    if (!p || !v) continue;
+    const s = stock.get(`${p.id}:${v.id}`);
+    items.push({ productId: p.id, variantId: v.id, name: p.name, size: v.size, category: s?.category ?? "Soins", qty: Math.max(1, Math.min(10, Number(l.qty) || 1)), unit: v.price, cost: s?.cost ?? Math.round((v.price / 1.2) * 0.3 * 100) / 100 });
+  }
+  if (!items.length || !email.includes("@")) return false;
+  const subtotal = Math.round(items.reduce((a, i) => a + i.unit * i.qty, 0) * 100) / 100;
+  const num = (v: unknown, max: number) => Math.max(0, Math.min(max, Number(v) || 0));
+  const shipping = num(b.shipping, 50);
+  const discount = num(b.discount, subtotal);
+  const total = Math.round(Math.max(0, subtotal - discount + shipping) * 100) / 100;
+  const at = ymdhm(new Date());
+  const address = (b.address ?? {}) as Record<string, unknown>;
+  const [firstName, ...rest] = clip(address.name, 80).split(" ");
+  let customer = all("customers").find((c) => c.email === email);
+  if (!customer) {
+    customer = { id: crmUid("cus_"), source: "reel", email, firstName: firstName || email.split("@")[0], lastName: rest.join(" "), city: clip(address.city, 60), region: "", zip: clip(address.zip, 10), createdAt: at, channel: "direct", skinType: "normale", concerns: [], birthYear: 0, optinEmail: false, optinSms: false, tags: ["Boutique en ligne", "Type de peau non renseigné"] };
+    save("customers", customer);
+  }
+  const number = clip(b.id, 30) || `SC-${Date.now().toString(36).toUpperCase()}`;
+  // Même commande renvoyée deux fois (double clic, rechargement) : on ne la duplique pas
+  if (all("orders").some((o) => o.number === number)) return { number, mail: "deja_recue" };
+  const firstOrder = !all("orders").some((o) => o.customerId === customer.id);
+  save("orders", {
+    id: crmUid("ord_"), number, source: "reel", customerId: customer.id, email, customerName: `${customer.firstName} ${customer.lastName}`.trim(), createdAt: at, status: "payee",
+    channel: "direct", device: b.device === "mobile" ? "mobile" : "desktop", payment: PAYMENT[String(b.paymentMethod)] ?? "carte", items, subtotal, discount, promoCode: clip(b.code, 30) || undefined, shipping, total,
+    city: customer.city, region: "", firstOrder, history: [{ at, status: "payee", note: "Paiement simulé sur la boutique (démo INSEEC)" }],
+  });
+  const euro = (n: number) => `${n.toFixed(2).replace(".", ",")} €`;
+  const text = `Bonjour ${customer.firstName},\n\nMerci pour ta commande ${number} ! Voici son récapitulatif :\n${items.map((i) => `• ${i.name} (${i.size}) × ${i.qty} : ${euro(i.unit * i.qty)}`).join("\n")}\n\nLivraison : ${shipping ? euro(shipping) : "offerte"}${discount ? `\nRéduction : -${euro(discount)}` : ""}\nTotal TTC : ${euro(total)}\n\nPaiement simulé (projet étudiant INSEEC) : aucune somme n'a été débitée et la commande ne sera pas expédiée.`;
+  const { deliver } = await import("./automations");
+  const sent = await deliver(email, `Ta commande ${number} est confirmée`, text, { href: `${process.env.NEXT_PUBLIC_SITE_URL || "https://skinclean.vercel.app"}/compte/commandes`, label: "Suivre ma commande" }, "Boutique (commande)", "order");
+  await flushJournal(); // base partagée en ligne : la commande et l'e-mail sont visibles depuis tous les serveurs
+  return { number, mail: sent.delivery };
+}
