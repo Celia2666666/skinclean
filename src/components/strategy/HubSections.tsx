@@ -179,7 +179,7 @@ export function Funnel({ section }: { section: HubSection }) {
       <span className="absolute bottom-2 left-[15px] top-2 w-px bg-line md:left-[23px]" />
       <motion.span style={{ scaleY }} className="absolute bottom-2 left-[15px] top-2 w-px origin-top bg-forest md:left-[23px]" />
       {section.blocks.map((b, i) => (
-        <motion.li key={b.title} initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, ease: EASE }} className="relative">
+        <motion.li key={b.title} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, ease: EASE }} className="relative">
           <span className="absolute -left-10 top-4 grid h-8 w-8 place-items-center rounded-full bg-forest text-xs font-semibold text-ivory md:-left-14 md:h-12 md:w-12 md:text-sm">{i + 1}</span>
           <div className="border border-line bg-ivory p-5" style={{ marginRight: `${(section.blocks.length - 1 - i) * 3}%` }}>
             <p className="font-display text-xl">{b.title?.replace(/^\d\.\s*/, "")}</p>
@@ -322,7 +322,7 @@ export function PersonaDeck() {
         ))}
       </div>
       <AnimatePresence mode="wait">
-        <motion.article key={p.id} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.4, ease: EASE }} className="mt-5 grid gap-6 border border-line bg-ivory p-6 md:grid-cols-[14rem_1fr] md:p-8">
+        <motion.article key={p.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -14 }} transition={{ duration: 0.4, ease: EASE }} className="mt-5 grid gap-6 border border-line bg-ivory p-6 md:grid-cols-[14rem_1fr] md:p-8">
           <div>
             <motion.span initial={{ scale: 0.6, rotate: -12 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 260, damping: 18 }} className="grid h-24 w-24 place-items-center rounded-full font-display text-4xl" style={{ background: p.color }}>{p.avatar}</motion.span>
             <p className="mt-4 font-display text-3xl">{p.name}</p>

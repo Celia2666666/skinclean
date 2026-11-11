@@ -219,11 +219,45 @@ function PostSheet({ post, onClose }: { post: Post | null; onClose: () => void }
 const PLAN_PLATFORM: Record<string, Platform> = { Instagram: "instagram", TikTok: "tiktok", Pinterest: "pinterest" };
 const toHubPost = (p: PlanPost): Post => ({
   id: `plan-${p.id}`, title: p.title, date: p.dateISO, platform: PLAN_PLATFORM[p.network], format: p.network === "Pinterest" ? "epingle" : p.video ? "video" : p.format.startsWith("Carrousel") ? "carrousel" : "post",
-  objective: p.goal, pillar: "", formatLabel: p.format, visual: p.video ? { kind: "video", src: p.video } : { kind: "image", src: p.image },
+  objective: p.goal, pillar: "", formatLabel: p.format,
+  visual: p.video ? { kind: "video", src: p.video }
+    : p.slides ? { kind: "design", design: { w: 1080, h: 1350, pages: [p.image, ...p.slides].map((src, i) => ({ bg: { type: "color", color: "#FFFFFF" }, layers: [{ id: `s${i}`, type: "image", x: 0, y: 0, w: 1080, h: 1350, src, fit: "cover" }] })) } }
+    : { kind: "image", src: p.image },
   caption: p.text, hashtags: p.hashtags.split(" "), cta: "", status: "valide", comments: [], productIds: [],
 } as unknown as Post);
 
 const goalColor: Record<string, string> = { Notoriété: "bg-sage", Considération: "bg-sage-soft", Conversion: "bg-forest text-ivory", Fidélisation: "bg-ivory border border-line" };
+
+/** Carrousel qui défile seul dans la carte (comme un swipe Instagram), avec ses points de pagination. */
+function CardCarousel({ images, alt }: { images: string[]; alt: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const [i, setI] = useState(0);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.5 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!visible || reduce) return;
+    const t = setTimeout(() => setI((x) => (x + 1) % images.length), 2400);
+    return () => clearTimeout(t);
+  }, [i, visible, reduce, images.length]);
+  return (
+    <div ref={ref} className="absolute inset-0">
+      <AnimatePresence initial={false}>
+        <motion.div key={i} className="absolute inset-0" initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ duration: 0.6, ease: EASE }}>
+          <Image src={images[i]} alt={i === 0 ? alt : ""} fill sizes="(max-width: 768px) 92vw, 30vw" className="object-cover" />
+        </motion.div>
+      </AnimatePresence>
+      <span className="absolute left-3 top-3 z-10 rounded-full bg-black/55 px-2 py-0.5 text-[0.65rem] font-medium text-white">{i + 1}/{images.length}</span>
+      <span className="absolute inset-x-0 bottom-3 z-10 flex justify-center gap-1.5">{images.map((_, k) => <span key={k} className={clsx("h-1.5 rounded-full transition-all duration-500", k === i ? "w-5 bg-white" : "w-1.5 bg-white/60")} />)}</span>
+    </div>
+  );
+}
 
 function PlanCard({ p, onOpen, i }: { p: PlanPost; onOpen: () => void; i: number }) {
   const reduce = useReducedMotion();
@@ -236,7 +270,7 @@ function PlanCard({ p, onOpen, i }: { p: PlanPost; onOpen: () => void; i: number
       onMouseEnter={() => vid.current?.play().catch(() => {})} onMouseLeave={() => { if (vid.current) { vid.current.pause(); vid.current.currentTime = 0; } }}
       className="group flex h-full flex-col border border-line bg-ivory transition duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-20px_rgba(31,51,41,0.35)]">
       <button type="button" onClick={onOpen} aria-label={`Voir le post ${p.id} tel qu'il apparaîtra sur ${p.network}`} className={clsx("relative block overflow-hidden bg-sky text-left", p.network === "Instagram" ? "aspect-[4/5]" : p.network === "Pinterest" ? "aspect-[2/3] max-h-[520px]" : "aspect-[9/16] max-h-[520px]")}>
-        <Image src={p.image} alt={p.alt} fill sizes="(max-width: 768px) 92vw, 30vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />
+        {p.slides ? <CardCarousel images={[p.image, ...p.slides]} alt={p.alt} /> : <Image src={p.image} alt={p.alt} fill sizes="(max-width: 768px) 92vw, 30vw" className="object-cover transition duration-700 group-hover:scale-[1.04]" />}
         {p.video && <video ref={vid} src={p.video} muted loop playsInline preload="none" className="absolute inset-0 h-full w-full object-cover opacity-0 transition duration-500 group-hover:opacity-100" />}
         {p.video && <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-black/55 text-white" aria-hidden>▶</span>}
         <span className="absolute inset-x-0 bottom-0 flex translate-y-2 items-center justify-center bg-gradient-to-t from-black/60 to-transparent p-4 pt-10 text-sm font-medium text-white opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">{p.video ? "Lire la vidéo comme sur TikTok →" : `Voir comme sur ${p.network} →`}</span>
@@ -310,7 +344,7 @@ export function FeedLibrary() {
     <div className="grid items-start gap-8 lg:grid-cols-[400px_1fr]">
       <div ref={phone} className="scroll-mt-[calc(5rem+var(--demo-h))] lg:sticky lg:top-[calc(5.5rem+var(--demo-h))] lg:max-h-[calc(100vh-6.5rem-var(--demo-h))] lg:overflow-y-auto lg:pr-2 no-scrollbar">
         <div className="relative mx-auto w-full max-w-[380px]">
-          <div className="pointer-events-none absolute -inset-8 -z-10 rounded-[48px] bg-[radial-gradient(closest-side,#D8DFD4,transparent)]" />
+          <div className="pointer-events-none absolute -inset-y-8 inset-x-0 -z-10 rounded-[48px] bg-[radial-gradient(closest-side,#D8DFD4,transparent)] sm:-inset-x-8" />
           <AnimatePresence mode="wait">
             <motion.div key={current.id} initial={{ opacity: 0, y: 30, rotate: -2, scale: 0.96 }} animate={{ opacity: 1, y: 0, rotate: 0, scale: 1 }} exit={{ opacity: 0, y: -20, rotate: 2, scale: 0.96 }} transition={{ duration: 0.4, ease: EASE }}>
               <PostPreview post={current} />
@@ -596,7 +630,7 @@ export function EditorialCalendar() {
         ))}
       </div>
 
-      <div className="mt-6 border border-line bg-ivory">
+      <div className="mt-6 overflow-hidden border border-line bg-ivory">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line p-4">
           <button type="button" onClick={() => step(-1)} aria-label="Mois précédent" className="grid h-9 w-9 place-items-center rounded-full border border-line hover:bg-sage-soft">←</button>
           <div className="text-center"><AnimatePresence mode="wait"><motion.p key={month} initial={{ opacity: 0, y: dir * 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -dir * 10 }} className="font-display text-2xl capitalize">{label}</motion.p></AnimatePresence><p className="text-xs text-forest-soft">{inMonth.length} action{inMonth.length > 1 ? "s" : ""} ce mois-ci{c ? ` · lancement de « ${c.name} » le ${new Date(`${c.startDate}T12:00`).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}` : ""}</p></div>
