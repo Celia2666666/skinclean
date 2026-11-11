@@ -9,6 +9,12 @@ import fs from "node:fs";
 const db = new DatabaseSync("data/hub/marketing-hub.sqlite", { readOnly: true });
 const all = (c) => db.prepare("select data from docs where collection = ?").all(c).map((r) => JSON.parse(r.data));
 
+// Textes provisoires du Hub remplacés pour la version publique
+const FIX = { "Dernières dates de commande pour une livraison avant Noël : à compléter selon le transporteur.": "Pense à commander tôt pour recevoir tes cadeaux avant Noël : la livraison est offerte dès 100 € d'achat." };
+// Le Skin Diag compte 10 questions partout sur le site
+const FIX_RE = [[/\b8 questions\b/g, "10 questions"]];
+const fix = (v) => JSON.parse(JSON.stringify(v), (_, x) => (typeof x === "string" ? FIX_RE.reduce((t, [re, to]) => t.replace(re, to), FIX[x] ?? x) : x));
+
 // Seuls les fichiers versionnés dans le dépôt sont disponibles en ligne
 const tracked = new Set(fs.readFileSync(0, "utf8").split("\n").filter(Boolean).map((f) => f.replace(/^public/, "")));
 const mediaOk = (v) => [...JSON.stringify(v).matchAll(/"(\/media\/[^"]+)"/g)].every(([, m]) => tracked.has(m));
@@ -22,7 +28,7 @@ const roadmap = all("roadmap").sort((a, b) => a.month.localeCompare(b.month)).ma
 const campaigns = all("campaigns").map(({ id, name, status, color, objective, target, concept, message, channels, budget, kpis, startDate, durationDays, plan }) => ({ id, name, status, color, objective, target, concept, message, channels, budget: (budget ?? []).reduce((a, b) => a + b.amount, 0), kpis, startDate: startDate ?? null, durationDays: durationDays ?? null, plan: plan ?? [] }));
 
 const READY = ["valide", "publie_test", "a_valider"];
-const posts = all("posts")
+const posts = fix(all("posts"))
   .filter((p) => ["tiktok", "instagram", "pinterest", "facebook", "story"].includes(p.platform) && READY.includes(p.status) && mediaOk(p.visual))
   .map(({ id, title, date, platform, format, objective, pillar, campaignId, visual, caption, hashtags, cta, status }) => ({ id, title, date: date ?? null, platform, format, objective, pillar, campaignId, visual, caption, hashtags, cta, status, comments: [], productIds: [] }));
 // Vidéos vérifiées image par image : chaque publication reçoit une vidéo qui montre ce que dit sa légende.
@@ -60,15 +66,12 @@ posts.push(...unique);
 // La vidéo tournée par l'équipe (TikTok « routine sérum ») en premier
 posts.sort((a, b) => Number(b.visual?.src?.includes("tiktok-routine") ?? 0) - Number(a.visual?.src?.includes("tiktok-routine") ?? 0));
 
-const ads = all("ads").map(({ id, name, platform, status, objective, audience, ads: creatives, budget }) => ({ id, name, platform, status, objective, audience, creatives: (creatives ?? []).slice(0, 1), budget: budget ?? null }));
+const ads = fix(all("ads")).map(({ id, name, platform, campaignId, status, objective, audience, messages, ads: creatives, keywords, negativeKeywords, dailyBudget, totalBudget, startDate, endDate, url }) => ({ id, name, platform, campaignId, status, objective, audience, messages: messages ?? [], creatives: creatives ?? [], keywords: keywords ?? [], negativeKeywords: negativeKeywords ?? [], dailyBudget: dailyBudget ?? null, totalBudget: totalBudget ?? null, startDate: startDate ?? null, endDate: endDate ?? null, url: url ?? null }));
 
 // Le blog /conseils n'est pas publié en ligne : les liens vers d'autres articles deviennent du texte simple
 const unlinkBlog = (md) => md.replace(/\[([^\]]+)\]\(\/conseils[^)]*\)/g, "$1");
-const articles = all("articles").filter((a) => mediaOk(a)).map(({ id, slug, status, keyword, secondary, title, metaTitle, metaDescription, excerpt, cover, content, author, readingMinutes }) => ({ id, slug, status, keyword, secondary, title, metaTitle, metaDescription, excerpt, cover, content: unlinkBlog(content), author, readingMinutes }));
+const articles = fix(all("articles")).filter((a) => mediaOk(a)).map(({ id, slug, status, keyword, secondary, title, metaTitle, metaDescription, excerpt, cover, content, author, readingMinutes }) => ({ id, slug, status, keyword, secondary, title, metaTitle, metaDescription, excerpt, cover, content: unlinkBlog(content), author, readingMinutes }));
 const keywords = all("keywords").sort((a, b) => a.priority - b.priority).map(({ id, keyword, cluster, intent, priority, targetUrl, difficulty }) => ({ id, keyword, cluster, intent, priority, targetUrl, difficulty }));
-// Textes provisoires du Hub remplacés pour la version publique
-const FIX = { "Dernières dates de commande pour une livraison avant Noël : à compléter selon le transporteur.": "Pense à commander tôt pour recevoir tes cadeaux avant Noël : la livraison est offerte dès 100 € d'achat." };
-const fix = (v) => JSON.parse(JSON.stringify(v), (_, x) => (typeof x === "string" && FIX[x] ? FIX[x] : x));
 const emails = fix(all("emails")).filter((e) => mediaOk(e)).map(({ id, name, status, subject, preheader, blocks, campaignId }) => ({ id, name, status, subject, preheader, blocks, campaignId }));
 
 const out = { exportedAt: new Date().toISOString().slice(0, 10), strategy, personas, objectives, roadmap, campaigns, posts, ads, articles, keywords, emails };

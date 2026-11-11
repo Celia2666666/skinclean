@@ -42,12 +42,15 @@ const gradient = (w, h, from = 0.0, to = 0.82) => Buffer.from(`<svg xmlns="http:
 async function product({ file, w, h, bg, items, scale = 0.62, bottom = 0.08, ...text }) {
   const comps = [];
   const n = items.length;
+  // Plusieurs produits : chacun dans une case de même largeur, centré, posés sur la même ligne de sol
+  const margin = w * 0.07, gap = w * 0.03;
+  const cell = n === 1 ? w : (w - 2 * margin - gap * (n - 1)) / n;
   for (const [i, it] of items.entries()) {
     const ph = Math.round(h * scale * (n > 1 ? 0.78 : 1));
-    const img = await sharp(packshot(it)).resize({ height: ph, fit: "inside" }).toBuffer();
+    const trimmed = await sharp(packshot(it)).trim().toBuffer();
+    const img = await sharp(trimmed).resize({ height: ph, width: n === 1 ? undefined : Math.round(cell), fit: "inside" }).toBuffer();
     const meta = await sharp(img).metadata();
-    const span = w * 0.78;
-    const cx = n === 1 ? w / 2 : w * 0.11 + (span / (n - 1)) * i;
+    const cx = n === 1 ? w / 2 : margin + cell * i + gap * i + cell / 2;
     comps.push({ input: img, left: Math.round(cx - meta.width / 2), top: Math.round(h * (1 - bottom) - meta.height) });
   }
   comps.push({ input: textLayer({ w, h, ...text }), left: 0, top: 0 });
@@ -84,7 +87,7 @@ await tips({ file: "post-2.webp", ...SQ, bg: C.forest, tag: "Instagram", tagBg: 
 await beforeAfter({ file: "post-3.webp", ...SQ, tag: "Instagram", lines: ["30 jours de", "Skin Journal"], size: 92, color: C.forest, y0: 250, sub: "Photos et témoignage de démonstration.", subColor: C.sageDeep });
 // Carrousels Instagram : pages suivantes des posts 1 et 2 (la page 1 est post-1.webp / post-2.webp)
 await tips({ file: "post-1-2.webp", ...SQ, bg: C.forest, tag: "Étape 1", tagBg: C.sage, lines: ["Fais ton", "Skin Diag"], size: 112, color: C.ivory, y0: 320, bullets: ["10 questions sur ta peau", "2 minutes, c'est gratuit", "Ton temps et ton budget comptent"], bulletColor: C.sage, footer: "2/4 · " + sign, footerColor: C.sage });
-await product({ file: "post-1-3.webp", ...SQ, bg: C.sand, items: ["clear-foam-nettoyant-purifiant", "clear-skin-serum-niacinamide", "cloud-cream-creme-hydratante"], scale: 0.5, tag: "Étape 2", lines: ["Reçois une", "routine courte"], size: 92, color: C.forest, y0: 250, sub: "3 à 6 soins qui vont ensemble.", subColor: C.sageDeep, footer: "3/4 · " + sign, footerColor: C.sageDeep });
+await product({ file: "post-1-3.webp", ...SQ, bg: C.sand, items: ["clear-foam-nettoyant-purifiant", "clear-skin-serum-niacinamide", "cloud-cream-creme-hydratante"], scale: 0.5, bottom: 0.13, tag: "Étape 2", lines: ["Reçois une", "routine courte"], size: 92, color: C.forest, y0: 250, sub: "3 à 6 soins qui vont ensemble.", subColor: C.sageDeep, footer: "3/4 · " + sign, footerColor: C.sageDeep });
 await beforeAfter({ file: "post-1-4.webp", ...SQ, tag: "Étape 3", lines: ["Suis tes progrès", "sur 30 jours"], size: 84, color: C.forest, y0: 250, sub: "Skin Journal · photos de démonstration", subColor: C.sageDeep });
 await product({ file: "post-2-2.webp", ...SQ, bg: C.sand, items: ["glow-shot-serum-vitamine-c"], scale: 0.5, tag: "Le matin", lines: ["Vitamine C"], size: 110, color: C.forest, y0: 260, sub: "Glow Shot sur peau propre, pour l'éclat.", subColor: C.sageDeep, footer: "2/5 · " + sign, footerColor: C.sageDeep });
 await product({ file: "post-2-3.webp", ...SQ, bg: C.sage, items: ["clear-skin-serum-niacinamide"], scale: 0.5, tag: "Le soir", lines: ["Niacinamide"], size: 110, color: C.forest, y0: 260, sub: "Clear Skin, pour les pores et les imperfections.", subColor: C.sageDeep, footer: "3/5 · " + sign, footerColor: C.sageDeep });

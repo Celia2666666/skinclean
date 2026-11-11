@@ -4,8 +4,8 @@ import { PageHero } from "@/components/catalog/PageHero";
 import { brandPlatform, calendar, channels, firstTen, kpis, partnerships, posts } from "@/data/communication";
 import { sources, src } from "@/data/strategy";
 import { hubData, hubSection } from "@/data/hub-public";
-import { AdminLink, AdsGrid, BlockExplorer, CampaignStrip, PillarBars, StrategyTabs } from "@/components/strategy/HubSections";
-import { EditorialCalendar, FeedLibrary, NewsletterShelf, PlanPosts, SeoStudio } from "@/components/strategy/HubStudio";
+import { AdminLink, BlockExplorer, CampaignStrip, PillarBars, StrategyTabs } from "@/components/strategy/HubSections";
+import { AdsStudio, EditorialCalendar, FeedLibrary, NewsletterShelf, PlanPosts, SeoStudio } from "@/components/strategy/HubStudio";
 import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
@@ -164,7 +164,7 @@ export default function CommunicationPage() {
             <div>
               <p className="mb-1 font-display text-2xl">Publicité payante (SEA) : les annonces préparées</p>
               <p className="mb-4 text-sm text-forest-soft">Annonces prêtes à être programmées. Aucune n&apos;a été diffusée et aucun budget n&apos;a été dépensé : chaque dépense doit d&apos;abord être validée.</p>
-              <AdsGrid />
+              <AdsStudio />
               <AdminLink href="/hub/ads" label="Gérer les publicités dans l'Admin" hint="Google Ads, Meta Ads et TikTok Ads : ciblage, budget, validation" />
             </div>
           </div>
@@ -173,7 +173,7 @@ export default function CommunicationPage() {
         {/* Partenariats */}
         <section aria-labelledby="partenariats">
           <H2 id="partenariats" kicker="9 · Partenariats">Cinq partenaires possibles</H2>
-          <p className="-mt-4 mb-6 text-sm text-forest-soft">Pistes de partenariat à proposer : aucun accord n&apos;est signé à ce jour.</p>
+          <p className="-mt-4 mb-6 text-sm text-forest-soft">Pistes de partenariat à proposer : aucun accord n&apos;est signé à ce jour. Pour chacune, un exemple réel à démarcher (lien externe) : ces structures ne travaillent pas avec SKINCLEAN.</p>
           <div className="no-scrollbar -mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
             <table className="w-full min-w-[860px] border-collapse text-left text-sm">
               <thead><tr className="border-b border-forest/20 text-xs uppercase tracking-[0.06em] text-forest-soft"><th className="py-3 pr-4 font-medium">Partenaire</th><th className="py-3 pr-4 font-medium">Ce que nous proposons</th><th className="py-3 pr-4 font-medium">Ce qu&apos;ils y gagnent</th><th className="py-3 font-medium">Première action</th></tr></thead>
@@ -183,7 +183,7 @@ export default function CommunicationPage() {
                     <td className="py-4 pr-4"><span className="block font-medium">{p.who}</span><span className="text-xs text-sage-deep">{p.type}</span></td>
                     <td className="py-4 pr-4 text-forest-soft">{p.offer}</td>
                     <td className="py-4 pr-4 text-forest-soft">{p.gain}</td>
-                    <td className="py-4 text-forest-soft">{p.first}</td>
+                    <td className="py-4 text-forest-soft">{p.first}{p.example && <a href={p.example.url} target="_blank" rel="noopener noreferrer" className="group mt-2 flex w-fit items-center gap-1.5 rounded-full border border-forest/30 px-3 py-1 text-xs text-forest transition hover:bg-forest hover:text-ivory"><span className="text-[0.6rem] uppercase tracking-[0.08em] opacity-70">Exemple réel</span>{p.example.label}<span className="transition group-hover:translate-x-0.5" aria-hidden>↗</span></a>}</td>
                   </tr>
                 ))}
               </tbody>

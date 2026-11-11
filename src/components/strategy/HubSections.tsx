@@ -2,8 +2,6 @@
 import { AnimatePresence, animate, motion, useInView, useReducedMotion, useScroll, useSpring } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import type { Post } from "@/lib/hub/types";
-import { VisualThumb } from "@/components/hub/design/DesignPreview";
 import { hubData as hub, type HubBlock as Block, type HubSection } from "@/data/hub-public";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -369,33 +367,48 @@ export function CampaignStrip() {
   );
 }
 
-const AD_PLATFORM: Record<string, string> = { google_ads: "Google Ads", meta_ads: "Meta Ads", tiktok_ads: "TikTok Ads" };
-const AD_STATUS: Record<string, string> = { brouillon: "Brouillon", a_valider: "À valider", prete: "Prête" };
 
-/** Publicités préparées (jamais diffusées) : aperçu de l'annonce. */
-export function AdsGrid() {
+/** Chiffre qui défile jusqu'à sa valeur (« 5 millions », « 66 % », « 4,71 Md$ », « +10 % »), le reste du texte est conservé. */
+export function CountFigure({ value }: { value: string }) {
+  const m = /^([+−-]?)(\d+(?:,\d+)?)(.*)$/.exec(value);
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
+  const reduce = useReducedMotion();
+  useEffect(() => {
+    if (!m || !inView || reduce || !ref.current) return;
+    const el = ref.current;
+    const target = Number(m[2].replace(",", "."));
+    const decimals = m[2].includes(",") ? m[2].split(",")[1].length : 0;
+    const c = animate(0, target, { duration: 1.3, ease: EASE, onUpdate: (v) => { el.textContent = v.toFixed(decimals).replace(".", ","); } });
+    return () => c.stop();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inView, reduce, value]);
+  if (!m) return <>{value}</>;
+  return <>{m[1]}<span ref={ref}>{m[2]}</span>{m[3]}</>;
+}
+
+/** Comparaison des prix au 100 ml : barres qui se remplissent, SKINCLEAN mis en avant. */
+export function PriceBars({ rows }: { rows: { brand: string; price: number; per100: number }[] }) {
+  const max = Math.max(...rows.map((r) => r.per100));
+  const eur = (n: number) => n.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {hub.ads.map((a, i) => {
-        const cr = a.creatives[0] as { headline?: string; text?: string; description?: string; cta?: string; visual?: Post["visual"] } | undefined;
+    <div className="mb-8 space-y-3 border border-line bg-ivory p-5 md:p-6">
+      <p className="text-xs font-medium uppercase tracking-[0.08em] text-forest-soft">Prix ramené à 100 ml</p>
+      {rows.map((r, i) => {
+        const ours = r.brand === "SKINCLEAN";
         return (
-          <motion.div key={a.id} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55, delay: (i % 4) * 0.07, ease: EASE }} className="flex flex-col border border-line bg-ivory p-5">
-            <div className="flex items-center justify-between gap-2 text-[0.7rem]"><span className="chip bg-forest text-ivory">{AD_PLATFORM[a.platform]}</span><span className="text-forest-soft">{AD_STATUS[a.status] ?? a.status}</span></div>
-            <p className="mt-3 font-medium">{a.name}</p>
-            <p className="mt-1 text-xs text-forest-soft">{a.objective}</p>
-            {cr && (
-              <div className="mt-4 flex-1 rounded-md bg-cream p-3 text-xs">
-                <p className="text-[0.6rem] uppercase tracking-wide text-forest-soft">Sponsorisé · skinclean</p>
-                {cr.visual && <div className="mt-2 overflow-hidden rounded"><VisualThumb visual={cr.visual} width={260} className={cr.visual.kind === "video" ? "max-h-56" : undefined} /></div>}
-                {cr.headline && <p className="mt-1 font-medium text-[#1a0dab]">{cr.headline}</p>}
-                {cr.text && <p className="mt-1 text-forest-soft">{cr.text}</p>}
-                {cr.cta && <span className="mt-2 inline-block rounded bg-forest px-2 py-1 text-[0.65rem] text-ivory">{cr.cta}</span>}
-              </div>
-            )}
-            <p className="mt-3 text-[0.7rem] text-forest-soft">Cible : {a.audience.age} ans, {a.audience.locations}</p>
-          </motion.div>
+          <div key={r.brand} className="grid grid-cols-[7.5rem_1fr] items-center gap-3 text-sm md:grid-cols-[10rem_1fr]">
+            <span className={clsx("truncate", ours && "font-semibold")}>{r.brand}</span>
+            <div className="relative h-8 overflow-hidden rounded-full bg-cream">
+              <motion.div initial={{ width: 0 }} whileInView={{ width: `${Math.max(14, (r.per100 / max) * 100)}%` }} viewport={{ once: true }} transition={{ duration: 1.1, delay: i * 0.15, ease: EASE }}
+                className={clsx("flex h-full items-center justify-end rounded-full px-3 text-xs font-medium", ours ? "bg-forest text-ivory" : "bg-sage text-forest")}>
+                {eur(r.per100)}
+              </motion.div>
+            </div>
+          </div>
         );
       })}
+      <p className="text-xs text-forest-soft">SKINCLEAN se place entre l&apos;actif nu à petit prix et la dermocosmétique de pharmacie : plus accompagné que le premier, plus accessible que la seconde.</p>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 {
- "exportedAt": "2026-11-10",
+ "exportedAt": "2026-11-11",
  "strategy": [
   {
    "id": "marche",
@@ -21942,6 +21942,7 @@
    "id": "ad-google-niacinamide",
    "name": "Search — Sérum niacinamide",
    "platform": "google_ads",
+   "campaignId": "camp-niacinamide",
    "status": "brouillon",
    "objective": "Trafic qualifié sur les requêtes actif / problème",
    "audience": {
@@ -21952,6 +21953,10 @@
      "Requêtes génériques skincare"
     ]
    },
+   "messages": [
+    "Niacinamide 10 % + zinc",
+    "Pores et brillances"
+   ],
    "creatives": [
     {
      "id": "g2",
@@ -21961,12 +21966,41 @@
      "cta": "Découvrir Clear Skin"
     }
    ],
-   "budget": null
+   "keywords": [
+    {
+     "text": "sérum niacinamide",
+     "match": "expression"
+    },
+    {
+     "text": "niacinamide peau grasse",
+     "match": "expression"
+    },
+    {
+     "text": "sérum pores dilatés",
+     "match": "large"
+    },
+    {
+     "text": "niacinamide 10 zinc",
+     "match": "exact"
+    }
+   ],
+   "negativeKeywords": [
+    "the ordinary",
+    "dupe",
+    "diy",
+    "maison"
+   ],
+   "dailyBudget": 20,
+   "totalBudget": 500,
+   "startDate": "2026-12-19",
+   "endDate": "2027-01-13",
+   "url": "https://www.skinclean.fr/produits/clear-skin-serum-niacinamide"
   },
   {
    "id": "ad-google-noel",
    "name": "Search — Idées cadeaux skincare",
    "platform": "google_ads",
+   "campaignId": "camp-noel",
    "status": "brouillon",
    "objective": "Trafic sur le guide cadeaux",
    "audience": {
@@ -21977,6 +22011,9 @@
      "Requêtes cadeaux beauté"
     ]
    },
+   "messages": [
+    "Le cadeau qu'on utilise vraiment"
+   ],
    "creatives": [
     {
      "id": "g3",
@@ -21986,12 +22023,35 @@
      "cta": "Voir le guide"
     }
    ],
-   "budget": null
+   "keywords": [
+    {
+     "text": "coffret soin visage",
+     "match": "expression"
+    },
+    {
+     "text": "idée cadeau skincare",
+     "match": "expression"
+    },
+    {
+     "text": "coffret skincare femme",
+     "match": "large"
+    }
+   ],
+   "negativeKeywords": [
+    "homme rasage",
+    "gratuit"
+   ],
+   "dailyBudget": 25,
+   "totalBudget": 400,
+   "startDate": "2026-12-01",
+   "endDate": "2026-12-18",
+   "url": "https://www.skinclean.fr/kits"
   },
   {
    "id": "ad-meta-lancement",
    "name": "Meta — Notoriété lancement",
    "platform": "meta_ads",
+   "campaignId": "camp-lancement",
    "status": "a_valider",
    "objective": "Notoriété — portée maximale",
    "audience": {
@@ -22006,6 +22066,10 @@
     ],
     "exclusions": "Abonnés actuels de la page"
    },
+   "messages": [
+    "Ta peau a son histoire",
+    "Des formules lisibles, une routine faite pour toi"
+   ],
    "creatives": [
     {
      "id": "m1",
@@ -22099,14 +22163,90 @@
        ]
       }
      }
+    },
+    {
+     "id": "m2",
+     "headline": "Ta routine en 2 minutes",
+     "text": "Réponds à 10 questions, reçois ta routine personnalisée.",
+     "cta": "Faire le test",
+     "visual": {
+      "kind": "design",
+      "design": {
+       "w": 1080,
+       "h": 1920,
+       "pages": [
+        {
+         "bg": {
+          "type": "color",
+          "color": "#D8DFD4"
+         },
+         "layers": [
+          {
+           "id": "lmvv1cdr31v",
+           "type": "logo",
+           "x": 356.4,
+           "y": 249.60000000000002,
+           "w": 367.20000000000005,
+           "variant": "wordmark",
+           "tint": "dark"
+          },
+          {
+           "id": "lmvv1cdr31w",
+           "type": "shape",
+           "x": 86.4,
+           "y": 448.20685714285713,
+           "w": 907.2,
+           "h": 422.4,
+           "color": "#FFFFFF",
+           "radius": 40,
+           "opacity": 0.95
+          },
+          {
+           "id": "lmvv1cdr31x",
+           "type": "text",
+           "x": 162,
+           "y": 448.20685714285713,
+           "w": 756,
+           "text": "Ta routine en 2 minutes",
+           "size": 77.75999999999999,
+           "weight": 500,
+           "color": "#1F3329",
+           "align": "center",
+           "font": "display",
+           "lineHeight": 1.12,
+           "maxH": 422.4,
+           "valign": "middle"
+          },
+          {
+           "id": "lmvv1cdr31y",
+           "type": "image",
+           "x": 237.6,
+           "y": 947.406857142857,
+           "w": 604.8000000000001,
+           "h": 626.9931428571429,
+           "src": "/media/packshots/dew-drop-toner-hydratant.png",
+           "fit": "contain"
+          }
+         ]
+        }
+       ]
+      }
+     }
     }
    ],
-   "budget": null
+   "keywords": [],
+   "negativeKeywords": [],
+   "dailyBudget": 40,
+   "totalBudget": 1200,
+   "startDate": "2026-10-30",
+   "endDate": "2026-11-28",
+   "url": "https://www.skinclean.fr/"
   },
   {
    "id": "ad-meta-diag",
    "name": "Meta — Skin Diag",
    "platform": "meta_ads",
+   "campaignId": "camp-skin-diag",
    "status": "brouillon",
    "objective": "Trafic — diagnostics complétés",
    "audience": {
@@ -22119,11 +22259,14 @@
      "Routine beauté"
     ]
    },
+   "messages": [
+    "2 minutes pour comprendre ta peau"
+   ],
    "creatives": [
     {
      "id": "m3",
      "headline": "Ta peau, enfin expliquée",
-     "text": "8 questions, 2 minutes, une routine adaptée envoyée par e-mail. Gratuit et sans engagement.",
+     "text": "10 questions, 2 minutes, une routine adaptée envoyée par e-mail. Gratuit et sans engagement.",
      "cta": "Faire mon Skin Diag",
      "visual": {
       "kind": "design",
@@ -22240,12 +22383,19 @@
      }
     }
    ],
-   "budget": null
+   "keywords": [],
+   "negativeKeywords": [],
+   "dailyBudget": 30,
+   "totalBudget": 900,
+   "startDate": "2026-11-11",
+   "endDate": "2026-12-10",
+   "url": "https://www.skinclean.fr/skin-diag"
   },
   {
    "id": "ad-meta-black-friday",
    "name": "Meta — Glow Friday kits",
    "platform": "meta_ads",
+   "campaignId": "camp-black-friday",
    "status": "brouillon",
    "objective": "Trafic vers les kits",
    "audience": {
@@ -22258,6 +22408,9 @@
     ],
     "exclusions": "—"
    },
+   "messages": [
+    "Choisir mieux plutôt que plus"
+   ],
    "creatives": [
     {
      "id": "m4",
@@ -22353,12 +22506,19 @@
      }
     }
    ],
-   "budget": null
+   "keywords": [],
+   "negativeKeywords": [],
+   "dailyBudget": 120,
+   "totalBudget": 1000,
+   "startDate": "2026-11-25",
+   "endDate": "2026-11-30",
+   "url": "https://www.skinclean.fr/kits"
   },
   {
    "id": "ad-google-marque",
    "name": "Search — Marque SKINCLEAN",
    "platform": "google_ads",
+   "campaignId": "camp-lancement",
    "status": "prete",
    "objective": "Trafic qualifié — protéger les recherches sur la marque",
    "audience": {
@@ -22369,6 +22529,10 @@
      "Requêtes marque"
     ]
    },
+   "messages": [
+    "Site officiel SKINCLEAN",
+    "Skin Diag gratuit en 2 minutes"
+   ],
    "creatives": [
     {
      "id": "g1",
@@ -22378,12 +22542,36 @@
      "cta": "Découvrir"
     }
    ],
-   "budget": null
+   "keywords": [
+    {
+     "text": "skinclean",
+     "match": "exact"
+    },
+    {
+     "text": "skin clean soin",
+     "match": "expression"
+    },
+    {
+     "text": "skinclean avis",
+     "match": "expression"
+    }
+   ],
+   "negativeKeywords": [
+    "gratuit échantillon",
+    "emploi",
+    "recrutement"
+   ],
+   "dailyBudget": 10,
+   "totalBudget": 300,
+   "startDate": "2026-10-30",
+   "endDate": "2026-11-28",
+   "url": "https://www.skinclean.fr/"
   },
   {
    "id": "ad-tiktok-diag",
    "name": "TikTok — Skin Diag",
    "platform": "tiktok_ads",
+   "campaignId": "camp-skin-diag",
    "status": "brouillon",
    "objective": "Vues vidéo + trafic Skin Diag",
    "audience": {
@@ -22395,6 +22583,9 @@
      "Skincare"
     ]
    },
+   "messages": [
+    "J'ai enfin compris ma peau"
+   ],
    "creatives": [
     {
      "id": "t1",
@@ -22468,12 +22659,19 @@
      }
     }
    ],
-   "budget": null
+   "keywords": [],
+   "negativeKeywords": [],
+   "dailyBudget": 25,
+   "totalBudget": 700,
+   "startDate": "2026-11-11",
+   "endDate": "2026-12-08",
+   "url": "https://www.skinclean.fr/skin-diag"
   },
   {
    "id": "ad-tiktok-niacinamide",
    "name": "TikTok — Clear Skin niacinamide",
    "platform": "tiktok_ads",
+   "campaignId": "camp-niacinamide",
    "status": "brouillon",
    "objective": "Vues vidéo",
    "audience": {
@@ -22485,6 +22683,9 @@
      "Acne"
     ]
    },
+   "messages": [
+    "La niacinamide sans blabla"
+   ],
    "creatives": [
     {
      "id": "t2",
@@ -22558,7 +22759,13 @@
      }
     }
    ],
-   "budget": null
+   "keywords": [],
+   "negativeKeywords": [],
+   "dailyBudget": 20,
+   "totalBudget": 500,
+   "startDate": "2026-12-19",
+   "endDate": "2027-01-12",
+   "url": "https://www.skinclean.fr/produits/clear-skin-serum-niacinamide"
   }
  ],
  "articles": [

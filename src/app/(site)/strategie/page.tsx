@@ -5,8 +5,8 @@ import { euro } from "@/lib/format";
 import { businessModel, competitors, market, ourProduct, personas, pricing, problem, sources, src } from "@/data/strategy";
 import { promise } from "@/data/offer";
 import { hubSection } from "@/data/hub-public";
-import { BlockExplorer, Funnel, KindLegend, ObjectiveCards, PersonaDeck, RoadmapTimeline, SwotGrid } from "@/components/strategy/HubSections";
-import { Reveal } from "@/components/ui/Reveal";
+import { BlockExplorer, CountFigure, Funnel, KindLegend, ObjectiveCards, PersonaDeck, PriceBars, RoadmapTimeline, SwotGrid } from "@/components/strategy/HubSections";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "Stratégie : pourquoi ce produit",
@@ -63,14 +63,14 @@ export default function StrategyPage() {
         {/* 1. Problème */}
         <section aria-labelledby="probleme">
           <H2 id="probleme" kicker="1 · Le problème">{problem.title}</H2>
-          <div className="grid gap-4 md:grid-cols-3">
-            {problem.who.map((w) => (
-              <div key={w.figure} className="border border-line bg-ivory p-6">
-                <p className="font-display text-5xl">{w.figure}<Cite id={w.source} /></p>
+          <Stagger className="grid gap-4 md:grid-cols-3">
+            {problem.who.map((w, i) => (
+              <StaggerItem key={w.figure} className={`rounded-[28px] p-6 transition duration-500 hover:-translate-y-1.5 md:p-8 ${["bg-sage-soft", "bg-[#F3E9E2]", "bg-sage"][i % 3]}`}>
+                <p className="whitespace-nowrap font-display text-5xl"><CountFigure value={w.figure} /><Cite id={w.source} /></p>
                 <p className="mt-3 text-sm text-forest-soft">{w.text}</p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             <div className="bg-sage-soft p-6"><p className="font-medium">À quelle fréquence ?</p><p className="mt-2 text-sm text-forest-soft">{problem.frequency}</p></div>
             <div className="bg-sage-soft p-6"><p className="font-medium">Ce que ça coûte aujourd&apos;hui</p><p className="mt-2 text-sm text-forest-soft">{problem.cost.text}</p><p className="mt-3 border-l-2 border-forest pl-3 text-sm"><span className="chip mr-2 bg-ivory text-[0.6rem]">Estimation</span>{problem.cost.estimate}</p></div>
@@ -99,14 +99,14 @@ export default function StrategyPage() {
         {/* 3. Marché */}
         <section aria-labelledby="marche">
           <H2 id="marche" kicker="3 · Le marché">Taille, croissance et tendances</H2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {market.figures.map((f) => (
-              <div key={f.figure} className="bg-forest p-6 text-ivory">
-                <p className="font-display text-4xl">{f.figure}<Cite id={f.source} /></p>
-                <p className="mt-3 text-sm text-ivory/80">{f.text}</p>
-              </div>
+          <Stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {market.figures.map((f, i) => (
+              <StaggerItem key={f.figure} className={`rounded-[28px] p-6 transition duration-500 hover:-translate-y-1.5 ${["bg-forest text-ivory", "bg-sage-deep text-ivory", "bg-sage", "bg-[#F3E9E2]"][i % 4]}`}>
+                <p className="font-display text-4xl"><CountFigure value={f.figure} /><Cite id={f.source} /></p>
+                <p className={`mt-3 text-sm ${i < 2 ? "text-ivory/80" : "text-forest-soft"}`}>{f.text}</p>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {market.trends.map((t) => (
               <div key={t.t} className="border border-line bg-ivory p-6"><p className="font-medium">{t.t}<Cite id={t.source} /></p><p className="mt-2 text-sm text-forest-soft">{t.d}</p></div>
@@ -125,6 +125,7 @@ export default function StrategyPage() {
         <section aria-labelledby="concurrence">
           <H2 id="concurrence" kicker="4 · La concurrence">Trois concurrents réels, un produit comparable</H2>
           <p className="-mt-4 mb-6 max-w-3xl text-forest-soft">Comparaison sur le produit phare de chacun pour les peaux à imperfections : un sérum à la niacinamide ou à l&apos;acide salicylique de 30 ml. Prix publics TTC relevés sur les sites officiels.</p>
+          <PriceBars rows={rows} />
           <div className="no-scrollbar -mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
             <table className="w-full min-w-[820px] border-collapse text-left text-sm">
               <thead><tr className="border-b border-forest/20 text-xs uppercase tracking-[0.06em] text-forest-soft"><th className="py-3 pr-4 font-medium">Marque</th><th className="py-3 pr-4 font-medium">Produit comparé</th><th className="py-3 pr-4 text-right font-medium">Prix TTC</th><th className="py-3 pr-4 text-right font-medium">€ / 100 ml</th><th className="py-3 pr-4 font-medium">Positionnement</th><th className="py-3 font-medium">Ce qui nous distingue</th></tr></thead>

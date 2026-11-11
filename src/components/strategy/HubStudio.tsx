@@ -540,18 +540,21 @@ const PREP = [{ d: -21, t: "Brief de campagne" }, { d: -14, t: "Production des c
 const DAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 const ymd = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const addDays = (s: string, n: number) => { const d = new Date(`${s}T12:00`); d.setDate(d.getDate() + n); return ymd(d); };
-interface CalEvent { date: string; title: string; kind: string; campaign?: string; color?: string; detail?: string; plan?: PlanPost }
+interface CalEvent { date: string; title: string; kind: string; campaign?: string; color?: string; detail?: string; plan?: PlanPost; emailId?: string }
 
 const PLAN_KIND: Record<string, string> = { Instagram: "instagram", TikTok: "tiktok", Pinterest: "pinterest", Newsletter: "newsletter", Partenariat: "partenariat", Bilan: "bilan" };
 /** Date d'une ligne du plan de 4 semaines (23 novembre au 20 décembre 2026) : « Lun. 23 » = novembre, « Mar. 1ᵉʳ » = décembre. */
 const planDay = (day: string) => { const n = Number(day.replace(/\D/g, "")); return ymd(new Date(2026, n >= 23 ? 10 : 11, n, 12)); };
 
+/** Newsletters du plan des 4 semaines → e-mails prêts. */
+const PLAN_EMAIL: [string, string][] = [["Bienvenue", "mail-bienvenue"], ["Winter Rescue", "mail-collection"], ["cadeaux", "mail-saison"]];
+
 function allEvents(): CalEvent[] {
   const ev: CalEvent[] = [];
-  for (const c of hub.campaigns) if (c.startDate) for (const a of c.plan) ev.push({ date: addDays(c.startDate, a.day), title: a.title, kind: a.platform, campaign: c.id, color: c.color, detail: [a.idea, a.hour].filter(Boolean).join(" · ") });
+  for (const c of hub.campaigns) if (c.startDate) for (const a of c.plan) ev.push({ date: addDays(c.startDate, a.day), title: a.title, kind: a.platform, campaign: c.id, color: c.color, detail: [a.idea, a.hour].filter(Boolean).join(" · "), emailId: a.platform === "newsletter" ? hub.emails.find((m) => m.campaignId === c.id)?.id : undefined });
   for (const w of planCalendar) for (const it of w.items) {
     const post = it.postId ? planPosts.find((p) => p.id === it.postId) : undefined;
-    ev.push({ date: post?.dateISO ?? planDay(it.day), title: post?.title ?? it.action, kind: PLAN_KIND[it.channel] ?? "bilan", campaign: "plan", detail: w.theme, plan: post });
+    ev.push({ date: post?.dateISO ?? planDay(it.day), title: post?.title ?? it.action, kind: PLAN_KIND[it.channel] ?? "bilan", campaign: "plan", detail: w.theme, plan: post, emailId: it.channel === "Newsletter" ? PLAN_EMAIL.find(([k]) => it.action.includes(k))?.[1] : undefined });
   }
   return ev;
 }
@@ -600,7 +603,8 @@ export function EditorialCalendar() {
     if (first) { const m = (id && id !== "plan" ? addDays(first, -21) : first).slice(0, 7); setDir(m >= month ? 1 : -1); setMonth(m); }
   };
   const step = (n: number) => { const d = new Date(`${month}-01T12:00`); d.setMonth(d.getMonth() + n); setDir(n); setMonth(ymd(d).slice(0, 7)); };
-  const openEvent = (e: CalEvent) => { setDay(null); if (e.plan) setPlanOpen(withEdits(toHubPost(e.plan), edits)); else setOpen(e); };
+  const [mailOpen, setMailOpen] = useState<string | null>(null);
+  const openEvent = (e: CalEvent) => { setDay(null); if (e.plan) setPlanOpen(withEdits(toHubPost(e.plan), edits)); else if (e.emailId) setMailOpen(e.emailId); else setOpen(e); };
   const first = new Date(`${month}-01T12:00`);
   const startOffset = (first.getDay() + 6) % 7;
   const daysInMonth = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
@@ -750,6 +754,7 @@ export function EditorialCalendar() {
         )}
       </Sheet>
       <PostSheet post={planOpen ?? postOpen} onClose={() => { setPlanOpen(null); setPostOpen(null); }} />
+      <EmailSheet id={mailOpen} onClose={() => setMailOpen(null)} />
     </div>
   );
 }
@@ -778,14 +783,43 @@ function EmailFrame({ email }: { email: EmailCampaign }) {
   );
 }
 
+/** Une newsletter ouverte : l'e-mail tel qu'il arrivera, avec édition et validation. */
+function EmailSheet({ id, onClose }: { id: string | null; onClose: () => void }) {
+  const edits = useEdits();
+  const raw = (hub.emails as unknown as (EmailCampaign & { status: string })[]).find((e) => e.id === id);
+  const open = raw ? withEdits(raw, edits) : null;
+  return (
+    <Sheet open={!!open} onClose={onClose} label={open?.subject ?? "Newsletter"}>
+      {open && <EmailBody key={open.id} email={open} />}
+    </Sheet>
+  );
+}
+
+function EmailBody({ email: open }: { email: EmailCampaign & { status: string } }) {
+  const [editing, setEditing] = useState(false);
+  return (
+    <div className="grid md:grid-cols-[1fr_20rem]">
+      <div className="bg-sand p-4 md:p-8"><EmailFrame email={open} /></div>
+      <div className="p-6">
+        <p className="eyebrow text-sage-deep">Newsletter</p>
+        <p className="mt-2 font-display text-2xl leading-tight">{open.name}</p>
+        {editing ? (
+          <div className="mt-4"><EditForm fields={[{ key: "subject", label: "Objet" }, { key: "preheader", label: "Texte d'aperçu", long: true, rows: 3 }]} values={{ subject: open.subject, preheader: open.preheader }} onSave={(v) => { saveEdit(open.id, v); setEditing(false); }} onCancel={() => setEditing(false)} /></div>
+        ) : (
+          <dl className="mt-4 space-y-2 text-sm"><div><dt className="text-forest-soft">Objet</dt><dd>{open.subject}</dd></div><div><dt className="text-forest-soft">Texte d&apos;aperçu</dt><dd>{open.preheader}</dd></div></dl>
+        )}
+        <p className="mt-3 text-xs text-forest-soft">Envoyée uniquement aux personnes inscrites qui ont donné leur accord, avec un lien de désinscription.</p>
+        <div className="mt-5"><ValidationBar id={open.id} initial={open.status} onEdit={editing ? undefined : () => setEditing(true)} /></div>
+      </div>
+    </div>
+  );
+}
+
 export function NewsletterShelf() {
   const emails = hub.emails as unknown as (EmailCampaign & { status: string })[];
   const statuses = useStatuses();
   const edits = useEdits();
   const [openId, setOpenId] = useState<string | null>(null);
-  const [editing, setEditing] = useState(false);
-  const raw = emails.find((e) => e.id === openId);
-  const open = raw ? withEdits(raw, edits) : null;
   return (
     <div>
       <ul className="grid gap-3 md:grid-cols-3">
@@ -793,7 +827,7 @@ export function NewsletterShelf() {
           const e = withEdits(raw, edits);
           return (
             <motion.li key={e.id} initial={{ opacity: 0, y: 20, rotateX: 12 }} whileInView={{ opacity: 1, y: 0, rotateX: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: (i % 3) * 0.07, ease: EASE }}>
-              <button type="button" onClick={() => { setOpenId(e.id); setEditing(false); }} className="group relative flex h-full w-full flex-col overflow-hidden border border-line bg-ivory p-5 text-left transition hover:-translate-y-1 hover:shadow-[0_16px_30px_-18px_rgba(31,51,41,0.4)]">
+              <button type="button" onClick={() => setOpenId(e.id)} className="group relative flex h-full w-full flex-col overflow-hidden border border-line bg-ivory p-5 text-left transition hover:-translate-y-1 hover:shadow-[0_16px_30px_-18px_rgba(31,51,41,0.4)]">
                 <span aria-hidden className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-forest transition-transform duration-500 group-hover:scale-x-100" />
                 <span className="flex items-center justify-between gap-2"><span className="grid h-9 w-9 place-items-center rounded-full bg-sage-soft text-base transition group-hover:rotate-12" aria-hidden>✉</span><StatusPill status={(statuses[e.id] ?? e.status) as Status} /></span>
                 <span className="mt-4 text-xs uppercase tracking-[0.08em] text-sage-deep">{e.name}</span>
@@ -805,20 +839,112 @@ export function NewsletterShelf() {
           );
         })}
       </ul>
-      <Sheet open={!!open} onClose={() => setOpenId(null)} label={open?.subject ?? "Newsletter"}>
-        {open && (
-          <div className="grid md:grid-cols-[1fr_20rem]">
-            <div className="bg-sand p-4 md:p-8"><EmailFrame email={open} /></div>
-            <div className="p-6">
-              <p className="eyebrow text-sage-deep">Newsletter</p>
-              <p className="mt-2 font-display text-2xl leading-tight">{open.name}</p>
-              {editing ? (
-                <div className="mt-4"><EditForm fields={[{ key: "subject", label: "Objet" }, { key: "preheader", label: "Texte d'aperçu", long: true, rows: 3 }]} values={{ subject: open.subject, preheader: open.preheader }} onSave={(v) => { saveEdit(open.id, v); setEditing(false); }} onCancel={() => setEditing(false)} /></div>
-              ) : (
-                <dl className="mt-4 space-y-2 text-sm"><div><dt className="text-forest-soft">Objet</dt><dd>{open.subject}</dd></div><div><dt className="text-forest-soft">Texte d&apos;aperçu</dt><dd>{open.preheader}</dd></div></dl>
+      <EmailSheet id={openId} onClose={() => setOpenId(null)} />
+    </div>
+  );
+}
+
+/* ───────── Publicités préparées : aperçu de l'annonce et ciblage ───────── */
+
+const AD_PLATFORM: Record<string, string> = { google_ads: "Google Ads", meta_ads: "Meta Ads", tiktok_ads: "TikTok Ads" };
+const AD_STATUS: Record<string, Status> = { brouillon: "brouillon", a_valider: "a_valider", prete: "valide" };
+type Ad = (typeof hub.ads)[number];
+type Creative = { id: string; headline?: string; text?: string; description?: string; cta?: string; visual?: Visual };
+const eur0 = (n: number) => n.toLocaleString("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+
+/** L'annonce telle qu'elle s'affichera sur la régie. */
+function AdPreview({ ad, c }: { ad: Ad; c: Creative }) {
+  const host = (ad.url ?? "https://www.skinclean.fr").replace(/^https?:\/\//, "").replace(/\/$/, "");
+  if (ad.platform === "google_ads") return (
+    <div className="rounded-xl border border-line bg-white p-5 text-left font-sans shadow-sm">
+      <p className="text-[12px] text-[#202124]"><b className="font-semibold">Sponsorisé</b></p>
+      <div className="mt-1 flex items-center gap-2"><span className="grid h-7 w-7 place-items-center rounded-full bg-sage-soft font-display text-xs">S</span><span className="text-[13px] leading-tight text-[#202124]">SKINCLEAN<br /><span className="text-[#4d5156]">{host}</span></span></div>
+      <p className="mt-2 text-[19px] leading-snug text-[#1a0dab]">{c.headline}</p>
+      <p className="mt-1 text-[14px] leading-snug text-[#4d5156]">{c.text} {c.description}</p>
+    </div>
+  );
+  const tiktok = ad.platform === "tiktok_ads";
+  return (
+    <div className={clsx("mx-auto overflow-hidden text-left font-sans shadow-lg", tiktok ? "relative aspect-[9/16] w-full max-w-[280px] rounded-[22px] bg-black text-white" : "w-full max-w-[360px] rounded-xl border border-[#DBDBDB] bg-white text-[#262626]")}>
+      {!tiktok && <div className="flex items-center gap-2 px-3 py-2.5"><span className="grid h-8 w-8 place-items-center rounded-full bg-sage-soft font-display text-sm">S</span><span className="text-[13px] leading-tight"><b className="font-semibold">skinclean</b><br /><span className="text-[11px] text-[#737373]">Sponsorisé</span></span></div>}
+      {c.visual ? <div className={tiktok ? "absolute inset-0" : ""}><VisualThumb visual={c.visual} width={360} playable={c.visual.kind === "video"} fill={tiktok} /></div> : <div className="grid aspect-square place-items-center bg-sage-soft font-display text-2xl">SKINCLEAN</div>}
+      {tiktok ? (
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 pt-16 text-[12px]">
+          <p className="text-[14px] font-semibold">@skinclean · <span className="font-normal opacity-80">Sponsorisé</span></p>
+          <p className="mt-1 leading-snug">{c.text}</p>
+          {c.cta && <span className="mt-3 block rounded bg-[#FE2C55] py-2 text-center text-[13px] font-semibold">{c.cta}</span>}
+        </div>
+      ) : (
+        <div>
+          {c.cta && <div className="flex items-center justify-between border-b border-[#EFEFEF] bg-[#F7F7F7] px-3 py-2.5 text-[13px] font-semibold"><span>{c.cta}</span><span aria-hidden>›</span></div>}
+          <div className="px-3 pb-3 pt-2 text-[13px] leading-snug"><b className="font-semibold">skinclean</b> {c.headline && <b className="font-semibold">{c.headline}. </b>}{c.text}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function AdsStudio() {
+  const statuses = useStatuses();
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [v, setV] = useState(0);
+  const ad = hub.ads.find((a) => a.id === openId);
+  const creatives = (ad?.creatives ?? []) as Creative[];
+  const c = creatives[Math.min(v, creatives.length - 1)];
+  return (
+    <div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {hub.ads.map((a, i) => {
+          const cr = a.creatives[0] as Creative | undefined;
+          const st = (statuses[a.id] ?? AD_STATUS[a.status] ?? "brouillon") as Status;
+          return (
+            <motion.button key={a.id} type="button" onClick={() => { setOpenId(a.id); setV(0); }} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55, delay: (i % 4) * 0.07, ease: EASE }}
+              className="group flex flex-col border border-line bg-ivory p-5 text-left transition hover:-translate-y-1 hover:shadow-[0_16px_30px_-18px_rgba(31,51,41,0.4)]">
+              <span className="flex items-center justify-between gap-2 text-[0.7rem]"><span className="chip bg-forest text-ivory">{AD_PLATFORM[a.platform]}</span><StatusPill status={st} /></span>
+              <span className="mt-3 block font-medium">{a.name}</span>
+              <span className="mt-1 block text-xs text-forest-soft">{a.objective}</span>
+              {cr && (
+                <span className="mt-4 block flex-1 rounded-md bg-cream p-3 text-xs">
+                  <span className="block text-[0.6rem] uppercase tracking-wide text-forest-soft">Sponsorisé · skinclean</span>
+                  {cr.visual && <span className="mt-2 block overflow-hidden rounded"><VisualThumb visual={cr.visual} width={260} className={cr.visual.kind === "video" ? "max-h-56" : undefined} /></span>}
+                  {cr.headline && <span className="mt-1 block font-medium text-[#1a0dab]">{cr.headline}</span>}
+                  {cr.text && <span className="mt-1 line-clamp-3 block text-forest-soft">{cr.text}</span>}
+                </span>
               )}
-              <p className="mt-3 text-xs text-forest-soft">Envoyée uniquement aux personnes inscrites qui ont donné leur accord, avec un lien de désinscription.</p>
-              <div className="mt-5"><ValidationBar id={open.id} initial={open.status} onEdit={editing ? undefined : () => setEditing(true)} /></div>
+              <span className="mt-3 flex items-center justify-between text-[0.7rem] text-forest-soft"><span>{a.totalBudget ? `Budget prévu : ${eur0(a.totalBudget)}` : `Cible : ${a.audience.age} ans`}</span><span className="font-medium text-forest transition group-hover:translate-x-1">Ouvrir →</span></span>
+            </motion.button>
+          );
+        })}
+      </div>
+      <Sheet open={!!ad} onClose={() => setOpenId(null)} label={ad?.name ?? "Publicité"} wide>
+        {ad && c && (
+          <div className="grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+            <div className="flex flex-col items-center justify-center gap-4 bg-[radial-gradient(closest-side,#D8DFD4,#EFEEEA)] px-4 py-8 md:py-10">
+              <AnimatePresence mode="wait"><motion.div key={c.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35 }} className="w-full max-w-[380px]"><AdPreview ad={ad} c={c} /></motion.div></AnimatePresence>
+              {creatives.length > 1 && (
+                <div className="flex gap-1 text-xs">{creatives.map((x, k) => <button key={x.id} type="button" onClick={() => setV(k)} aria-pressed={k === v} className={clsx("rounded-full border px-3 py-1", k === v ? "border-forest bg-forest text-ivory" : "border-line bg-ivory")}>Version {String.fromCharCode(65 + k)}</button>)}</div>
+              )}
+            </div>
+            <div className="p-6 md:p-8">
+              <p className="eyebrow text-sage-deep">{AD_PLATFORM[ad.platform]} · {campName(ad.campaignId) ?? "Campagne"}</p>
+              <p className="mt-2 font-display text-3xl leading-tight">{ad.name}</p>
+              <dl className="mt-5 grid grid-cols-[8rem_1fr] gap-x-3 gap-y-1.5 text-sm">
+                <dt className="text-forest-soft">Objectif</dt><dd>{ad.objective}</dd>
+                {ad.startDate && <><dt className="text-forest-soft">Dates</dt><dd>du {new Date(`${ad.startDate}T12:00`).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}{ad.endDate ? ` au ${new Date(`${ad.endDate}T12:00`).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}` : ""}</dd></>}
+                {ad.totalBudget != null && <><dt className="text-forest-soft">Budget</dt><dd>{eur0(ad.totalBudget)} au total{ad.dailyBudget ? `, ${eur0(ad.dailyBudget)} par jour` : ""}</dd></>}
+                <dt className="text-forest-soft">Cible</dt><dd>{ad.audience.age} ans · {ad.audience.gender} · {ad.audience.locations}</dd>
+                {ad.audience.interests?.length > 0 && <><dt className="text-forest-soft">Centres d&apos;intérêt</dt><dd>{ad.audience.interests.join(", ")}</dd></>}
+                {ad.url && <><dt className="text-forest-soft">Page d&apos;arrivée</dt><dd className="break-all">{ad.url.replace(/^https?:\/\/(www\.)?/, "")}</dd></>}
+              </dl>
+              {ad.keywords.length > 0 && (
+                <div className="mt-5">
+                  <p className="text-xs font-medium uppercase tracking-[0.08em] text-forest-soft">Mots-clés achetés</p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">{(ad.keywords as { text: string; match: string }[]).map((k) => <span key={k.text} className="rounded-full bg-sage-soft px-2.5 py-1 text-xs">{k.text} <span className="opacity-60">· {k.match}</span></span>)}</div>
+                  {ad.negativeKeywords.length > 0 && <p className="mt-2 text-xs text-forest-soft">Exclus : {(ad.negativeKeywords as string[]).join(", ")}</p>}
+                </div>
+              )}
+              <p className="mt-5 rounded-md bg-cream p-3 text-xs text-forest-soft">Annonce prête, jamais diffusée : aucun budget n&apos;a été dépensé. La diffusion se lance depuis l&apos;Admin, après validation du budget.</p>
+              <div className="mt-5"><ValidationBar id={ad.id} initial={AD_STATUS[ad.status] ?? "brouillon"} /></div>
             </div>
           </div>
         )}
