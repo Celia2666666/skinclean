@@ -10,7 +10,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const STEPS = [
   { k: "Pour qui", t: "Les 18-35 ans", d: "à la peau mixte, sensible ou à imperfections", tone: "border border-line bg-white" },
   { k: "Le problème", t: "Des soins empilés au hasard", d: "qui se contredisent et irritent", tone: "border border-line bg-white" },
-  { k: "La solution", t: "Le Skin Diag en 2 minutes", d: "compose une routine courte et compatible", tone: "border border-forest bg-forest text-ivory" },
+  { k: "La solution", t: "Le Skin Diag en 2 minutes", d: "compose une routine courte et compatible", tone: "border border-forest bg-forest text-ivory", href: "/skin-diag" },
   { k: "Le résultat", t: "Une peau plus nette", d: "et plus confortable en 4 à 8 semaines", tone: "border border-line bg-white" },
 ];
 
@@ -41,14 +41,22 @@ export function PromiseBand() {
         {/* Quatre cartes : pour qui, problème, solution, résultat */}
         <div className="relative mt-10">
           <ol className="relative grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map((s, i) => (
-              <motion.li key={s.k} initial={reduce ? false : { opacity: 0, y: 26, scale: 0.94 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.6, delay: 0.25 + i * 0.12, ease: EASE }}
-                whileHover={reduce ? undefined : { y: -4 }} className={`rounded-2xl p-6 transition-shadow hover:shadow-[0_14px_30px_-22px_rgba(31,51,41,0.5)] ${s.tone}`}>
-                <span className="flex items-center gap-2 text-[0.7rem] font-medium uppercase tracking-[0.1em] opacity-70"><span className="grid h-6 w-6 place-items-center rounded-full bg-current/10 font-display text-xs">{i + 1}</span>{s.k}</span>
-                <p className="mt-3 font-display text-2xl leading-tight">{s.t}</p>
-                <p className="mt-1 text-sm opacity-75">{s.d}</p>
-              </motion.li>
-            ))}
+            {STEPS.map((s, i) => {
+              const body = (
+                <>
+                  <span className="flex items-center gap-2 text-[0.7rem] font-medium uppercase tracking-[0.1em] opacity-70"><span className="grid h-6 w-6 place-items-center rounded-full bg-current/10 font-display text-xs">{i + 1}</span>{s.k}</span>
+                  <p className="mt-3 font-display text-2xl leading-tight">{s.t}</p>
+                  <p className="mt-1 text-sm opacity-75">{s.d}</p>
+                  {"href" in s && <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 group-hover:underline">Faire mon Skin Diag <ArrowIcon size={14} /></span>}
+                </>
+              );
+              return (
+                <motion.li key={s.k} initial={reduce ? false : { opacity: 0, y: 26, scale: 0.94 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.6, delay: 0.25 + i * 0.12, ease: EASE }}
+                  whileHover={reduce ? undefined : { y: -4 }} className={`rounded-2xl transition-shadow hover:shadow-[0_14px_30px_-22px_rgba(31,51,41,0.5)] ${s.tone}`}>
+                  {"href" in s && s.href ? <Link href={s.href} className="group block h-full p-6">{body}</Link> : <div className="p-6">{body}</div>}
+                </motion.li>
+              );
+            })}
           </ol>
         </div>
 

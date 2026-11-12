@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 /** Les quatre espaces demandés (+ l'admin), reliés depuis toutes les pages. */
 export const SPACES = [
@@ -22,6 +23,15 @@ const activeSpace = (path: string) =>
 export function DemoBanner() {
   const path = usePathname() ?? "/";
   const current = activeSpace(path);
+  // Préchauffage : en ligne, un nouveau serveur doit d'abord préparer la démo du CRM (quelques secondes).
+  // On la lance discrètement en arrière-plan, une fois par visite, pour que le CRM s'ouvre vite au clic.
+  useEffect(() => {
+    if (path.startsWith("/crm")) return;
+    try { if (sessionStorage.getItem("crm-warm")) return; sessionStorage.setItem("crm-warm", "1"); } catch { return; }
+    const warm = () => { fetch("/crm", { credentials: "same-origin", priority: "low" } as RequestInit).catch(() => {}); };
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+    if (w.requestIdleCallback) w.requestIdleCallback(warm, { timeout: 4000 }); else setTimeout(warm, 2500);
+  }, [path]);
   return (
     <>
       <div aria-hidden className="h-[var(--demo-h)] print:hidden" />
