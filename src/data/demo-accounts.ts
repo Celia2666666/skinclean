@@ -66,7 +66,7 @@ export function camilleJournal(): Account["journal"] {
 export const demoAccounts: DemoAccount[] = [
   {
     label: "Cliente fidèle",
-    description: "2 commandes livrées, 1 en cours d'expédition, plus de 950 feuilles SKINCLEAN Club (palier Fleur), Skin Journal rempli, routine enregistrée, favoris.",
+    description: "2 commandes livrées, 1 en cours d'expédition, plus de 1 400 feuilles SKINCLEAN Club (palier Canopée), Skin Journal rempli, routine enregistrée, favoris.",
     email: "camille@skinclean.test",
     build: () => {
       const email = "camille@skinclean.test";
@@ -85,6 +85,9 @@ export const demoAccounts: DemoAccount[] = [
         { id: "l_d9", date: now() - 12 * DAY, delta: 120, label: "Opération Glow Week : feuilles doublées", status: "credited" },
         { id: "l_d10", date: now() - 2 * DAY, delta: 200, label: "Défi Skin Journal 30 jours terminé", status: "credited" },
         { id: "l_d11", date: now() - 1 * DAY, delta: 20, label: "Bonus avis — Clear Foam", status: "credited" },
+        { id: "l_d12", date: now() - 1 * DAY, delta: 150, label: "Parrainage — Léa a passé sa 1ʳᵉ commande", status: "credited" },
+        { id: "l_d13", date: now() - 1 * DAY, delta: 150, label: "Glow Friday : 3 routines partagées avec #skinclean", status: "credited" },
+        { id: "l_d14", date: now() - 1 * DAY, delta: 200, label: "Bonus fidélité : 1 an au SKINCLEAN Club", status: "credited" },
       ];
       const step = (productId: string, s: RoutineStep, moments: ("matin" | "soir")[]) => ({
         step: s, productId, variantId: "std", moments, reason: "Routine enregistrée (compte de test).", alternatives: [], selected: true, frequency: getProduct(productId)!.frequency,
